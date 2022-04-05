@@ -1,6 +1,10 @@
-﻿namespace Catacombs.Repositories
+﻿using Catacombs.Models;
+using System.Collections.Generic;
+
+namespace Catacombs.Repositories
 {
-    public class IMoviesRepository
+    public interface IMoviesRepository
     {
+        List<Movies> GetAllMoviesByUser(int userId);
     }
 }

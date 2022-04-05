@@ -28,6 +28,7 @@ namespace Catacombs
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<IUsersRepository, UsersRepository>();
+            services.AddTransient<IMoviesRepository, MoviesRepository>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

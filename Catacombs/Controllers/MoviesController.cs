@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Catacombs.Repositories;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -9,6 +10,12 @@ namespace Catacombs.Controllers
     [ApiController]
     public class MoviesController : ControllerBase
     {
+
+        private readonly IMoviesRepository _moviesRepository;
+        public MoviesController(IMoviesRepository moviesRepository)
+        {
+            _moviesRepository = moviesRepository;
+        }
         // GET: api/<MoviesController>
         [HttpGet]
         public IEnumerable<string> Get()
@@ -21,6 +28,17 @@ namespace Catacombs.Controllers
         public string Get(int id)
         {
             return "value";
+        }
+
+        [HttpGet("movies/{id}")]
+        public IActionResult GetByUserId(int id)
+        {
+            var movies = _moviesRepository.GetAllMoviesByUser(id);
+            if (movies == null)
+            {
+                return NotFound();
+            }
+            return Ok(movies);
         }
 
         // POST api/<MoviesController>

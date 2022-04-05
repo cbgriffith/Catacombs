@@ -19,11 +19,11 @@ namespace Catacombs.Repositories
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                       SELECT m.id, m.userId, m.Content, 
+                       SELECT m.id, m.userId, 
                               m.title,
-                              m.rating, m.watched, m.poser_path,
+                              m.rating, m.watched, m.poster_path,
                               m.overview, m.popularity,
-                              m.voter_average,
+                              m.vote_average,
                               u.username, u.email, u.password
                          FROM Movies m
                               LEFT JOIN Users u ON m.userId = u.id
@@ -58,7 +58,7 @@ namespace Catacombs.Repositories
                 poster_path = reader.GetString(reader.GetOrdinal("poster_path")),
                 overview = reader.GetString(reader.GetOrdinal("overview")),
                 popularity = reader.GetInt32(reader.GetOrdinal("popularity")),
-                voter_average = reader.GetDecimal(reader.GetOrdinal("voter_average")),
+                vote_average = reader.GetDecimal(reader.GetOrdinal("vote_average")),
                 Users = new Users()
                 {
                     id = reader.GetInt32(reader.GetOrdinal("id")),

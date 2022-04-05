@@ -10,7 +10,7 @@
         public string poster_path { get; set; }
         public string overview { get; set; }
         public int popularity { get; set; }
-        public decimal voter_average { get; set; }
+        public decimal vote_average { get; set; }
         public Users Users { get; set; }
     }
 }

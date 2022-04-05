@@ -1,6 +1,11 @@
-﻿namespace Catacombs.Repositories
+﻿using System.Collections.Generic;
+using Catacombs.Models;
+
+namespace Catacombs.Repositories
 {
-    public class IUsersRepository
+    public interface IUsersRepository
     {
+        void Add(Users users);
+        Users GetByEmail(string email);
     }
 }

@@ -46,6 +46,67 @@ namespace Catacombs.Repositories
             }
         }
 
+        public Movies GetMovieById(int id)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                       SELECT m.id, m.userId, 
+                              m.title,
+                              m.rating, m.watched, m.poster_path,
+                              m.overview, m.popularity,
+                              m.vote_average,
+                              u.username, u.email, u.password
+                         FROM Movies m
+                              LEFT JOIN Users u ON m.userId = u.id
+                        WHERE m.id = @id";
+
+                    cmd.Parameters.AddWithValue("@id", id);
+                    var reader = cmd.ExecuteReader();
+
+                    Movies movies = null;
+
+                    if (reader.Read())
+                    {
+                        movies = NewMovieFromReader(reader);
+                    }
+
+                    reader.Close();
+
+                    return movies;
+                }
+            }
+        }
+
+        public void Add(Movies movie)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        INSERT INTO Movies (userId, title, rating, watched, poster_path, overview, popularity, vote_average)
+                        OUTPUT INSERTED.ID
+                        VALUES (@userId, @title, @rating, @watched, @poster_path, @overview, @popularity, @vote_average)";
+
+                    DbUtils.AddParameter(cmd, "@userId", movie.userId);
+                    DbUtils.AddParameter(cmd, "@title", movie.title);
+                    DbUtils.AddParameter(cmd, "@rating", movie.rating);
+                    DbUtils.AddParameter(cmd, "@watched", movie.watched);
+                    DbUtils.AddParameter(cmd, "@poster_path", movie.poster_path);
+                    DbUtils.AddParameter(cmd, "@overview", movie.overview);
+                    DbUtils.AddParameter(cmd, "@popularity", movie.popularity);
+                    DbUtils.AddParameter(cmd, "@vote_average", movie.vote_average);
+
+                    movie.id = (int)cmd.ExecuteScalar();
+                }
+            }
+        }
+
         private Movies NewMovieFromReader(SqlDataReader reader)
         {
             return new Movies()
@@ -57,7 +118,7 @@ namespace Catacombs.Repositories
                 watched = reader.GetBoolean(reader.GetOrdinal("watched")),
                 poster_path = reader.GetString(reader.GetOrdinal("poster_path")),
                 overview = reader.GetString(reader.GetOrdinal("overview")),
-                popularity = reader.GetInt32(reader.GetOrdinal("popularity")),
+                popularity = reader.GetDecimal(reader.GetOrdinal("popularity")),
                 vote_average = reader.GetDecimal(reader.GetOrdinal("vote_average")),
                 Users = new Users()
                 {

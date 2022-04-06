@@ -1,4 +1,5 @@
-﻿using Catacombs.Repositories;
+﻿using Catacombs.Models;
+using Catacombs.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
@@ -24,13 +25,25 @@ namespace Catacombs.Controllers
         }
 
         // GET api/<MoviesController>/5
+        //[HttpGet("{id}")]
+        //public string Get(int id)
+        //{
+        //    return "value";
+        //}
+
+        // GET api/<PostController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public IActionResult Get(int id)
         {
-            return "value";
+            var movie = _moviesRepository.GetMovieById(id);
+            if (movie == null)
+            {
+                return NotFound();
+            }
+            return Ok(movie);
         }
 
-        [HttpGet("movies/{id}")]
+        [HttpGet("user/{id}")]
         public IActionResult GetByUserId(int id)
         {
             var movies = _moviesRepository.GetAllMoviesByUser(id);
@@ -42,9 +55,17 @@ namespace Catacombs.Controllers
         }
 
         // POST api/<MoviesController>
+        //[HttpPost]
+        //public void Post([FromBody] string value)
+        //{
+        //}
+
+        // POST api/<MoviesController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public IActionResult Movies(Movies movie)
         {
+            _moviesRepository.Add(movie);
+            return CreatedAtAction("Get", new { id = movie.id }, movie);
         }
 
         // PUT api/<MoviesController>/5

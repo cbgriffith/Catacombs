@@ -4,9 +4,10 @@ GO
 
 USE [TheCatacombs]
 GO
-
+DROP TABLE IF EXISTS MOVIES
+DROP TABLE IF EXISTS USERS
 CREATE TABLE [Users] (
-  [id] int PRIMARY KEY IDENTITY(1, 1),
+  [id] int PRIMARY KEY IDENTITY,
   [username] nvarchar(255),
   [email] nvarchar(255),
   [password] nvarchar(255)
@@ -14,7 +15,7 @@ CREATE TABLE [Users] (
 GO
 
 CREATE TABLE [Movies] (
-  [id] int,
+  [id] int PRIMARY KEY IDENTITY,
   [userId] int,
   [title] nvarchar(255),
   [rating] int,

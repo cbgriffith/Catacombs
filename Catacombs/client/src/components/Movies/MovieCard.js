@@ -5,16 +5,17 @@ export const MovieCard = ({ movie }) => {
     let formattedDate = date.toLocaleDateString('en-US')
 
     return (
-    
+
         <div>
             <h3>{movie.original_title}</h3>
             <p>{movie.overview}</p>
             <p>Release Date: {formattedDate}</p>
-            <img src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`} alt={movie.original_title}/>
-            <p>User Rating: {movie.vote_average}</p>
-            <p>{movie.popularity}</p>
-            <hr/>
+            <img src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`} alt={movie.original_title} />
+            <p>Score: {movie.vote_average}</p>
+            {/* <p>Page: {movie.total_pages}</p> */}
+            {/* <p>{movie.popularity}</p> */}
+            <hr />
         </div>
-      
+
     )
-  }
+}

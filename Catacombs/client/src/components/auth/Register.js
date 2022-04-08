@@ -17,7 +17,7 @@ export default function Register() {
     if (password && password !== confirmPassword) {
       alert("Passwords don't match. Try again.");
     } else {
-      const userProfile = { username, email };
+      const userProfile = { username, email, password };
       register(userProfile, password)
         .then(() => navigate("/"));
     }

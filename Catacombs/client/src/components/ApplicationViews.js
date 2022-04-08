@@ -21,7 +21,7 @@ export default function ApplicationViews() {
    else {
       return (
          <Routes>
-            <Route path="/" element={<MovieList />} />
+            <Route path="/movies/rating" element={<MovieList />} />
          </Routes>
       );
    }

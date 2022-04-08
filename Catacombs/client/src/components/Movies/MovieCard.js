@@ -8,45 +8,48 @@ export const MovieCard = ({ movie }) => {
     const { addMovie } = useContext(MovieContext)
     const user = JSON.parse(sessionStorage.getItem("userProfile"))
 
-    const handleSaveMovie = () => {
-        addMovie({
+    const handleSaveMovie = (e) => {
+        // const newMovie = {...movie}
+        e.preventDefault();
+        const newMovie = {
         userId: user.id,
         title: movie.title,
         rating: 0,
-        watched: 0,
+        watched: false,
         poster_path: movie.poster_path,
         overview: movie.overview,
         popularity: movie.popularity,
         vote_average: movie.vote_average
-        })
+        }
+        addMovie(newMovie)
     }
 
-    const seenIt = () => {
-        addMovie({
-        userId: user.id,
-        title: movie.title,
-        rating: 0,
-        watched: 1,
-        poster_path: movie.poster_path,
-        overview: movie.overview,
-        popularity: movie.popularity,
-        vote_average: movie.vote_average
-        })
-    }
+    // const seenIt = () => {
+    //     addMovie({
+    //     userId: user.id,
+    //     title: movie.title,
+    //     rating: 0,
+    //     watched: 1,
+    //     poster_path: movie.poster_path,
+    //     overview: movie.overview,
+    //     popularity: movie.popularity,
+    //     vote_average: movie.vote_average
+    //     })
+    // }
 
     return (
 
         <div>
-            <h3>{movie.original_title}</h3>
+            <h3>{movie.title}</h3>
             <p>{movie.overview}</p>
             <p>Release Date: {formattedDate}</p>
             <img src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`} alt={movie.original_title} />
             <p>Score: {movie.vote_average}</p>
             {/* <p>Page: {movie.total_pages}</p> */}
-            {/* <p>{movie.popularity}</p> */}
+            <p>Popularity: {movie.popularity}</p>
             <Button color="danger" onClick={handleSaveMovie}>Add to Watch List</Button>
             <br /> <br />
-            <Button color="danger" onClick={seenIt}>Seen It</Button>
+            {/* <Button color="danger" onClick={seenIt}>Seen It</Button> */}
             <hr />
         </div>
 

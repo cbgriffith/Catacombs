@@ -81,6 +81,39 @@ namespace Catacombs.Repositories
             }
         }
 
+        public List<Movies> GetAllMovies()
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                              
+                       SELECT m.id, m.userId, 
+                              m.title,
+                              m.rating, m.watched, m.poster_path,
+                              m.overview, m.popularity,
+                              m.vote_average,
+                              u.username, u.email, u.password
+                         FROM Movies m
+                              LEFT JOIN Users u ON m.userId = u.id";
+                    var reader = cmd.ExecuteReader();
+
+                    var movies = new List<Movies>();
+
+                    while (reader.Read())
+                    {
+                        movies.Add(NewMovieFromReader(reader));
+                    }
+
+                    reader.Close();
+
+                    return movies;
+                }
+            }
+        }
+
         public void Add(Movies movie)
         {
             using (var conn = Connection)

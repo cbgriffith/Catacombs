@@ -4,6 +4,7 @@ import { MovieList } from "./Movies/MovieList";
 import { UserContext } from "./Users/UserProvider";
 import Login from "./auth/Login";
 import Register from "./auth/Register";
+import { MovieWatchList } from "./Movies/MovieWatchList";
 
 
 export default function ApplicationViews() {
@@ -22,6 +23,7 @@ export default function ApplicationViews() {
       return (
          <Routes>
             <Route path="/movies/rating" element={<MovieList />} />
+            <Route path="/movies/watchlist" element={<MovieWatchList />} />
          </Routes>
       );
    }

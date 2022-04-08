@@ -31,32 +31,18 @@ export default function Header() {
                 </NavItem> */}
 
                 <NavItem>
-                  <NavLink tag={RRNavLink} to="/posts">Posts</NavLink>
+                  <NavLink tag={RRNavLink} to="/movies/rating">Movies By Rating</NavLink>
                 </NavItem>
 
                 <NavItem>
-                  <NavLink tag={RRNavLink} to="/myposts">My Posts</NavLink>
+                  <NavLink tag={RRNavLink} to="/movies/mylist">My Movie List</NavLink>
                 </NavItem>
               </>
-            }
-            {isLoggedIn &&
-              <NavItem>
-                <NavLink tag={RRNavLink} to="/category">Categories</NavLink>
-              </NavItem>
-            }
-              {isLoggedIn &&
-              <NavItem>
-                <NavLink tag={RRNavLink} to="/tag">Tags</NavLink>
-              </NavItem>
             }
           </Nav>
           <Nav navbar>
             {isLoggedIn &&
               <>
-                <NavItem>
-                  <NavLink tag={RRNavLink} to="/userprofiles">User Profiles</NavLink>
-                </NavItem>
-
                 <NavItem>
                   <a aria-current="page" className="nav-link"
                     style={{ cursor: "pointer" }} onClick={logout}>Logout</a>

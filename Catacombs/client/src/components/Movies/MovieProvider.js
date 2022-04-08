@@ -5,6 +5,7 @@ export const MovieContext = createContext()
 export const MovieProvider = (props) => {
     const [movies, setMovies] = useState([])
     let pageNumber = 1;
+    const apiUrl = "https://localhost:44377";
 
     //each fetch call to themoviedb api limits every page to just 20 results, I'm going to need way more
     //I'm going to do at least 5 pages for each list from the tmdb api (by popularity and rating at least)
@@ -17,9 +18,19 @@ export const MovieProvider = (props) => {
             .then(movieObject => setMovies(movieObject.results))
     }
 
+    const addMovie = (movie) => {
+        return fetch(`${apiUrl}/api/movies`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(movie),
+        });
+      };
+
     return (
         <MovieContext.Provider value={{
-            movies, getMoviesByRating, pageNumber
+            movies, getMoviesByRating, pageNumber, addMovie
         }}>
             {props.children}
         </MovieContext.Provider>

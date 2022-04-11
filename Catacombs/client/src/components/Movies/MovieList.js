@@ -14,8 +14,8 @@ export const MovieList = () => {
   }, [])
 
   const nextPage = () => {
-    if (pageNumber < 60){
-    pageNumber++;
+    if (pageNumber < 60) {
+      pageNumber++;
     } else {
       pageNumber = 60;
     }

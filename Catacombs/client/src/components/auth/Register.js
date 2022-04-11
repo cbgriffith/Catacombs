@@ -21,7 +21,7 @@ export default function Register() {
       register(userProfile, password)
         .then(() => navigate("/"));
     }
- };
+  };
 
   return (
     <Form onSubmit={registerClick}>

@@ -12,15 +12,15 @@ export default function Login() {
 
   const loginSubmit = (e) => {
     e.preventDefault();
-    login({email, password})
-      .then(r =>{
-      if(r){
-      navigate("/")
-      }
-      else{
-        alert("Invalid email or password")
-      }
-    })
+    login({ email, password })
+      .then(r => {
+        if (r) {
+          navigate("/")
+        }
+        else {
+          alert("Invalid email or password")
+        }
+      })
   };
 
   return (

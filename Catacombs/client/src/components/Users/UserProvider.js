@@ -1,8 +1,5 @@
 import React, { useState, useEffect, createContext } from "react";
 
-
-
-
 export const UserContext = createContext();
 
 export function UserProvider(props) {
@@ -15,14 +12,14 @@ export function UserProvider(props) {
 
   const login = (userObject) => {
     return fetch(`${apiUrl}/api/users/getbyemail?email=${userObject.email}`)
-    .then((r) => r.json())
+      .then((r) => r.json())
       .then((userProfile) => {
-        if(userProfile.id){
+        if (userProfile.id) {
           sessionStorage.setItem("userProfile", JSON.stringify(userProfile));
           setIsLoggedIn(true);
           return userProfile
         }
-        else{
+        else {
           return undefined
         }
       });

@@ -9,10 +9,10 @@ export const SearchMovies = () => {
         searchMovies(searchTerm)
     }
     return (<>
-            <div className="container pt-4">
-                <input type="text" id="search" autoFocus placeholder="Enter movie title" onKeyPress={(e) => e.key === 'Enter' && handleSearch()} onChange={(e) => setSearchTerm(e.target.value)} />
-                <button onClick={handleSearch}>Search</button>
-            </div>
+        <div className="container pt-4">
+            <input type="text" id="search" autoFocus placeholder="Enter movie title" onKeyPress={(e) => e.key === 'Enter' && handleSearch()} onChange={(e) => setSearchTerm(e.target.value)} />
+            <button onClick={handleSearch}>Search</button>
+        </div>
         <div>
             <h1>Search Results</h1>
             <div>

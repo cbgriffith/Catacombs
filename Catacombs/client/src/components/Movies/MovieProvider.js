@@ -36,9 +36,9 @@ export const MovieProvider = (props) => {
 
     const searchMovies = (query) => {
         return fetch(`https://api.themoviedb.org/3/search/movie?api_key=b90c6e98b6940ecc7131589bc7ed9067&language=en-US&query=${query}&page=${pageNumber}&include_adult=false`)
-          .then((res) => res.json())
-          .then(setMovies);
-      };
+            .then((res) => res.json())
+            .then(setMovies);
+    };
 
     return (
         <MovieContext.Provider value={{

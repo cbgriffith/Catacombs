@@ -12,15 +12,15 @@ export const MovieCard = ({ movie }) => {
         // const newMovie = {...movie}
         e.preventDefault();
         const newMovie = {
-        userId: user.id,
-        title: movie.title,
-        rating: 0,
-        watched: false,
-        poster_path: movie.poster_path,
-        overview: movie.overview,
-        popularity: movie.popularity,
-        vote_average: movie.vote_average,
-        release_date: movie.release_date
+            userId: user.id,
+            title: movie.title,
+            rating: 0,
+            watched: false,
+            poster_path: movie.poster_path,
+            overview: movie.overview,
+            popularity: movie.popularity,
+            vote_average: movie.vote_average,
+            release_date: movie.release_date
         }
         addMovie(newMovie)
     }

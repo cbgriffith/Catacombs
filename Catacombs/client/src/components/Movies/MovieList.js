@@ -28,7 +28,7 @@ export const MovieList = () => {
         <h1>List of Horror Movies By Score</h1>
         <div>
           {
-            movies.map(movie => {
+            movies?.map(movie => {
               return <MovieCard key={movie.id} movie={movie} />
             })
           }

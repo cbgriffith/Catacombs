@@ -5,6 +5,7 @@ import { UserContext } from "./Users/UserProvider";
 import Login from "./auth/Login";
 import Register from "./auth/Register";
 import { MovieWatchList } from "./Movies/MovieWatchList";
+import { SearchMovies } from "./Movies/SearchMovies";
 
 
 export default function ApplicationViews() {
@@ -24,6 +25,7 @@ export default function ApplicationViews() {
          <Routes>
             <Route path="/movies/rating" element={<MovieList />} />
             <Route path="/movies/watchlist" element={<MovieWatchList />} />
+            <Route path="/movies/search" element={<> <SearchMovies />  </>} />
          </Routes>
       );
    }

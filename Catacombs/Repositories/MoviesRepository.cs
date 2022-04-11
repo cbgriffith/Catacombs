@@ -23,7 +23,7 @@ namespace Catacombs.Repositories
                               m.title,
                               m.rating, m.watched, m.poster_path,
                               m.overview, m.popularity,
-                              m.vote_average,
+                              m.vote_average, m.release_date,
                               u.username, u.email, u.password
                          FROM Movies m
                               LEFT JOIN Users u ON m.userId = u.id
@@ -58,7 +58,7 @@ namespace Catacombs.Repositories
                               m.title,
                               m.rating, m.watched, m.poster_path,
                               m.overview, m.popularity,
-                              m.vote_average,
+                              m.vote_average, m.release_date,
                               u.username, u.email, u.password
                          FROM Movies m
                               LEFT JOIN Users u ON m.userId = u.id
@@ -94,7 +94,7 @@ namespace Catacombs.Repositories
                               m.title,
                               m.rating, m.watched, m.poster_path,
                               m.overview, m.popularity,
-                              m.vote_average,
+                              m.vote_average, m.release_date,
                               u.username, u.email, u.password
                          FROM Movies m
                               LEFT JOIN Users u ON m.userId = u.id";
@@ -122,9 +122,9 @@ namespace Catacombs.Repositories
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                        INSERT INTO Movies (userId, title, rating, watched, poster_path, overview, popularity, vote_average)
+                        INSERT INTO Movies (userId, title, rating, watched, poster_path, overview, popularity, vote_average, release_date)
                         OUTPUT INSERTED.ID
-                        VALUES (@userId, @title, @rating, @watched, @poster_path, @overview, @popularity, @vote_average)";
+                        VALUES (@userId, @title, @rating, @watched, @poster_path, @overview, @popularity, @vote_average, @release_date)";
 
                     DbUtils.AddParameter(cmd, "@userId", movie.userId);
                     DbUtils.AddParameter(cmd, "@title", movie.title);
@@ -134,6 +134,7 @@ namespace Catacombs.Repositories
                     DbUtils.AddParameter(cmd, "@overview", movie.overview);
                     DbUtils.AddParameter(cmd, "@popularity", movie.popularity);
                     DbUtils.AddParameter(cmd, "@vote_average", movie.vote_average);
+                    DbUtils.AddParameter(cmd, "@release_date", movie.release_date);
 
                     movie.id = (int)cmd.ExecuteScalar();
                 }
@@ -151,8 +152,9 @@ namespace Catacombs.Repositories
                 watched = reader.GetBoolean(reader.GetOrdinal("watched")),
                 poster_path = reader.GetString(reader.GetOrdinal("poster_path")),
                 overview = reader.GetString(reader.GetOrdinal("overview")),
-                popularity = reader.GetDecimal(reader.GetOrdinal("popularity")),
-                vote_average = reader.GetDecimal(reader.GetOrdinal("vote_average")),
+                popularity = reader.GetDouble(reader.GetOrdinal("popularity")),
+                vote_average = reader.GetDouble(reader.GetOrdinal("vote_average")),
+                release_date = reader.GetDateTime(reader.GetOrdinal("release_date")),
                 Users = new Users()
                 {
                     id = reader.GetInt32(reader.GetOrdinal("id")),

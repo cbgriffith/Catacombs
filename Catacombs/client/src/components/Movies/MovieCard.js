@@ -19,7 +19,8 @@ export const MovieCard = ({ movie }) => {
         poster_path: movie.poster_path,
         overview: movie.overview,
         popularity: movie.popularity,
-        vote_average: movie.vote_average
+        vote_average: movie.vote_average,
+        release_date: movie.release_date
         }
         addMovie(newMovie)
     }

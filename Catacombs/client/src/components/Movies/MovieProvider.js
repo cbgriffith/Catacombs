@@ -19,18 +19,24 @@ export const MovieProvider = (props) => {
     }
 
     const addMovie = (movie) => {
-        return fetch(`${apiUrl}/api/movies`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(movie),
+        return fetch(`${apiUrl}/api/Movies`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(movie),
         });
-      };
+    };
+
+    const getAllMovies = () => {
+        return fetch(`${apiUrl}/api/Movies`)
+            .then((res) => res.json())
+            .then(setMovies);
+    };
 
     return (
         <MovieContext.Provider value={{
-            movies, getMoviesByRating, pageNumber, addMovie
+            movies, getMoviesByRating, pageNumber, addMovie, getAllMovies
         }}>
             {props.children}
         </MovieContext.Provider>

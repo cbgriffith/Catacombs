@@ -19,9 +19,9 @@ namespace Catacombs.Controllers
         }
         // GET: api/<MoviesController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IActionResult Get()
         {
-            return new string[] { "value1", "value2" };
+            return Ok(_moviesRepository.GetAllMovies());
         }
 
         // GET api/<MoviesController>/5

@@ -21,9 +21,10 @@ CREATE TABLE [Movies] (
   [rating] int,
   [watched] bit,
   [poster_path] nvarchar(255),
-  [overview] nvarchar(255),
-  [popularity] numeric,
-  [vote_average] decimal
+  [overview] nvarchar(4000),
+  [popularity] float,
+  [vote_average] float,
+  [release_date] datetime
 )
 GO
 

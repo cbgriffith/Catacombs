@@ -8,5 +8,6 @@ namespace Catacombs.Repositories
         List<Movies> GetAllMoviesByUser(int userId);
         Movies GetMovieById(int id);
         void Add(Movies movie);
+        List<Movies> GetAllMovies();
     }
 }

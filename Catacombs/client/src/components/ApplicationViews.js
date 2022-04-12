@@ -6,6 +6,9 @@ import Login from "./auth/Login";
 import Register from "./auth/Register";
 import { MovieWatchList } from "./Movies/MovieWatchList";
 import { SearchMovies } from "./Movies/SearchMovies";
+import { ComingSoonList } from "./Movies/ComingSoonList";
+import { NowPlayingList } from "./Movies/NowPlayingList";
+import { PopularMovieList } from "./Movies/PopularMovieList";
 
 
 export default function ApplicationViews() {
@@ -25,7 +28,10 @@ export default function ApplicationViews() {
          <Routes>
             <Route path="/movies/rating" element={<MovieList />} />
             <Route path="/movies/watchlist" element={<MovieWatchList />} />
-            <Route path="/movies/search" element={<> <SearchMovies />  </>} />
+            <Route path="/movies/search" element={<SearchMovies />} />
+            <Route path="/movies/comingsoon" element={<ComingSoonList />} />
+            <Route path="/movies/nowplaying" element={<NowPlayingList />} />
+            <Route path="/movies/popular" element={<PopularMovieList />} />
          </Routes>
       );
    }

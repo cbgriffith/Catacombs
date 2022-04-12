@@ -7,7 +7,11 @@ import {
   NavbarBrand,
   Nav,
   NavItem,
-  NavLink
+  NavLink,
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem
 } from 'reactstrap';
 import { UserContext } from './Users/UserProvider';
 
@@ -30,16 +34,35 @@ export default function Header() {
                   <NavLink tag={RRNavLink} to="/">Home</NavLink>
                 </NavItem> */}
 
-                <NavItem>
-                  <NavLink tag={RRNavLink} to="/movies/rating">Movies By Rating</NavLink>
-                </NavItem>
+                <UncontrolledDropdown nav inNavbar>
+                  <DropdownToggle nav caret>
+                    Movies
+                  </DropdownToggle>
+                  <DropdownMenu right>
+                    <DropdownItem>
+                      <NavLink tag={RRNavLink} to="/movies/rating">Top Rated</NavLink>
+                    </DropdownItem>
+                    <DropdownItem>
+                      <NavLink tag={RRNavLink} to="/movies/popular">Most Popular</NavLink>
+                    </DropdownItem>
+                    <DropdownItem>
+                      <NavLink tag={RRNavLink} to="/movies/nowplaying">Now Playing</NavLink>
+                    </DropdownItem>
+                    <DropdownItem>
+                      <NavLink tag={RRNavLink} to="/movies/comingsoon">Coming Soon</NavLink>
+                    </DropdownItem>
+                    <DropdownItem>
+                      <NavLink tag={RRNavLink} to="/movies/search">Search</NavLink>
+                    </DropdownItem>
+                    {/* <DropdownItem divider />
+                    <DropdownItem>
+                      Reset
+                    </DropdownItem> */}
+                  </DropdownMenu>
+                </UncontrolledDropdown>
 
                 <NavItem>
                   <NavLink tag={RRNavLink} to="/movies/watchlist">Watchlist</NavLink>
-                </NavItem>
-
-                <NavItem>
-                  <NavLink tag={RRNavLink} to="/movies/search">Search</NavLink>
                 </NavItem>
               </>
             }

@@ -97,7 +97,42 @@ namespace Catacombs.Repositories
                               m.vote_average, m.release_date,
                               u.username, u.email, u.password
                          FROM Movies m
-                              LEFT JOIN Users u ON m.userId = u.id";
+                              LEFT JOIN Users u ON m.userId = u.id
+                        WHERE m.watched = 0";
+                    var reader = cmd.ExecuteReader();
+
+                    var movies = new List<Movies>();
+
+                    while (reader.Read())
+                    {
+                        movies.Add(NewMovieFromReader(reader));
+                    }
+
+                    reader.Close();
+
+                    return movies;
+                }
+            }
+        }
+
+        public List<Movies> GetAllSeenMovies()
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                              
+                       SELECT m.id, m.userId, 
+                              m.title,
+                              m.rating, m.watched, m.poster_path,
+                              m.overview, m.popularity,
+                              m.vote_average, m.release_date,
+                              u.username, u.email, u.password
+                         FROM Movies m
+                              LEFT JOIN Users u ON m.userId = u.id
+                        WHERE m.watched = 1";
                     var reader = cmd.ExecuteReader();
 
                     var movies = new List<Movies>();
@@ -137,6 +172,22 @@ namespace Catacombs.Repositories
                     DbUtils.AddParameter(cmd, "@release_date", movie.release_date);
 
                     movie.id = (int)cmd.ExecuteScalar();
+                }
+            }
+        }
+
+        public void Delete(int id)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"DELETE FROM Movies WHERE id = @id";
+
+                    DbUtils.AddParameter(cmd, "@id", id);
+
+                    cmd.ExecuteNonQuery();
                 }
             }
         }

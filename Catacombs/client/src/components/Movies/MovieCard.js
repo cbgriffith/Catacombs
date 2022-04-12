@@ -1,12 +1,25 @@
 import React, { useContext } from "react"
 import { MovieContext } from "./MovieProvider";
 import { Button } from "reactstrap";
+// import imgNotFound from './images/Broken-1.jpg';
 
 export const MovieCard = ({ movie }) => {
     let date = new Date(movie.release_date);
     let formattedDate = date.toLocaleDateString('en-US')
     const { addMovie } = useContext(MovieContext)
     const user = JSON.parse(sessionStorage.getItem("userProfile"))
+    let link = "https://image.tmdb.org/t/p/w200";
+    const imgNotFound = require('./images/broken-1.png');
+    let poster = "";
+
+    if (movie.poster_path === null || movie.poster_path === ""){
+        link = "";
+        poster = imgNotFound;
+    } else {
+        link = "https://image.tmdb.org/t/p/w200";
+        poster = movie.poster_path;
+    }
+    
 
     const handleSaveMovie = (e) => {
         // const newMovie = {...movie}
@@ -44,7 +57,7 @@ export const MovieCard = ({ movie }) => {
             <h3>{movie.title}</h3>
             <p>{movie.overview}</p>
             <p>Release Date: {formattedDate}</p>
-            <img src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`} alt={movie.original_title} />
+            <img src={`${link}${poster}`} alt={movie.original_title} />
             <p>Score: {movie.vote_average}</p>
             {/* <p>Page: {movie.total_pages}</p> */}
             <p>Popularity: {movie.popularity}</p>

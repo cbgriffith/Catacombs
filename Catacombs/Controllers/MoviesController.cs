@@ -24,6 +24,12 @@ namespace Catacombs.Controllers
             return Ok(_moviesRepository.GetAllMovies());
         }
 
+        [HttpGet("seen")]
+        public IActionResult GetAllSeenMovies()
+        {
+            return Ok(_moviesRepository.GetAllSeenMovies());
+        }
+
         // GET api/<MoviesController>/5
         //[HttpGet("{id}")]
         //public string Get(int id)
@@ -78,6 +84,7 @@ namespace Catacombs.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+            _moviesRepository.Delete(id);
         }
     }
 }

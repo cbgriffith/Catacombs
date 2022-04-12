@@ -5,7 +5,7 @@ export const MovieContext = createContext()
 export const MovieProvider = (props) => {
     const [movies, setMovies] = useState([])
     let pageNumber = 1;
-    let movieId;
+    let recommendedMovieId;
     const apiUrl = "https://localhost:44377";
 
     //each fetch call to themoviedb api limits every page to just 20 results, I'm going to need way more
@@ -67,14 +67,28 @@ export const MovieProvider = (props) => {
 
     //get movie recommendations based on movie id
     const recommendedMovies = () => {
-        return fetch(`https://api.themoviedb.org/3/movie/${movieId}/recommendations?api_key=b90c6e98b6940ecc7131589bc7ed9067&language=en-US&page=${pageNumber}`)
+        return fetch(`https://api.themoviedb.org/3/movie/${recommendedMovieId}/recommendations?api_key=b90c6e98b6940ecc7131589bc7ed9067&language=en-US&page=${pageNumber}`)
             .then(res => res.json())
             .then(movieObject => setMovies(movieObject.results))
     }
 
+    //list all seen movies
+    const getAllSeenMovies = () => {
+        return fetch(`${apiUrl}/api/Movies/seen`)
+            .then((res) => res.json())
+            .then(setMovies);
+    };
+
+    //delete a movie from the watchlist
+    const deleteMovie = movieId => {
+        return fetch(`${apiUrl}/api/Movies/${movieId}`, {
+            method: "DELETE"
+        })
+    }
+
     return (
         <MovieContext.Provider value={{
-            movies, getMoviesByRating, pageNumber, addMovie, getAllMovies, searchMovies, comingSoon, nowPlaying, popularMovies, recommendedMovies, movieId
+            movies, getMoviesByRating, pageNumber, addMovie, getAllMovies, searchMovies, comingSoon, nowPlaying, popularMovies, recommendedMovies, recommendedMovieId, getAllSeenMovies, deleteMovie
         }}>
             {props.children}
         </MovieContext.Provider>

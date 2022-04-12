@@ -38,7 +38,7 @@ export default function Header() {
                   <DropdownToggle nav caret>
                     Movies
                   </DropdownToggle>
-                  <DropdownMenu right>
+                  <DropdownMenu end>
                     <DropdownItem>
                       <NavLink tag={RRNavLink} to="/movies/rating">Top Rated</NavLink>
                     </DropdownItem>
@@ -61,9 +61,25 @@ export default function Header() {
                   </DropdownMenu>
                 </UncontrolledDropdown>
 
-                <NavItem>
-                  <NavLink tag={RRNavLink} to="/movies/watchlist">Watchlist</NavLink>
-                </NavItem>
+                <UncontrolledDropdown nav inNavbar>
+                  <DropdownToggle nav caret>
+                    My Movies
+                  </DropdownToggle>
+                  <DropdownMenu end>
+                    <DropdownItem>
+                      <NavLink tag={RRNavLink} to="/movies/watchlist">Watchlist</NavLink>
+                    </DropdownItem>
+                    <DropdownItem>
+                      <NavLink tag={RRNavLink} to="/movies/seen">Movies I've Seen</NavLink>
+                    </DropdownItem>
+                    <DropdownItem>
+                      <NavLink tag={RRNavLink} to="/movies/liked">Liked Movies</NavLink>
+                    </DropdownItem>
+                    <DropdownItem>
+                      <NavLink tag={RRNavLink} to="/movies/disliked">Disliked Movies</NavLink>
+                    </DropdownItem>
+                  </DropdownMenu>
+                </UncontrolledDropdown>
               </>
             }
           </Nav>

@@ -9,6 +9,7 @@ import { SearchMovies } from "./Movies/SearchMovies";
 import { ComingSoonList } from "./Movies/ComingSoonList";
 import { NowPlayingList } from "./Movies/NowPlayingList";
 import { PopularMovieList } from "./Movies/PopularMovieList";
+import { SeenMoviesList } from "./Movies/SeenMoviesList";
 
 
 export default function ApplicationViews() {
@@ -26,12 +27,17 @@ export default function ApplicationViews() {
    else {
       return (
          <Routes>
+            {/* External API Routes */}
             <Route path="/movies/rating" element={<MovieList />} />
-            <Route path="/movies/watchlist" element={<MovieWatchList />} />
             <Route path="/movies/search" element={<SearchMovies />} />
             <Route path="/movies/comingsoon" element={<ComingSoonList />} />
             <Route path="/movies/nowplaying" element={<NowPlayingList />} />
             <Route path="/movies/popular" element={<PopularMovieList />} />
+
+
+            {/* My API Routes */}
+            <Route path="/movies/watchlist" element={<MovieWatchList />} />
+            <Route path="/movies/seen" element={<SeenMoviesList />} />
          </Routes>
       );
    }

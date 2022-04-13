@@ -149,6 +149,74 @@ namespace Catacombs.Repositories
             }
         }
 
+        public List<Movies> GetAllLikedMovies()
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                              
+                       SELECT m.id, m.userId, 
+                              m.title,
+                              m.rating, m.watched, m.poster_path,
+                              m.overview, m.popularity,
+                              m.vote_average, m.release_date,
+                              u.username, u.email, u.password
+                         FROM Movies m
+                              LEFT JOIN Users u ON m.userId = u.id
+                        WHERE m.watched = 1 AND m.rating = 1";
+                    var reader = cmd.ExecuteReader();
+
+                    var movies = new List<Movies>();
+
+                    while (reader.Read())
+                    {
+                        movies.Add(NewMovieFromReader(reader));
+                    }
+
+                    reader.Close();
+
+                    return movies;
+                }
+            }
+        }
+
+        public List<Movies> GetAllDislikedMovies()
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                              
+                       SELECT m.id, m.userId, 
+                              m.title,
+                              m.rating, m.watched, m.poster_path,
+                              m.overview, m.popularity,
+                              m.vote_average, m.release_date,
+                              u.username, u.email, u.password
+                         FROM Movies m
+                              LEFT JOIN Users u ON m.userId = u.id
+                        WHERE m.watched = 1 AND m.rating = -1";
+                    var reader = cmd.ExecuteReader();
+
+                    var movies = new List<Movies>();
+
+                    while (reader.Read())
+                    {
+                        movies.Add(NewMovieFromReader(reader));
+                    }
+
+                    reader.Close();
+
+                    return movies;
+                }
+            }
+        }
+
         public void Add(Movies movie)
         {
             using (var conn = Connection)
@@ -187,6 +255,54 @@ namespace Catacombs.Repositories
 
                     DbUtils.AddParameter(cmd, "@id", id);
 
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void SeenIt(int id)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"UPDATE Movies
+                                        SET Watched = 1
+                                        Where id = @id";
+                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void LikedIt(int id)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"UPDATE Movies
+                                        SET rating = 1
+                                        Where id = @id";
+                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void DislikedIt(int id)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"UPDATE Movies
+                                        SET rating = -1
+                                        Where id = @id";
+                    cmd.Parameters.AddWithValue("@id", id);
                     cmd.ExecuteNonQuery();
                 }
             }

@@ -86,9 +86,55 @@ export const MovieProvider = (props) => {
         })
     }
 
+    //list all liked movies
+    const getAllLikedMovies = () => {
+        return fetch(`${apiUrl}/api/Movies/liked`)
+            .then((res) => res.json())
+            .then(setMovies);
+    };
+
+    //list all disliked movies
+    const getAllDislikedMovies = () => {
+        return fetch(`${apiUrl}/api/Movies/disliked`)
+            .then((res) => res.json())
+            .then(setMovies);
+    };
+
+    //change watched to true
+    const seenIt = (id) => {
+        return fetch(`${apiUrl}/api/Movies/seenit/${id}`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        }).then(getAllMovies)
+    }
+
+    //change rating to 1
+    const likedIt = (id) => {
+        return fetch(`${apiUrl}/api/Movies/likedit/${id}`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        }).then(getAllSeenMovies)
+    }
+
+    //change rating to -1
+    const dislikedIt = (id) => {
+        return fetch(`${apiUrl}/api/Movies/dislikedit/${id}`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        }).then(getAllSeenMovies)
+    }
+
     return (
         <MovieContext.Provider value={{
-            movies, getMoviesByRating, pageNumber, addMovie, getAllMovies, searchMovies, comingSoon, nowPlaying, popularMovies, recommendedMovies, recommendedMovieId, getAllSeenMovies, deleteMovie
+            movies, getMoviesByRating, pageNumber, addMovie, getAllMovies, searchMovies, comingSoon, nowPlaying, popularMovies,
+            recommendedMovies, recommendedMovieId, getAllSeenMovies, deleteMovie, getAllLikedMovies, getAllDislikedMovies, seenIt,
+            likedIt, dislikedIt
         }}>
             {props.children}
         </MovieContext.Provider>

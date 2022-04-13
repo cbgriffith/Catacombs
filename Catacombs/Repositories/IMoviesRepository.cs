@@ -11,5 +11,10 @@ namespace Catacombs.Repositories
         List<Movies> GetAllMovies();
         List<Movies> GetAllSeenMovies();
         void Delete(int id);
-    }
+        List<Movies> GetAllLikedMovies();
+        List<Movies> GetAllDislikedMovies();
+        void SeenIt(int id);
+        void LikedIt(int id);
+        void DislikedIt(int id);
+    }                      
 }

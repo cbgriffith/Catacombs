@@ -10,6 +10,8 @@ import { ComingSoonList } from "./Movies/ComingSoonList";
 import { NowPlayingList } from "./Movies/NowPlayingList";
 import { PopularMovieList } from "./Movies/PopularMovieList";
 import { SeenMoviesList } from "./Movies/SeenMoviesList";
+import { LikedMoviesList } from "./Movies/LikedMoviesList";
+import { DislikedMoviesList } from "./Movies/DislikedMoviesList";
 
 
 export default function ApplicationViews() {
@@ -38,6 +40,8 @@ export default function ApplicationViews() {
             {/* My API Routes */}
             <Route path="/movies/watchlist" element={<MovieWatchList />} />
             <Route path="/movies/seen" element={<SeenMoviesList />} />
+            <Route path="/movies/liked" element={<LikedMoviesList />} />
+            <Route path="/movies/disliked" element={<DislikedMoviesList />} />
          </Routes>
       );
    }

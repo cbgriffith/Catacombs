@@ -1,26 +1,26 @@
 import React, { useContext, useEffect } from "react"
 import { MovieContext } from "./MovieProvider"
-import { SeenMoviesCard } from "./SeenMoviesCard"
+import { MovieCard } from "./MovieCard"
 import { Button } from "reactstrap";
 
-export const SeenMoviesList = () => {
-    const { movies, getAllSeenMovies } = useContext(MovieContext)
+export const LikedMoviesList = () => {
+    const { movies, getAllLikedMovies } = useContext(MovieContext)
     const user = JSON.parse(sessionStorage.getItem("userProfile"))
 
 
     //useEffect - reach out to the world for something
     useEffect(() => {
-        getAllSeenMovies()
+        getAllLikedMovies()
         // eslint-disable-next-line
     }, [])
 
     return (
         <>
             <div>
-                <h1>Movies I've Seen</h1>
+                <h1>Movies I Liked</h1>
                 <div>
                     {movies.filter(m => m.userId === user.id).map((movie) => (
-                        <SeenMoviesCard key={movie.id} movie={movie} />
+                        <MovieCard key={movie.id} movie={movie} />
                     ))}
                 </div>
             </div>

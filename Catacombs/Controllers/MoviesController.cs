@@ -30,6 +30,18 @@ namespace Catacombs.Controllers
             return Ok(_moviesRepository.GetAllSeenMovies());
         }
 
+        [HttpGet("liked")]
+        public IActionResult GetAllLikedMovies()
+        {
+            return Ok(_moviesRepository.GetAllLikedMovies());
+        }
+
+        [HttpGet("disliked")]
+        public IActionResult GetAllDislikedMovies()
+        {
+            return Ok(_moviesRepository.GetAllDislikedMovies());
+        }
+
         // GET api/<MoviesController>/5
         //[HttpGet("{id}")]
         //public string Get(int id)
@@ -85,6 +97,27 @@ namespace Catacombs.Controllers
         public void Delete(int id)
         {
             _moviesRepository.Delete(id);
+        }
+
+        // PATCH api/<MoviesController>/5
+        [HttpPatch("seenit/{id}")]
+        public void SeenIt(int id)
+        {
+            _moviesRepository.SeenIt(id);
+        }
+
+        // PATCH api/<MoviesController>/5
+        [HttpPatch("likedit/{id}")]
+        public void LikedIt(int id)
+        {
+            _moviesRepository.LikedIt(id);
+        }
+
+        // PATCH api/<MoviesController>/5
+        [HttpPatch("dislikedit/{id}")]
+        public void DislikedIt(int id)
+        {
+            _moviesRepository.DislikedIt(id);
         }
     }
 }

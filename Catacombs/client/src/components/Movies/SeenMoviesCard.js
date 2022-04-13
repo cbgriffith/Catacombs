@@ -1,13 +1,24 @@
 import React, { useContext } from "react"
 import { MovieContext } from "./MovieProvider";
 import { Button } from "reactstrap";
-// import imgNotFound from './images/Broken-1.jpg';
 
-export const MovieCard = ({ movie }) => {
+export const SeenMoviesCard = ({ movie, reloadProp }) => {
     let date = new Date(movie.release_date);
     let formattedDate = date.toLocaleDateString('en-US')
-    const { addMovie } = useContext(MovieContext)
-    const user = JSON.parse(sessionStorage.getItem("userProfile"))
+    const { deleteMovie, likedIt, dislikedIt } = useContext(MovieContext)
+
+    const handleDeleteMovie = () => {
+        deleteMovie(movie.id).then(reloadProp)
+    }
+
+    const handleLikedIt = () => {
+        likedIt(movie.id)
+    }
+
+    const handleDislikedIt = () => {
+        dislikedIt(movie.id)
+    }
+
     let link = "https://image.tmdb.org/t/p/w200";
     const imgNotFound = require('./images/broken-1.png');
     let poster = "";
@@ -18,24 +29,6 @@ export const MovieCard = ({ movie }) => {
     } else {
         link = "https://image.tmdb.org/t/p/w200";
         poster = movie.poster_path;
-    }
-    
-
-    const handleSaveMovie = (e) => {
-        // const newMovie = {...movie}
-        e.preventDefault();
-        const newMovie = {
-            userId: user.id,
-            title: movie.title,
-            rating: 0,
-            watched: false,
-            poster_path: movie.poster_path,
-            overview: movie.overview,
-            popularity: movie.popularity,
-            vote_average: movie.vote_average,
-            release_date: movie.release_date
-        }
-        addMovie(newMovie)
     }
 
     return (
@@ -48,8 +41,10 @@ export const MovieCard = ({ movie }) => {
             <p>Score: {movie.vote_average}</p>
             {/* <p>Page: {movie.total_pages}</p> */}
             <p>Popularity: {movie.popularity}</p>
-            <Button color="danger" onClick={handleSaveMovie}>Add to Watch List</Button>
+            <Button color="danger" onClick={handleDeleteMovie}>Delete</Button>
             <br /> <br />
+            <Button color="danger" onClick={handleLikedIt}>Liked It</Button>
+            <Button color="danger" onClick={handleDislikedIt}>Disliked it</Button>
             <hr />
         </div>
 

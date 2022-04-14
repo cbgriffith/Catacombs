@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react"
-import { MovieContext } from "./MovieProvider"
+import { MovieContext } from "../Repositories/MovieProvider"
 import { SeenMoviesCard } from "./SeenMoviesCard"
 import { Button } from "reactstrap";
 

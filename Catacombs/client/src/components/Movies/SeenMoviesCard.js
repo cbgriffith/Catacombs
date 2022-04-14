@@ -1,5 +1,5 @@
 import React, { useContext } from "react"
-import { MovieContext } from "./MovieProvider";
+import { MovieContext } from "../Repositories/MovieProvider";
 import { Button } from "reactstrap";
 
 export const SeenMoviesCard = ({ movie, reloadProp }) => {

@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import { MovieList } from "./Movies/MovieList";
-import { UserContext } from "./Users/UserProvider";
+import { UserContext } from "./Repositories/UserProvider"
 import Login from "./auth/Login";
 import Register from "./auth/Register";
 import { MovieWatchList } from "./Movies/MovieWatchList";

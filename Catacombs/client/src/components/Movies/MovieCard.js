@@ -1,5 +1,5 @@
 import React, { useContext } from "react"
-import { MovieContext } from "./MovieProvider";
+import { MovieContext } from "../Repositories/MovieProvider";
 import { Button } from "reactstrap";
 // import imgNotFound from './images/Broken-1.jpg';
 

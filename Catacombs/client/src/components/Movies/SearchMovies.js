@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { MovieContext } from "./MovieProvider";
+import { MovieContext } from "../Repositories/MovieProvider"
 import { MovieCard } from "./MovieCard";
 
 export const SearchMovies = () => {

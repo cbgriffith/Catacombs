@@ -1,10 +1,11 @@
-import React, { useContext, useEffect } from "react"
-import { MovieContext } from "./MovieProvider"
+import React, { useContext, useEffect, useState } from "react"
+import { MovieContext } from "../Repositories/MovieProvider"
 import { SeenMoviesCard } from "./SeenMoviesCard"
 import { Button } from "reactstrap";
 
 export const SeenMoviesList = () => {
     const { movies, getAllSeenMovies } = useContext(MovieContext)
+    const [reload, setReload] = useState();
     const user = JSON.parse(sessionStorage.getItem("userProfile"))
 
 
@@ -12,7 +13,7 @@ export const SeenMoviesList = () => {
     useEffect(() => {
         getAllSeenMovies()
         // eslint-disable-next-line
-    }, [])
+    }, [reload])
 
     return (
         <>
@@ -20,7 +21,7 @@ export const SeenMoviesList = () => {
                 <h1>Movies I've Seen</h1>
                 <div>
                     {movies.filter(m => m.userId === user.id).map((movie) => (
-                        <SeenMoviesCard key={movie.id} movie={movie} />
+                        <SeenMoviesCard key={movie.id} movie={movie} reloadProp={setReload} />
                     ))}
                 </div>
             </div>

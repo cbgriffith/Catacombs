@@ -13,7 +13,7 @@ import {
   DropdownMenu,
   DropdownItem
 } from 'reactstrap';
-import { UserContext } from './Users/UserProvider';
+import { UserContext } from './Repositories/UserProvider';
 
 export default function Header() {
   const { isLoggedIn, logout } = useContext(UserContext);

@@ -1,13 +1,15 @@
 import React, { useContext } from "react"
-import { MovieContext } from "./MovieProvider";
+import { MovieContext } from "../Repositories/MovieProvider";
 import { Button } from "reactstrap";
+import { useNavigate } from "react-router-dom";
 // import imgNotFound from './images/Broken-1.jpg';
 
 export const MovieCard = ({ movie }) => {
     let date = new Date(movie.release_date);
     let formattedDate = date.toLocaleDateString('en-US')
-    const { addMovie } = useContext(MovieContext)
+    const { addMovie, recommendedMovies } = useContext(MovieContext)
     const user = JSON.parse(sessionStorage.getItem("userProfile"))
+    const navigate = useNavigate();
     let link = "https://image.tmdb.org/t/p/w200";
     const imgNotFound = require('./images/broken-1.png');
     let poster = "";
@@ -38,6 +40,11 @@ export const MovieCard = ({ movie }) => {
         addMovie(newMovie)
     }
 
+    const handleRecommendedMovies = () => {
+        // recommendedMovies(movie.id)
+        navigate(`/movies/recommended/${movie.id}`)
+    }
+
     return (
 
         <div>
@@ -49,6 +56,7 @@ export const MovieCard = ({ movie }) => {
             {/* <p>Page: {movie.total_pages}</p> */}
             <p>Popularity: {movie.popularity}</p>
             <Button color="danger" onClick={handleSaveMovie}>Add to Watch List</Button>
+            <Button color="danger" onClick={handleRecommendedMovies}>Recommended Movies</Button>
             <br /> <br />
             <hr />
         </div>

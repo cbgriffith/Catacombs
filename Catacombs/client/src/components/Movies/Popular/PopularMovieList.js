@@ -26,7 +26,7 @@ export const PopularMovieList = () => {
           }
         </div>
       </div>
-      <Pagination color="dark" inverse style={{textAlign:"center"}} aria-label="Page navigation example">
+      <Pagination inverse style={{textAlign:"center"}} aria-label="Page navigation example">
         <PaginationItem disabled>
           <PaginationLink previous href="" />
         </PaginationItem>

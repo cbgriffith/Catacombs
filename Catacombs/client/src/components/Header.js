@@ -22,7 +22,7 @@ export default function Header() {
 
   return (
     <div>
-      <Navbar color="light" light expand="md">
+      <Navbar color="dark" full dark expand="md">
         <NavbarBrand tag={RRNavLink} to="/">The Catacombs</NavbarBrand>
         <NavbarToggler onClick={toggle} />
         <Collapse isOpen={isOpen} navbar>
@@ -38,7 +38,7 @@ export default function Header() {
                   <DropdownToggle nav caret>
                     Movies
                   </DropdownToggle>
-                  <DropdownMenu end>
+                  <DropdownMenu dark end>
                     <DropdownItem>
                       <NavLink tag={RRNavLink} to="/movies/rating">Top Rated</NavLink>
                     </DropdownItem>
@@ -65,7 +65,7 @@ export default function Header() {
                   <DropdownToggle nav caret>
                     My Movies
                   </DropdownToggle>
-                  <DropdownMenu end>
+                  <DropdownMenu dark end>
                     <DropdownItem>
                       <NavLink tag={RRNavLink} to="/movies/watchlist">Watchlist</NavLink>
                     </DropdownItem>
@@ -86,7 +86,7 @@ export default function Header() {
           <Nav navbar>
             {isLoggedIn &&
               <>
-                <NavItem style={{textAlign:"right"}}>
+                <NavItem>
                   <a aria-current="page" className="nav-link"
                     style={{ cursor: "pointer" }} onClick={logout}>Logout</a>
                 </NavItem>

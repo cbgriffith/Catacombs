@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from "react"
 import { MovieContext } from "../../Repositories/MovieProvider"
 import { MovieCard } from "../MovieCard"
 import { Pagination, PaginationItem, PaginationLink } from 'reactstrap';
+import "../Movie.css"
 
 export const PopularMovieList = () => {
   const { movies, popularMovies } = useContext(MovieContext)
@@ -15,9 +16,9 @@ export const PopularMovieList = () => {
 
   return (
     <>
-      <div>
-        <h1>Most Popular Horror Movies</h1>
-        <div>
+      <div className="container">
+        <h1 style={{textAlign:"center"}}>Most Popular Horror Movies</h1>
+        <div id="movielist">
           {
             movies?.map(movie => {
               return <MovieCard key={movie.id} movie={movie} />
@@ -25,7 +26,7 @@ export const PopularMovieList = () => {
           }
         </div>
       </div>
-      <Pagination aria-label="Page navigation example">
+      <Pagination color="dark" inverse style={{textAlign:"center"}} aria-label="Page navigation example">
         <PaginationItem disabled>
           <PaginationLink previous href="" />
         </PaginationItem>

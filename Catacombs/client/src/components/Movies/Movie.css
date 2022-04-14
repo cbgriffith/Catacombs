@@ -1,0 +1,10 @@
+#movie {
+    flex-basis: 46%;
+    margin-left: 1rem;
+}
+
+#movielist {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+}

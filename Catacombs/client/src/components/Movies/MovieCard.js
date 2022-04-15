@@ -47,34 +47,25 @@ export const MovieCard = ({ movie }) => {
 
     return (
         <>
-
-
-
             <div className="container" id="movie">
                 <Card color="dark" inverse className="mb-3 mt-3">
                     <CardBody>
-                        <img className="mr-5 pr-5" style={{ float: "left" }} src={`${link}${poster}`} alt={movie.original_title} />
+                        <img className="m-2" style={{ float: "left" }} src={`${link}${poster}`} alt={movie.original_title} />
                         <CardTitle tag="h4">
                             {movie.title}
                         </CardTitle>
                         <CardSubtitle
-                            className="mb-2 text-muted"
+                            className="text-muted"
                             tag="h6">
                             Release date: {formattedDate}
                         </CardSubtitle>
+                        <CardSubtitle className="text-muted" tag="h6">Vote score: {movie.vote_average}</CardSubtitle>
+                        <CardSubtitle className="text-muted" tag="h6">Popularity score: {movie.popularity}</CardSubtitle>
                         <CardText>
                             {movie.overview}
                         </CardText>
-                        {/* <CardText>
-                            Score: {movie.vote_average}
-                        </CardText>
-                        <CardText>
-                            Popularity: {movie.popularity}
-                        </CardText> */}
                     </CardBody>
                     <CardFooter>
-                    <CardSubtitle className="text-muted">Vote Score: {movie.vote_average}</CardSubtitle>
-                    <CardSubtitle className="text-muted">Popularity Score: {movie.popularity}</CardSubtitle>
                         <Button className="mt-1" color="danger" onClick={handleSaveMovie}>Add to Watch List</Button> <Button className="mt-1" color="danger" onClick={handleRecommendedMovies}>Recommended Movies</Button>
                     </CardFooter>
                 </Card>

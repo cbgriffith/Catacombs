@@ -8,3 +8,16 @@
     width: 100%;
     flex-wrap: wrap;
 }
+
+#pagination {
+    text-align: center;
+}
+
+.pagination {
+    justify-content: center;
+    margin:30px;
+  }
+
+  #logout {
+      margin: left 5rem;
+  }

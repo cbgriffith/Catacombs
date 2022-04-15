@@ -1,25 +1,10 @@
-import React, { useContext } from "react"
-import { MovieContext } from "../Repositories/MovieProvider";
-import { Button, Card, CardBody, CardTitle, CardSubtitle, CardText, CardFooter } from "reactstrap";
+import React from "react"
+import { Card, CardBody, CardTitle, CardSubtitle, CardText } from "reactstrap";
 import "./Movie.css"
 
-export const SeenMoviesCard = ({ movie, reloadProp }) => {
+export const LikedDislikedMovieCard = ({ movie }) => {
     let date = new Date(movie.release_date);
     let formattedDate = date.toLocaleDateString('en-US')
-    const { deleteMovie, likedIt, dislikedIt } = useContext(MovieContext)
-
-    const handleDeleteMovie = () => {
-        deleteMovie(movie.id).then(reloadProp)
-    }
-
-    const handleLikedIt = () => {
-        likedIt(movie.id)
-    }
-
-    const handleDislikedIt = () => {
-        dislikedIt(movie.id)
-    }
-
     let link = "https://image.tmdb.org/t/p/w200";
     const imgNotFound = require('./images/broken-1.png');
     let poster = "";
@@ -52,9 +37,6 @@ export const SeenMoviesCard = ({ movie, reloadProp }) => {
                             {movie.overview}
                         </CardText>
                     </CardBody>
-                    <CardFooter>
-                        <Button color="danger" onClick={handleLikedIt}>Liked It</Button> <Button color="danger" onClick={handleDislikedIt}>Disliked it</Button> <Button color="danger" onClick={handleDeleteMovie}>Delete</Button>
-                    </CardFooter>
                 </Card>
             </div>
         </>

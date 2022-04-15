@@ -1,27 +1,25 @@
 import React, { useContext } from "react"
 import { MovieContext } from "../Repositories/MovieProvider";
-import { Button } from "reactstrap";
-import { useNavigate } from "react-router-dom";
-// import imgNotFound from './images/Broken-1.jpg';
+import { Button, Card, CardBody, CardTitle, CardSubtitle, CardText, CardFooter } from "reactstrap";
+import "./Movie.css"
 
 export const RecommendedMovieCard = ({ movie }) => {
     let date = new Date(movie.release_date);
     let formattedDate = date.toLocaleDateString('en-US')
     const { addMovie, recommendedMovies } = useContext(MovieContext)
     const user = JSON.parse(sessionStorage.getItem("userProfile"))
-    const navigate = useNavigate();
     let link = "https://image.tmdb.org/t/p/w200";
     const imgNotFound = require('./images/broken-1.png');
     let poster = "";
 
-    if (movie.poster_path === null || movie.poster_path === "" || movie.poster_path === "string"){
+    if (movie.poster_path === null || movie.poster_path === "" || movie.poster_path === "string") {
         link = "";
         poster = imgNotFound;
     } else {
         link = "https://image.tmdb.org/t/p/w200";
         poster = movie.poster_path;
     }
-    
+
 
     const handleSaveMovie = (e) => {
         // const newMovie = {...movie}
@@ -43,18 +41,34 @@ export const RecommendedMovieCard = ({ movie }) => {
 
     return (
 
-        <div>
-            <h3>{movie.title}</h3>
-            <p>{movie.overview}</p>
-            <p>Release Date: {formattedDate}</p>
-            <img src={`${link}${poster}`} alt={movie.original_title} />
-            <p>Score: {movie.vote_average}</p>
-            {/* <p>Page: {movie.total_pages}</p> */}
-            <p>Popularity: {movie.popularity}</p>
-            <Button color="danger" onClick={handleSaveMovie}>Add to Watch List</Button>
-            <br /> <br />
-            <hr />
+        <div className="container" id="movie">
+            <Card color="dark" inverse className="mb-3 mt-3">
+                <CardBody>
+                    <img className="m-2" style={{ float: "left" }} src={`${link}${poster}`} alt={movie.original_title} />
+                    <CardTitle tag="h4">
+                        {movie.title}
+                    </CardTitle>
+                    <CardSubtitle
+                        className="text-muted"
+                        tag="h6">
+                        Release date: {formattedDate}
+                    </CardSubtitle>
+                    <CardSubtitle className="text-muted" tag="h6">Vote score: {movie.vote_average}</CardSubtitle>
+                    <CardSubtitle className="text-muted" tag="h6">Popularity score: {movie.popularity}</CardSubtitle>
+                    <CardText>
+                        {movie.overview}
+                    </CardText>
+                    {/* <CardText>
+                            Score: {movie.vote_average}
+                        </CardText>
+                        <CardText>
+                            Popularity: {movie.popularity}
+                        </CardText> */}
+                </CardBody>
+                <CardFooter>
+                    <Button className="mt-1" color="danger" onClick={handleSaveMovie}>Add to Watch List</Button>
+                </CardFooter>
+            </Card>
         </div>
-
     )
 }

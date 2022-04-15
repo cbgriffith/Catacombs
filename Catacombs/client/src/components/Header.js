@@ -22,7 +22,7 @@ export default function Header() {
 
   return (
     <div>
-      <Navbar color="dark" full dark expand="md">
+      <Navbar color="dark" dark expand="md">
         <NavbarBrand tag={RRNavLink} to="/">The Catacombs</NavbarBrand>
         <NavbarToggler onClick={toggle} />
         <Collapse isOpen={isOpen} navbar>
@@ -86,11 +86,10 @@ export default function Header() {
           <Nav navbar>
             {isLoggedIn &&
               <>
-                <NavItem>
-                  <a aria-current="page" className="nav-link"
-                    style={{ cursor: "pointer" }} onClick={logout}>Logout</a>
-                </NavItem>
-
+                  <NavItem>
+                    <a aria-current="page" className="nav-link"
+                      style={{ cursor: "pointer" }} onClick={logout}>Logout</a>
+                  </NavItem>
               </>
             }
 

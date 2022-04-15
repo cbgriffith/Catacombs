@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState } from "react"
 import { MovieContext } from "../Repositories/MovieProvider"
 import { MovieWatchListCard } from "./MovieWatchListCard"
-import { Button } from "reactstrap";
+import { Container } from "reactstrap";
+import "./Movie.css"
 
 export const MovieWatchList = () => {
-  let { movies, getAllMovies, pageNumber } = useContext(MovieContext)
+  let { movies, getAllMovies } = useContext(MovieContext)
   const user = JSON.parse(sessionStorage.getItem("userProfile"))
   const [reload, setReload] = useState();
 
@@ -15,27 +16,16 @@ export const MovieWatchList = () => {
     // eslint-disable-next-line
   }, [reload])
 
-  //   const nextPage = () => {
-  //     if (pageNumber < 60){
-  //     pageNumber++;
-  //     } else {
-  //       pageNumber = 60;
-  //     }
-  //     window.location.reload(false);
-  //   }
-
   return (
     <>
-      <div>
-        <h1>Watch List</h1>
-        <div>
+      <Container>
+        <h1 style={{ textAlign: "center" }}>Watch List</h1>
+        <div id="movielist">
           {movies.filter(m => m.userId === user.id).map((movie) => (
             <MovieWatchListCard key={movie.id} movie={movie} reloadProp={setReload}/>
           ))}
         </div>
-      </div>
-      {/* <p>Page Number: {pageNumber}</p> */}
-      {/* <Button color="danger" onClick={nextPage}>Next Page</Button> */}
+      </Container>
     </>
   )
 }

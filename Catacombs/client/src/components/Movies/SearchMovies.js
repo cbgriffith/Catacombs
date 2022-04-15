@@ -1,6 +1,8 @@
 import React, { useContext, useState } from "react";
 import { MovieContext } from "../Repositories/MovieProvider"
 import { MovieCard } from "./MovieCard";
+import { Container } from "reactstrap";
+import "./Movie.css"
 
 export const SearchMovies = () => {
     const [searchTerm, setSearchTerm] = useState("")
@@ -9,18 +11,18 @@ export const SearchMovies = () => {
         searchMovies(searchTerm)
     }
     return (<>
-        <div className="container pt-4">
+        <Container className="pt-4">
             <input type="text" id="search" autoFocus placeholder="Enter movie title" onKeyPress={(e) => e.key === 'Enter' && handleSearch()} onChange={(e) => setSearchTerm(e.target.value)} />
             <button onClick={handleSearch}>Search</button>
-        </div>
-        <div>
-            <h1>Search Results</h1>
-            <div>
+        </Container>
+        <Container>
+            <h1 style={{ textAlign: "center" }}>Search Results</h1>
+            <div id="movielist">
                 {
                     movies.results?.map(movie => {
                         return <MovieCard key={movie.id} movie={movie} />
                     })
                 }
             </div>
-        </div></>)
+        </Container></>)
 }

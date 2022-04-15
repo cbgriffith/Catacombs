@@ -1,10 +1,11 @@
 import React, { useContext, useEffect } from "react"
 import { MovieContext } from "../Repositories/MovieProvider"
 import { MovieCard } from "./MovieCard"
-import { Button } from "reactstrap";
+import { Container } from "reactstrap";
+import "./Movie.css"
 
 export const NowPlayingList = () => {
-  let { movies, nowPlaying, pageNumber } = useContext(MovieContext)
+  const { movies, nowPlaying } = useContext(MovieContext)
 
 
   //useEffect - reach out to the world for something
@@ -13,29 +14,18 @@ export const NowPlayingList = () => {
     // eslint-disable-next-line
   }, [])
 
-//   const nextPage = () => {
-//     if (pageNumber < 60) {
-//       pageNumber++;
-//     } else {
-//       pageNumber = 60;
-//     }
-    // window.location.reload(false);
-//   }
-
   return (
     <>
-      <div>
-        <h1>Now Playing</h1>
-        <div>
+      <Container>
+        <h1 style={{ textAlign: "center" }}>Now Playing</h1>
+        <div id="movielist">
           {
             movies?.map(movie => {
               return <MovieCard key={movie.id} movie={movie} />
             })
           }
         </div>
-      </div>
-      {/* <p>Page Number: {pageNumber}</p> */}
-      {/* <Button color="danger" onClick={nextPage}>Next Page</Button> */}
+      </Container>
     </>
   )
 }

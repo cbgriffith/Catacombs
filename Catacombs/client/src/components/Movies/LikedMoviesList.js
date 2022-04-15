@@ -1,7 +1,8 @@
 import React, { useContext, useEffect } from "react"
 import { MovieContext } from "../Repositories/MovieProvider"
-import { MovieCard } from "./MovieCard"
-import { Button } from "reactstrap";
+import { LikedDislikedMovieCard } from "./LikedDislikedMovieCard"
+import { Container } from "reactstrap";
+import "./Movie.css"
 
 export const LikedMoviesList = () => {
     const { movies, getAllLikedMovies } = useContext(MovieContext)
@@ -16,14 +17,14 @@ export const LikedMoviesList = () => {
 
     return (
         <>
-            <div>
-                <h1>Movies I Liked</h1>
-                <div>
+            <Container>
+                <h1 style={{ textAlign: "center" }}>Movies I Liked</h1>
+                <div id="movielist">
                     {movies.filter(m => m.userId === user.id).map((movie) => (
-                        <MovieCard key={movie.id} movie={movie} />
+                        <LikedDislikedMovieCard key={movie.id} movie={movie} />
                     ))}
                 </div>
-            </div>
+            </Container>
         </>
     )
 }

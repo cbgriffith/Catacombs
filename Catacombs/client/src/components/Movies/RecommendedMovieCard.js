@@ -58,12 +58,6 @@ export const RecommendedMovieCard = ({ movie }) => {
                     <CardText>
                         {movie.overview}
                     </CardText>
-                    {/* <CardText>
-                            Score: {movie.vote_average}
-                        </CardText>
-                        <CardText>
-                            Popularity: {movie.popularity}
-                        </CardText> */}
                 </CardBody>
                 <CardFooter>
                     <Button className="mt-1" color="danger" onClick={handleSaveMovie}>Add to Watch List</Button>

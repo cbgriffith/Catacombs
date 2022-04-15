@@ -19,7 +19,7 @@ export const MovieWatchList = () => {
   return (
     <>
       <Container>
-        <h1 style={{ textAlign: "center" }}>Watch List</h1>
+        <h1 style={{ textAlign: "center" }}>Watchlist</h1>
         <div id="movielist">
           {movies.filter(m => m.userId === user.id).map((movie) => (
             <MovieWatchListCard key={movie.id} movie={movie} reloadProp={setReload}/>

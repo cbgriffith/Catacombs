@@ -18,7 +18,7 @@ export const DislikedMoviesList = () => {
     return (
         <>
             <Container>
-                <h1 style={{ textAlign: "center" }}>Movies I Disliked</h1>
+                <h1 style={{ textAlign: "center" }}>Movies I Didn't Like</h1>
                 <div id="movielist">
                     {movies.filter(m => m.userId === user.id).map((movie) => (
                         <LikedDislikedMovieCard key={movie.id} movie={movie} />

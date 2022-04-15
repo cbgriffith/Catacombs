@@ -6,7 +6,7 @@ import "./Movie.css"
 export const RecommendedMovieCard = ({ movie }) => {
     let date = new Date(movie.release_date);
     let formattedDate = date.toLocaleDateString('en-US')
-    const { addMovie, recommendedMovies } = useContext(MovieContext)
+    const { addMovie } = useContext(MovieContext)
     const user = JSON.parse(sessionStorage.getItem("userProfile"))
     let link = "https://image.tmdb.org/t/p/w200";
     const imgNotFound = require('./images/broken-1.png');

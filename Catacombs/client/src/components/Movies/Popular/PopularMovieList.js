@@ -18,6 +18,41 @@ export const PopularMovieList = () => {
     <>
       <Container>
         <h1 style={{ textAlign: "center" }}>Most Popular Horror Movies</h1>
+        <Container>
+        <Pagination aria-label="Page navigation example">
+          <PaginationItem disabled>
+            <PaginationLink previous href="" />
+          </PaginationItem>
+          <PaginationItem active>
+            <PaginationLink href="">
+              1
+            </PaginationLink>
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationLink href="/movies/popular/2">
+              2
+            </PaginationLink>
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationLink href="/movies/popular/3">
+              3
+            </PaginationLink>
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationLink href="/movies/popular/4">
+              4
+            </PaginationLink>
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationLink href="/movies/popular/5">
+              5
+            </PaginationLink>
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationLink next href="/movies/popular/2" />
+          </PaginationItem>
+        </Pagination>
+      </Container>
         <div id="movielist">
           {
             movies?.map(movie => {

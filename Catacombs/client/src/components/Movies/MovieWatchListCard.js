@@ -1,12 +1,14 @@
 import React, { useContext } from "react"
 import { MovieContext } from "../Repositories/MovieProvider"
 import { Button, Card, CardBody, CardTitle, CardSubtitle, CardText, CardFooter } from "reactstrap";
+import { useNavigate } from "react-router-dom";
 import "./Movie.css"
 
 export const MovieWatchListCard = ({ movie, reloadProp }) => {
     let date = new Date(movie.release_date);
     let formattedDate = date.toLocaleDateString('en-US')
     const { deleteMovie, seenIt } = useContext(MovieContext)
+    const navigate = useNavigate();
 
     const handleDeleteMovie = () => {
         deleteMovie(movie.id).then(reloadProp)
@@ -28,6 +30,10 @@ export const MovieWatchListCard = ({ movie, reloadProp }) => {
         poster = movie.poster_path;
     }
 
+    const handleRecommendedMovies = () => {
+        navigate(`/movies/recommended/${movie.movieId}`)
+    }
+
     return (
         <>
             <div className="container" id="movie">
@@ -44,11 +50,13 @@ export const MovieWatchListCard = ({ movie, reloadProp }) => {
                         </CardSubtitle>
                         <CardSubtitle className="text-muted" tag="h6">Vote score: {movie.vote_average}</CardSubtitle>
                         <CardSubtitle className="text-muted" tag="h6">Popularity score: {movie.popularity}</CardSubtitle>
+                        <CardSubtitle className="text-muted" tag="h6">Movie Id: {movie.movieId}</CardSubtitle>
                         <CardText>
                             {movie.overview}
                         </CardText>
                     </CardBody>
                     <CardFooter>
+                        <Button color="danger" onClick={handleRecommendedMovies}>Recommended Movies</Button> <br /> <br />
                         <Button color="danger" onClick={handleDeleteMovie}>Delete</Button> <Button color="danger" onClick={handleSeenIt}>Seen It</Button>
                     </CardFooter>
                 </Card>

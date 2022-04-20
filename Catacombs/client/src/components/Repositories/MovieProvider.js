@@ -176,12 +176,19 @@ export const MovieProvider = (props) => {
         }).then(getAllSeenMovies)
     }
 
+    //get socials
+    const getSocials = (movieId) => {
+        return fetch(`https://api.themoviedb.org/3/movie/${movieId}/external_ids?api_key=b90c6e98b6940ecc7131589bc7ed9067`)
+            .then(res => res.json())
+            .then(movieObject => setMovies(movieObject))
+    }
+
     return (
         <MovieContext.Provider value={{
             movies, getMoviesByRating, getMoviesByRating2, getMoviesByRating3, getMoviesByRating4, getMoviesByRating5,
             addMovie, getAllMovies, searchMovies, comingSoon, nowPlaying, popularMovies, popularMovies2, popularMovies3,
             popularMovies4, popularMovies5, recommendedMovies, getAllSeenMovies, deleteMovie, getAllLikedMovies,
-            getAllDislikedMovies, seenIt, likedIt, dislikedIt
+            getAllDislikedMovies, seenIt, likedIt, dislikedIt, getSocials
         }}>
             {props.children}
         </MovieContext.Provider>

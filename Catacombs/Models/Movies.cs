@@ -14,6 +14,7 @@ namespace Catacombs.Models
         public double popularity { get; set; }
         public double vote_average { get; set; }
         public DateTime release_date { get; set; }
-        public Users Users { get; set; }
+        public int movieId { get; set; }
+        public Users Users { get; set; }   
     }
 }

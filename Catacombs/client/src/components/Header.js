@@ -14,6 +14,7 @@ import {
   DropdownItem
 } from 'reactstrap';
 import { UserContext } from './Repositories/UserProvider';
+import icon from './Movies/images/icon.png'
 
 export default function Header() {
   const { isLoggedIn, logout } = useContext(UserContext);
@@ -23,7 +24,9 @@ export default function Header() {
   return (
     <div>
       <Navbar color="dark" dark expand="md">
-        <NavbarBrand tag={RRNavLink} to="/">The Catacombs</NavbarBrand>
+        <NavbarBrand tag={RRNavLink} to="/">
+          <img className="m-3" src={icon} alt="icon" width="30" height="30"/>
+          The Catacombs</NavbarBrand>
         <NavbarToggler onClick={toggle} />
         <Collapse isOpen={isOpen} navbar>
           <Nav className="mr-auto" navbar>
@@ -86,10 +89,10 @@ export default function Header() {
           <Nav navbar>
             {isLoggedIn &&
               <>
-                  <NavItem>
-                    <a aria-current="page" className="nav-link"
-                      style={{ cursor: "pointer" }} onClick={logout}>Logout</a>
-                  </NavItem>
+                <NavItem>
+                  <a aria-current="page" className="nav-link" href="/logout"
+                    style={{ cursor: "pointer" }} onClick={logout}>Logout</a>
+                </NavItem>
               </>
             }
 

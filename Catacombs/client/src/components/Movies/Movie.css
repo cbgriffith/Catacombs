@@ -9,15 +9,20 @@
     flex-wrap: wrap;
 }
 
-#pagination {
-    text-align: center;
-}
-
 .pagination {
     justify-content: center;
     margin:30px;
   }
 
-  #logout {
+  /* #logout {
       margin: left 5rem;
+  } */
+
+  .paginationitem{
+      background-color: #e61e4d;
+  }
+
+  .page-item.active .page-link {
+    background-color: #e61e4d;
+    border-color: #e61e4d;
   }

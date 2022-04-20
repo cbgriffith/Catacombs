@@ -35,13 +35,13 @@ export const MovieCard = ({ movie }) => {
             overview: movie.overview,
             popularity: movie.popularity,
             vote_average: movie.vote_average,
-            release_date: movie.release_date
+            release_date: movie.release_date,
+            movieId: movie.id
         }
         addMovie(newMovie)
     }
 
     const handleRecommendedMovies = () => {
-        // recommendedMovies(movie.id)
         navigate(`/movies/recommended/${movie.id}`)
     }
 

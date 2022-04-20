@@ -24,7 +24,8 @@ CREATE TABLE [Movies] (
   [overview] nvarchar(4000),
   [popularity] float,
   [vote_average] float,
-  [release_date] datetime
+  [release_date] datetime,
+  [movieId] int
 )
 GO
 

@@ -18,7 +18,41 @@ export const TopRatedMovieListP2 = () => {
         <>
             <Container>
                 <h1 style={{ textAlign: "center" }}>Top Rated Horror Movies</h1>
-                <h4 style={{ textAlign: "center" }}>Page 2</h4>
+                <Container>
+                <Pagination aria-label="Page navigation example">
+                    <PaginationItem>
+                        <PaginationLink previous href="/movies/rating" />
+                    </PaginationItem>
+                    <PaginationItem>
+                        <PaginationLink href="/movies/rating">
+                            1
+                        </PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem active>
+                        <PaginationLink href="">
+                            2
+                        </PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem>
+                        <PaginationLink href="/movies/rating/3">
+                            3
+                        </PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem>
+                        <PaginationLink href="/movies/rating/4">
+                            4
+                        </PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem>
+                        <PaginationLink href="/movies/rating/5">
+                            5
+                        </PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem>
+                        <PaginationLink next href="/movies/rating/3" />
+                    </PaginationItem>
+                </Pagination>
+            </Container>
                 <div id="movielist">
                     {
                         movies?.map(movie => {

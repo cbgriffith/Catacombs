@@ -2,6 +2,7 @@ import React, { useContext } from "react"
 import { MovieContext } from "../Repositories/MovieProvider"
 import { Button, Card, CardBody, CardTitle, CardSubtitle, CardText, CardFooter } from "reactstrap";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 import "./Movie.css"
 
 export const MovieWatchListCard = ({ movie, reloadProp }) => {
@@ -10,9 +11,38 @@ export const MovieWatchListCard = ({ movie, reloadProp }) => {
     const { deleteMovie, seenIt } = useContext(MovieContext)
     const navigate = useNavigate();
 
+    // const handleDeleteMovie = () => {
+    //     deleteMovie(movie.id).then(reloadProp)
+    // }
+
     const handleDeleteMovie = () => {
-        deleteMovie(movie.id).then(reloadProp)
+        Swal.fire({
+            title: `Are you sure you want to delete ${movie.title}?`,
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deleteMovie(movie.id).then(reloadProp)
+                Swal.fire(
+                    'Deleted!',
+                    `${movie.title} has been deleted.`,
+                    'success'
+                )
+            }
+        })
+
     }
+
+    // const handleDeleteMovie = () => {
+    //     var confirmDelete = window.confirm("Are you sure you want to delete this?")
+    //     if (confirmDelete) {
+    //         deleteMovie(movie.id).then(reloadProp)
+    //     }
+    // }
 
     const handleSeenIt = () => {
         seenIt(movie.id)
@@ -36,7 +66,7 @@ export const MovieWatchListCard = ({ movie, reloadProp }) => {
 
     return (
         <>
-            <div className="container" id="movie">
+            <div className="container d-flex align-items-stretch" id="movie">
                 <Card color="dark" inverse className="mb-3 mt-3">
                     <CardBody>
                         <img className="m-2" style={{ float: "left" }} src={`${link}${poster}`} alt={movie.original_title} />

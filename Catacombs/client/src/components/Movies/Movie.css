@@ -18,11 +18,15 @@
       margin: left 5rem;
   } */
 
-  .paginationitem{
+  /* .paginationitem{
       background-color: #e61e4d;
   }
 
   .page-item.active .page-link {
     background-color: #e61e4d;
     border-color: #e61e4d;
+  } */
+
+  .Pagination.Link {
+      background-color: red;
   }

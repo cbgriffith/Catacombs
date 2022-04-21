@@ -42,7 +42,7 @@ export const RecommendedMovieCard = ({ movie }) => {
 
     return (
 
-        <div className="container" id="movie">
+        <div className="container d-flex align-items-stretch" id="movie">
             <Card color="dark" inverse className="mb-3 mt-3">
                 <CardBody>
                     <img className="m-2" style={{ float: "left" }} src={`${link}${poster}`} alt={movie.original_title} />

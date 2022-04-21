@@ -180,7 +180,6 @@ export const MovieProvider = (props) => {
     const getSocials = (movieId) => {
         return fetch(`https://api.themoviedb.org/3/movie/${movieId}/external_ids?api_key=b90c6e98b6940ecc7131589bc7ed9067`)
             .then(res => res.json())
-            .then(movieObject => setMovies(movieObject))
     }
 
     return (

@@ -1,4 +1,4 @@
-import React, { useContext } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { MovieContext } from "../Repositories/MovieProvider"
 import { Button, Card, CardBody, CardTitle, CardSubtitle, CardText, CardFooter } from "reactstrap";
 import { useNavigate } from "react-router-dom";
@@ -8,7 +8,8 @@ import "./Movie.css"
 export const MovieWatchListCard = ({ movie, reloadProp }) => {
     let date = new Date(movie.release_date);
     let formattedDate = date.toLocaleDateString('en-US')
-    const { deleteMovie, seenIt } = useContext(MovieContext)
+    const { deleteMovie, seenIt, getSocials } = useContext(MovieContext)
+    const [socials, setSocials] = useState({});
     const navigate = useNavigate();
 
     // const handleDeleteMovie = () => {
@@ -17,8 +18,7 @@ export const MovieWatchListCard = ({ movie, reloadProp }) => {
 
     const handleDeleteMovie = () => {
         Swal.fire({
-            title: `Are you sure you want to delete ${movie.title}?`,
-            text: "You won't be able to revert this!",
+            title: `Delete ${movie.title}?`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -34,15 +34,7 @@ export const MovieWatchListCard = ({ movie, reloadProp }) => {
                 )
             }
         })
-
     }
-
-    // const handleDeleteMovie = () => {
-    //     var confirmDelete = window.confirm("Are you sure you want to delete this?")
-    //     if (confirmDelete) {
-    //         deleteMovie(movie.id).then(reloadProp)
-    //     }
-    // }
 
     const handleSeenIt = () => {
         seenIt(movie.id)
@@ -63,6 +55,12 @@ export const MovieWatchListCard = ({ movie, reloadProp }) => {
     const handleRecommendedMovies = () => {
         navigate(`/movies/recommended/${movie.movieId}`)
     }
+
+    useEffect(() => {
+        getSocials(movie.movieId)
+            .then(setSocials)
+        //eslint-disable-next-line
+    }, [])
 
     return (
         <>
@@ -86,6 +84,10 @@ export const MovieWatchListCard = ({ movie, reloadProp }) => {
                         </CardText>
                     </CardBody>
                     <CardFooter>
+                        {socials.imdb_id ? <Button className="mt-1" color="danger" href={`https://www.imdb.com/title/${socials.imdb_id}`} target="_blank">IMDB</Button> : ""}
+                        {socials.facebook_id ? <Button className="mt-1" color="danger" href={`https://www.facebook.com/${socials.facebook_id}`} target="_blank">Facebook</Button> : ""}
+                        {socials.twitter_id ? <Button className="mt-1" color="danger" href={`https://www.twitter.com/${socials.twitter_id}`} target="_blank">Twitter</Button> : ""}
+                        {socials.instagram_id ? <Button className="mt-1" color="danger" href={`https://www.instagram.com/${socials.instagram_id}`} target="_blank">Instagram</Button> : ""}
                         <Button color="danger" onClick={handleRecommendedMovies}>Recommended Movies</Button> <br /> <br />
                         <Button color="danger" onClick={handleDeleteMovie}>Delete</Button> <Button color="danger" onClick={handleSeenIt}>Seen It</Button>
                     </CardFooter>

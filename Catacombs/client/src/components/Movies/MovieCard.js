@@ -79,14 +79,10 @@ export const MovieCard = ({ movie }) => {
             cancelButtonText: 'No'
         }).then((result) => {
             if (result.isConfirmed) {
-                navigate(`/movies/recommended/${movie.movieId}`)
+                navigate(`/movies/recommended/${movie.id}`)
             }
         })
     }
-
-    // const goToIMDB = () => {
-    //     navigate(`https://www.imdb.com/title/${movie.imdb_id}/`)
-    // }
 
     return (
         <>

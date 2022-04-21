@@ -2,6 +2,7 @@ import React, { useContext } from "react"
 import { MovieContext } from "../Repositories/MovieProvider";
 import { Button, Card, CardBody, CardTitle, CardSubtitle, CardText, CardFooter } from "reactstrap";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 import "./Movie.css"
 
 export const SeenMoviesCard = ({ movie, reloadProp }) => {
@@ -11,7 +12,23 @@ export const SeenMoviesCard = ({ movie, reloadProp }) => {
     const navigate = useNavigate();
 
     const handleDeleteMovie = () => {
-        deleteMovie(movie.id).then(reloadProp)
+        Swal.fire({
+            title: `Delete ${movie.title}?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deleteMovie(movie.id).then(reloadProp)
+                Swal.fire(
+                    'Deleted!',
+                    `${movie.title} has been deleted.`,
+                    'success'
+                )
+            }
+        })
     }
 
     const handleLikedIt = () => {

@@ -4,6 +4,11 @@ import { Button, Card, CardBody, CardTitle, CardSubtitle, CardText, CardFooter }
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import "./Movie.css"
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faImdb, faFacebookSquare, faTwitterSquare, faInstagramSquare } from "@fortawesome/free-brands-svg-icons";
+import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
+import { faClapperboard, faEye } from "@fortawesome/free-solid-svg-icons";
+
 
 export const MovieWatchListCard = ({ movie, reloadProp }) => {
     let date = new Date(movie.release_date);
@@ -21,9 +26,10 @@ export const MovieWatchListCard = ({ movie, reloadProp }) => {
             title: `Delete ${movie.title}?`,
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
+            confirmButtonColor: '#0D6EFD',
+            cancelButtonColor: '#0D6EFD',
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'No'
         }).then((result) => {
             if (result.isConfirmed) {
                 deleteMovie(movie.id).then(reloadProp)
@@ -37,8 +43,26 @@ export const MovieWatchListCard = ({ movie, reloadProp }) => {
     }
 
     const handleSeenIt = () => {
-        seenIt(movie.id)
+        Swal.fire({
+            title: `You've seen ${movie.title}?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#0D6EFD',
+            cancelButtonColor: '#0D6EFD',
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'No'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                seenIt(movie.id)
+                Swal.fire(
+                    'Moved!',
+                    `${movie.title} has been moved to the Seen It list.`,
+                    'success'
+                )
+            }
+        })
     }
+
 
     let link = "https://image.tmdb.org/t/p/w200";
     const imgNotFound = require('./images/broken-1.png');
@@ -53,8 +77,21 @@ export const MovieWatchListCard = ({ movie, reloadProp }) => {
     }
 
     const handleRecommendedMovies = () => {
-        navigate(`/movies/recommended/${movie.movieId}`)
+        Swal.fire({
+            title: `View a list of similar movies to ${movie.title}?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#0D6EFD',
+            cancelButtonColor: '#0D6EFD',
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'No'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                navigate(`/movies/recommended/${movie.movieId}`)
+            }
+        })
     }
+
 
     useEffect(() => {
         getSocials(movie.movieId)
@@ -84,12 +121,12 @@ export const MovieWatchListCard = ({ movie, reloadProp }) => {
                         </CardText>
                     </CardBody>
                     <CardFooter>
-                        {socials.imdb_id ? <Button className="mt-1" color="danger" href={`https://www.imdb.com/title/${socials.imdb_id}`} target="_blank">IMDB</Button> : ""}
-                        {socials.facebook_id ? <Button className="mt-1" color="danger" href={`https://www.facebook.com/${socials.facebook_id}`} target="_blank">Facebook</Button> : ""}
-                        {socials.twitter_id ? <Button className="mt-1" color="danger" href={`https://www.twitter.com/${socials.twitter_id}`} target="_blank">Twitter</Button> : ""}
-                        {socials.instagram_id ? <Button className="mt-1" color="danger" href={`https://www.instagram.com/${socials.instagram_id}`} target="_blank">Instagram</Button> : ""}
-                        <Button color="danger" onClick={handleRecommendedMovies}>Recommended Movies</Button> <br /> <br />
-                        <Button color="danger" onClick={handleDeleteMovie}>Delete</Button> <Button color="danger" onClick={handleSeenIt}>Seen It</Button>
+                        {socials.imdb_id ? <a href={`https://www.imdb.com/title/${socials.imdb_id}`} target="_blank" rel="noreferrer"><FontAwesomeIcon icon={faImdb} size="3x" /></a> : ""}
+                        {socials.facebook_id ? <a href={`https://www.facebook.com/${socials.facebook_id}`} target="_blank" rel="noreferrer"><FontAwesomeIcon className="ms-1" icon={faFacebookSquare} size="3x" /></a> : ""}
+                        {socials.twitter_id ? <a href={`https://www.twitter.com/${socials.twitter_id}`} target="_blank" rel="noreferrer"><FontAwesomeIcon className="ms-1" icon={faTwitterSquare} size="3x" /></a> : ""}
+                        {socials.instagram_id ? <a href={`https://www.instagram.com/${socials.instagram_id}`} target="_blank" rel="noreferrer"><FontAwesomeIcon className="ms-1" icon={faInstagramSquare} size="3x" /></a> : ""}
+                        <br />
+                        <Button size="sm" style={{ backgroundColor: "#0D6EFD" }} onClick={handleRecommendedMovies}><FontAwesomeIcon icon={faClapperboard} style={{ backgroundColor: "#0D6EFD", color: "#202428" }} size="2x" /></Button> <Button size="sm" style={{ backgroundColor: "#0D6EFD" }} onClick={handleSeenIt}><FontAwesomeIcon icon={faEye} style={{ backgroundColor: "#0D6EFD", color: "#202428" }} size="2x" /></Button> <Button size="sm" style={{ backgroundColor: "#0D6EFD" }} onClick={handleDeleteMovie}><FontAwesomeIcon icon={faTrashCan} style={{ backgroundColor: "#0D6EFD", color: "#202428" }} size="2x" /></Button>
                     </CardFooter>
                 </Card>
             </div>

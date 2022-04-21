@@ -3,6 +3,10 @@ import { MovieContext } from "../Repositories/MovieProvider";
 import { Button, Card, CardBody, CardTitle, CardSubtitle, CardText, CardFooter } from "reactstrap";
 import { useNavigate } from "react-router-dom";
 import "./Movie.css"
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faImdb, faFacebookSquare, faTwitterSquare, faInstagramSquare } from "@fortawesome/free-brands-svg-icons";
+import { faClapperboard, faSquarePlus } from "@fortawesome/free-solid-svg-icons";
+import Swal from "sweetalert2";
 
 export const MovieCard = ({ movie }) => {
     let date = new Date(movie.release_date);
@@ -26,12 +30,11 @@ export const MovieCard = ({ movie }) => {
 
     useEffect(() => {
         getSocials(movie.id)
-        .then(setSocials)
+            .then(setSocials)
         //eslint-disable-next-line
     }, [])
 
     const handleSaveMovie = (e) => {
-        // const newMovie = {...movie}
         e.preventDefault();
         const newMovie = {
             userId: user.id,
@@ -45,11 +48,40 @@ export const MovieCard = ({ movie }) => {
             release_date: movie.release_date,
             movieId: movie.id
         }
-        addMovie(newMovie)
+        Swal.fire({
+            title: `Add <strong>${movie.title}</strong> to your Watch List?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#0D6EFD',
+            cancelButtonColor: '#0D6EFD',
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'No'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                addMovie(newMovie)
+                Swal.fire(
+                    'Added!',
+                    `${movie.title} has been added to your Watch List.`,
+                    'success'
+                )
+            }
+        })
     }
 
     const handleRecommendedMovies = () => {
-        navigate(`/movies/recommended/${movie.id}`)
+        Swal.fire({
+            title: `View a list of similar movies to <strong>${movie.title}</strong>?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#0D6EFD',
+            cancelButtonColor: '#0D6EFD',
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'No'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                navigate(`/movies/recommended/${movie.movieId}`)
+            }
+        })
     }
 
     // const goToIMDB = () => {
@@ -77,11 +109,12 @@ export const MovieCard = ({ movie }) => {
                         </CardText>
                     </CardBody>
                     <CardFooter>
-                        {socials.imdb_id ? <Button className="mt-1" color="danger" href={`https://www.imdb.com/title/${socials.imdb_id}`} target="_blank">IMDB</Button> : ""}
-                        {socials.facebook_id ? <Button className="mt-1" color="danger" href={`https://www.facebook.com/${socials.facebook_id}`} target="_blank">Facebook</Button> : ""}
-                        {socials.twitter_id ? <Button className="mt-1" color="danger" href={`https://www.twitter.com/${socials.twitter_id}`} target="_blank">Twitter</Button> : ""}
-                        {socials.instagram_id ? <Button className="mt-1" color="danger" href={`https://www.instagram.com/${socials.instagram_id}`} target="_blank">Instagram</Button> : ""}
-                        <Button className="mt-1" color="danger" onClick={handleSaveMovie}>Add to Watch List</Button> <Button className="mt-1" color="danger" onClick={handleRecommendedMovies}>Recommended Movies</Button>
+                        {socials.imdb_id ? <a href={`https://www.imdb.com/title/${socials.imdb_id}`} target="_blank" rel="noreferrer"><FontAwesomeIcon icon={faImdb} size="3x" /></a> : ""}
+                        {socials.facebook_id ? <a href={`https://www.facebook.com/${socials.facebook_id}`} target="_blank" rel="noreferrer"><FontAwesomeIcon className="ms-1" icon={faFacebookSquare} size="3x" /></a> : ""}
+                        {socials.twitter_id ? <a href={`https://www.twitter.com/${socials.twitter_id}`} target="_blank" rel="noreferrer"><FontAwesomeIcon className="ms-1" icon={faTwitterSquare} size="3x" /></a> : ""}
+                        {socials.instagram_id ? <a href={`https://www.instagram.com/${socials.instagram_id}`} target="_blank" rel="noreferrer"><FontAwesomeIcon className="ms-1" icon={faInstagramSquare} size="3x" /></a> : ""}
+                        <br />
+                        <Button size="sm" style={{ backgroundColor: "#0D6EFD" }} onClick={handleSaveMovie}><FontAwesomeIcon icon={faSquarePlus} style={{ backgroundColor: "#0D6EFD", color: "#202428" }} size="2x" /></Button> <Button size="sm" style={{ backgroundColor: "#0D6EFD" }} onClick={handleRecommendedMovies}><FontAwesomeIcon icon={faClapperboard} style={{ backgroundColor: "#0D6EFD", color: "#202428" }} size="2x" /></Button>
                     </CardFooter>
                 </Card>
             </div>

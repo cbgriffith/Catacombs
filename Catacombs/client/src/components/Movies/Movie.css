@@ -27,6 +27,11 @@
     border-color: #e61e4d;
   } */
 
-  .Pagination.Link {
-      background-color: red;
+  /* #main {
+      background-color: blue;
+  } */
+
+  #previous {
+      background-color: #202428;
+      color: white;
   }

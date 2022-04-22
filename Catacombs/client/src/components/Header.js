@@ -11,13 +11,16 @@ import {
   UncontrolledDropdown,
   DropdownToggle,
   DropdownMenu,
-  DropdownItem
+  DropdownItem,
+  NavbarText
 } from 'reactstrap';
 import { UserContext } from './Repositories/UserProvider';
 import icon from './Movies/images/icon.png'
+import "./Header.css"
 
 export default function Header() {
   const { isLoggedIn, logout } = useContext(UserContext);
+  const user = JSON.parse(sessionStorage.getItem("userProfile"))
   const [isOpen, setIsOpen] = useState(false);
   const toggle = () => setIsOpen(!isOpen);
 
@@ -25,11 +28,11 @@ export default function Header() {
     <div>
       <Navbar color="dark" dark expand="md">
         <NavbarBrand tag={RRNavLink} to="/">
-          <img className="m-3" src={icon} alt="icon" width="30" height="30"/>
+          <img className="me-3 ms-5" src={icon} alt="icon" width="30" height="30" />
           The Catacombs</NavbarBrand>
         <NavbarToggler onClick={toggle} />
         <Collapse isOpen={isOpen} navbar>
-          <Nav className="mr-auto" navbar>
+          <Nav className="me-auto" navbar>
             { /* When isLoggedIn === true, we will render the Home link */}
             {isLoggedIn &&
               <>
@@ -87,10 +90,14 @@ export default function Header() {
             }
           </Nav>
           <Nav navbar>
+
             {isLoggedIn &&
               <>
-                <NavItem>
-                  <a aria-current="page" className="nav-link" href="/logout"
+                <NavbarText id="username">
+                  {user.username}
+                </NavbarText>
+                <NavItem className="me-5" id="logout">
+                  <a aria-current="page" id="logout" className="nav-link" href="/logout"
                     style={{ cursor: "pointer" }} onClick={logout}>Logout</a>
                 </NavItem>
               </>

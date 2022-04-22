@@ -19,20 +19,20 @@ export const RecommendedMovieList = () => {
 
     return (
         <>
-
-            <Container>
-                <Button onClick={() => navigate(-1)}>Go back</Button>
-                <h1 style={{ textAlign: "center" }}>Recommended Movies</h1>
-                <div id="movielist">
-                    {
-                        movies?.map(movie => {
-                            return <RecommendedMovieCard key={movie.id} movie={movie} />
-                        })
-                    }
-                </div>
-                <Button onClick={() => navigate(-1)}>Go back</Button>
-            </Container>
-
+            <div id="main">
+                <Container>
+                    <Button onClick={() => navigate(-1)}>Go back</Button>
+                    <h1 style={{ textAlign: "center" }}>Recommended Movies</h1>
+                    <div id="movielist">
+                        {
+                            movies?.map(movie => {
+                                return <RecommendedMovieCard key={movie.id} movie={movie} />
+                            })
+                        }
+                    </div>
+                    <Button onClick={() => navigate(-1)}>Go back</Button>
+                </Container>
+            </div>
         </>
     )
 }

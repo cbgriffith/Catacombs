@@ -4,6 +4,7 @@ import ApplicationViews from "./components/ApplicationViews";
 import { MovieProvider } from './components/Repositories/MovieProvider';
 import { UserProvider } from './components/Repositories/UserProvider';
 import Header from './components/Header';
+import './App.css';
 
 function App() {
   return (

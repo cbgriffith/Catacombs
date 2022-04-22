@@ -20,7 +20,7 @@ export const TopRatedMovieList = () => {
         <h1 style={{ textAlign: "center" }}>Top Rated Horror Movies</h1>
         <Container>
           <Pagination aria-label="Page navigation example">
-            <PaginationItem disabled>
+            <PaginationItem  disabled>
               <PaginationLink previous href="" />
             </PaginationItem>
             <PaginationItem active>

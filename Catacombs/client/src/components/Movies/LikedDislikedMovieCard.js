@@ -1,10 +1,20 @@
-import React from "react"
-import { Card, CardBody, CardTitle, CardSubtitle, CardText } from "reactstrap";
+import React, { useContext, useEffect, useState } from "react"
+import { MovieContext } from "../Repositories/MovieProvider";
+import { Button, Card, CardBody, CardTitle, CardSubtitle, CardText, CardFooter } from "reactstrap";
+import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 import "./Movie.css"
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faImdb, faFacebookSquare, faTwitterSquare, faInstagramSquare } from "@fortawesome/free-brands-svg-icons";
+import { faClapperboard } from "@fortawesome/free-solid-svg-icons";
 
 export const LikedDislikedMovieCard = ({ movie }) => {
     let date = new Date(movie.release_date);
     let formattedDate = date.toLocaleDateString('en-US')
+    const { getSocials } = useContext(MovieContext)
+    const [socials, setSocials] = useState({});
+    const navigate = useNavigate();
+
     let link = "https://image.tmdb.org/t/p/w200";
     const imgNotFound = require('./images/broken-1.png');
     let poster = "";
@@ -16,6 +26,28 @@ export const LikedDislikedMovieCard = ({ movie }) => {
         link = "https://image.tmdb.org/t/p/w200";
         poster = movie.poster_path;
     }
+
+    const handleRecommendedMovies = () => {
+        Swal.fire({
+            title: `View a list of similar movies to ${movie.title}?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#0D6EFD',
+            cancelButtonColor: '#0D6EFD',
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'No'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                navigate(`/movies/recommended/${movie.movieId}`)
+            }
+        })
+    }
+
+    useEffect(() => {
+        getSocials(movie.movieId)
+            .then(setSocials)
+        //eslint-disable-next-line
+    }, [])
 
     return (
         <>
@@ -37,6 +69,14 @@ export const LikedDislikedMovieCard = ({ movie }) => {
                             {movie.overview}
                         </CardText>
                     </CardBody>
+                    <CardFooter>
+                        {socials.imdb_id ? <a href={`https://www.imdb.com/title/${socials.imdb_id}`} target="_blank" rel="noreferrer"><FontAwesomeIcon icon={faImdb} size="3x" /></a> : ""}
+                        {socials.facebook_id ? <a href={`https://www.facebook.com/${socials.facebook_id}`} target="_blank" rel="noreferrer"><FontAwesomeIcon className="ms-1" icon={faFacebookSquare} size="3x" /></a> : ""}
+                        {socials.twitter_id ? <a href={`https://www.twitter.com/${socials.twitter_id}`} target="_blank" rel="noreferrer"><FontAwesomeIcon className="ms-1" icon={faTwitterSquare} size="3x" /></a> : ""}
+                        {socials.instagram_id ? <a href={`https://www.instagram.com/${socials.instagram_id}`} target="_blank" rel="noreferrer"><FontAwesomeIcon className="ms-1" icon={faInstagramSquare} size="3x" /></a> : ""}
+                        <br />
+                        <Button size="sm" style={{ backgroundColor: "#0D6EFD" }} onClick={handleRecommendedMovies}><FontAwesomeIcon icon={faClapperboard} style={{ backgroundColor: "#0D6EFD", color: "#202428" }} size="2x" /></Button>
+                    </CardFooter>
                 </Card>
             </div>
         </>

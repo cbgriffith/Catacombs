@@ -115,7 +115,6 @@ export const MovieWatchListCard = ({ movie, reloadProp }) => {
                         </CardSubtitle>
                         <CardSubtitle className="text-muted" tag="h6">Vote score: {movie.vote_average}</CardSubtitle>
                         <CardSubtitle className="text-muted" tag="h6">Popularity score: {movie.popularity}</CardSubtitle>
-                        <CardSubtitle className="text-muted" tag="h6">Movie Id: {movie.movieId}</CardSubtitle>
                         <CardText>
                             {movie.overview}
                         </CardText>

@@ -6,12 +6,14 @@ export const Home = () => {
 
 
     return (
-
-        <Container>
-            <div className="Home mt-5">
-                {/* <h2>Hello, {user.username}</h2> */}
-                <h2 className="pt-5">Welcome to The Catacombs!</h2>
-            </div>
-        </Container>
+        <div id="background">
+            <Container>
+                <div className="Home mt-5">
+                    {/* <h2>Hello, {user.username}</h2> */}
+                    <h2 className="pt-5">Welcome to The Catacombs!</h2>
+                    <p>Create a watchlist of horror movies and give your rating on movies you've seen.</p>
+                </div>
+            </Container>
+        </div>
     )
 }

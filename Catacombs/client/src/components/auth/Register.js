@@ -29,7 +29,7 @@ export default function Register() {
         <fieldset>
           <FormGroup>
             <Label htmlFor="username">Username</Label>
-            <Input id="username" type="text" onChange={e => setUsername(e.target.value)} />
+            <Input style={{color: "black"}} id="username" type="text" onChange={e => setUsername(e.target.value)} />
           </FormGroup>
           <FormGroup>
             <Label for="email">Email</Label>

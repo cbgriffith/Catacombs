@@ -1,3 +1,4 @@
+using Catacombs.Database;
 using Catacombs.HealthChecks;
 using Catacombs.Repositories;
 using Microsoft.AspNetCore.Builder;
@@ -35,6 +36,7 @@ namespace Catacombs
                     "The PostgreSQL connection string 'Catacombs' is not configured.");
 
             services.AddSingleton(_ => NpgsqlDataSource.Create(postgresConnectionString));
+            services.AddHostedService<DatabaseInitializationService>();
             services.AddHealthChecks()
                 .AddCheck<PostgreSqlHealthCheck>("postgresql");
 

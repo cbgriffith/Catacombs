@@ -21,10 +21,17 @@ namespace Catacombs.HealthChecks
         {
             try
             {
-                await using var command = _dataSource.CreateCommand("SELECT 1");
-                await command.ExecuteScalarAsync(cancellationToken);
+                await using var command = _dataSource.CreateCommand(@"
+                    SELECT to_regclass('public.users') IS NOT NULL
+                       AND to_regclass('public.movies') IS NOT NULL");
+                var schemaIsReady = await command.ExecuteScalarAsync(
+                    cancellationToken);
 
-                return HealthCheckResult.Healthy("PostgreSQL is reachable.");
+                return schemaIsReady is true
+                    ? HealthCheckResult.Healthy(
+                        "PostgreSQL is reachable and the schema is ready.")
+                    : HealthCheckResult.Unhealthy(
+                        "PostgreSQL is reachable, but the schema is incomplete.");
             }
             catch (Exception exception)
             {

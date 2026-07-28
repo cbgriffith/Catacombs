@@ -25,7 +25,11 @@ import { Home } from "./Home";
 
 
 export default function ApplicationViews() {
-   const { isLoggedIn, userProfile } = useContext(UserContext);
+   const { isLoadingUser, isLoggedIn } = useContext(UserContext);
+
+   if (isLoadingUser) {
+      return null;
+   }
 
    if (!isLoggedIn) {
       return (

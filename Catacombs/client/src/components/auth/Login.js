@@ -5,22 +5,16 @@ import { UserContext } from "../Repositories/UserProvider";
 
 export default function Login() {
   const navigate = useNavigate();
-  const { login, userProfile } = useContext(UserContext);
+  const { login } = useContext(UserContext);
 
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const loginSubmit = (e) => {
     e.preventDefault();
     login({ email, password })
-      .then(r => {
-        if (r) {
-          navigate("/")
-        }
-        else {
-          alert("Invalid email or password")
-        }
-      })
+      .then(() => navigate("/"))
+      .catch((error) => alert(error.message));
   };
 
   return (
@@ -29,11 +23,11 @@ export default function Login() {
         <fieldset>
           <FormGroup>
             <Label for="email">Email</Label>
-            <Input id="email" type="text" onChange={e => setEmail(e.target.value)} />
+            <Input id="email" type="email" required maxLength="320" autoComplete="email" onChange={e => setEmail(e.target.value)} />
           </FormGroup>
           <FormGroup>
             <Label for="password">Password</Label>
-            <Input id="password" type="password" onChange={e => setPassword(e.target.value)} />
+            <Input id="password" type="password" required maxLength="128" autoComplete="current-password" onChange={e => setPassword(e.target.value)} />
           </FormGroup>
           <FormGroup>
             <Button>Login</Button>

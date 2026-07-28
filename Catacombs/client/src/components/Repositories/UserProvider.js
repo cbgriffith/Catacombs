@@ -1,59 +1,166 @@
-import React, { useState, createContext } from "react";
+import React, { createContext, useEffect, useState } from "react";
 
 export const UserContext = createContext();
 
-export function UserProvider(props) {
-  //user state holds list of users from API
-  const [userProfiles, setUserProfiles] = useState([])
-  const apiUrl = "https://localhost:44377";
-  const userProfile = sessionStorage.getItem("userProfile");
-  const [isLoggedIn, setIsLoggedIn] = useState(userProfile != null);
+const apiUrl = "https://localhost:44377";
 
+async function getErrorMessage(response, fallbackMessage) {
+  try {
+    const responseBody = await response.json();
+    return responseBody.title ?? fallbackMessage;
+  } catch {
+    return fallbackMessage;
+  }
+}
 
-  const login = (userObject) => {
-    return fetch(`${apiUrl}/api/users/getbyemail?email=${userObject.email}`)
-      .then((r) => r.json())
-      .then((userProfile) => {
-        if (userProfile.id) {
-          sessionStorage.setItem("userProfile", JSON.stringify(userProfile));
-          setIsLoggedIn(true);
-          return userProfile
-        }
-        else {
-          return undefined
-        }
-      });
+async function getAntiforgeryToken() {
+  const response = await fetch(`${apiUrl}/api/auth/antiforgery-token`, {
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error("Unable to prepare the secure request.");
+  }
+
+  const responseBody = await response.json();
+  return responseBody.token;
+}
+
+export function UserProvider({ children }) {
+  const [userProfile, setUserProfile] = useState(null);
+  const [isLoadingUser, setIsLoadingUser] = useState(true);
+  const isLoggedIn = userProfile !== null;
+
+  const saveUserProfile = (profile) => {
+    sessionStorage.setItem("userProfile", JSON.stringify(profile));
+    setUserProfile(profile);
   };
 
-  const logout = () => {
-    sessionStorage.clear()
-    setIsLoggedIn(false);
+  const clearUserProfile = () => {
+    sessionStorage.removeItem("userProfile");
+    setUserProfile(null);
   };
 
-  const register = (userObject) => {
-    return fetch(`${apiUrl}/api/auth/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(userObject),
+  useEffect(() => {
+    let isCancelled = false;
+
+    fetch(`${apiUrl}/api/auth/me`, {
+      credentials: "include",
     })
       .then(async (response) => {
-        const responseBody = await response.json();
-
-        if (!response.ok) {
-          throw new Error(
-            responseBody.title ?? "Unable to create the account."
-          );
+        if (response.status === 401) {
+          return null;
         }
 
-        return responseBody;
+        if (!response.ok) {
+          throw new Error("Unable to restore the login session.");
+        }
+
+        return response.json();
+      })
+      .then((profile) => {
+        if (isCancelled) {
+          return;
+        }
+
+        if (profile) {
+          saveUserProfile(profile);
+        } else {
+          clearUserProfile();
+        }
+      })
+      .catch(() => {
+        if (!isCancelled) {
+          clearUserProfile();
+        }
+      })
+      .finally(() => {
+        if (!isCancelled) {
+          setIsLoadingUser(false);
+        }
       });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
+
+  const login = async (credentials) => {
+    const antiforgeryToken = await getAntiforgeryToken();
+    const response = await fetch(`${apiUrl}/api/auth/login`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        "X-XSRF-TOKEN": antiforgeryToken,
+      },
+      body: JSON.stringify(credentials),
+    });
+
+    if (!response.ok) {
+      const fallbackMessage = response.status === 429
+        ? "Too many login attempts. Please wait a minute and try again."
+        : "Invalid email or password.";
+      throw new Error(await getErrorMessage(response, fallbackMessage));
+    }
+
+    const profile = await response.json();
+    saveUserProfile(profile);
+    return profile;
+  };
+
+  const logout = async () => {
+    const antiforgeryToken = await getAntiforgeryToken();
+    const response = await fetch(`${apiUrl}/api/auth/logout`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "X-XSRF-TOKEN": antiforgeryToken,
+      },
+    });
+
+    if (!response.ok && response.status !== 401) {
+      throw new Error(
+        await getErrorMessage(response, "Unable to log out.")
+      );
+    }
+
+    clearUserProfile();
+  };
+
+  const register = async (user) => {
+    const antiforgeryToken = await getAntiforgeryToken();
+    const response = await fetch(`${apiUrl}/api/auth/register`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        "X-XSRF-TOKEN": antiforgeryToken,
+      },
+      body: JSON.stringify(user),
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        await getErrorMessage(response, "Unable to create the account.")
+      );
+    }
+
+    return response.json();
   };
 
   return (
-    <UserContext.Provider value={{ isLoggedIn, login, logout, register, setUserProfiles, userProfiles }}>
-      {props.children}
+    <UserContext.Provider
+      value={{
+        isLoadingUser,
+        isLoggedIn,
+        login,
+        logout,
+        register,
+        userProfile,
+      }}
+    >
+      {children}
     </UserContext.Provider>
   );
 }

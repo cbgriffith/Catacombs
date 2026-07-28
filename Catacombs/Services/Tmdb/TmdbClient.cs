@@ -14,13 +14,16 @@ namespace Catacombs.Services.Tmdb
     {
         private readonly HttpClient _httpClient;
         private readonly string _readAccessToken;
+        private readonly TimeProvider _timeProvider;
 
         public TmdbClient(
             HttpClient httpClient,
-            IOptions<TmdbOptions> options)
+            IOptions<TmdbOptions> options,
+            TimeProvider timeProvider = null)
         {
             _httpClient = httpClient;
             _readAccessToken = options.Value.ReadAccessToken;
+            _timeProvider = timeProvider ?? TimeProvider.System;
         }
 
         public Task<TmdbResponse> GetMovieListAsync(
@@ -32,8 +35,8 @@ namespace Catacombs.Services.Tmdb
             {
                 TmdbMovieList.Popular => "discover/movie",
                 TmdbMovieList.TopRated => "discover/movie",
-                TmdbMovieList.Upcoming => "movie/upcoming",
-                TmdbMovieList.NowPlaying => "movie/now_playing",
+                TmdbMovieList.Upcoming => "discover/movie",
+                TmdbMovieList.NowPlaying => "discover/movie",
                 _ => throw new ArgumentOutOfRangeException(nameof(list))
             };
 
@@ -41,20 +44,26 @@ namespace Catacombs.Services.Tmdb
             {
                 ["language"] = "en-US",
                 ["region"] = "US",
-                ["page"] = FormatNumber(page)
+                ["page"] = FormatNumber(page),
+                ["include_adult"] = "false",
+                ["include_video"] = "false",
+                ["with_genres"] = "27"
             };
 
             if (list == TmdbMovieList.Popular ||
                 list == TmdbMovieList.TopRated)
             {
-                query["include_adult"] = "false";
-                query["include_video"] = "false";
-                query["with_genres"] = "27";
                 query["with_original_language"] = "en";
                 query["sort_by"] =
                     list == TmdbMovieList.Popular
                         ? "popularity.desc"
                         : "vote_average.desc";
+            }
+
+            if (list == TmdbMovieList.Upcoming ||
+                list == TmdbMovieList.NowPlaying)
+            {
+                AddTheatricalReleaseFilters(query, list);
             }
 
             if (list == TmdbMovieList.TopRated)
@@ -66,6 +75,31 @@ namespace Catacombs.Services.Tmdb
                 path,
                 query,
                 cancellationToken);
+        }
+
+        private void AddTheatricalReleaseFilters(
+            IDictionary<string, string> query,
+            TmdbMovieList list)
+        {
+            var today = DateOnly.FromDateTime(
+                _timeProvider.GetUtcNow().UtcDateTime);
+            var releaseStart =
+                list == TmdbMovieList.Upcoming
+                    ? today
+                    : today.AddDays(-45);
+            var releaseEnd =
+                list == TmdbMovieList.Upcoming
+                    ? today.AddMonths(6)
+                    : today;
+
+            query["sort_by"] = "popularity.desc";
+            query["with_release_type"] = "2|3";
+            query["release_date.gte"] = FormatDate(releaseStart);
+            query["release_date.lte"] = FormatDate(releaseEnd);
+            query["primary_release_date.gte"] =
+                FormatDate(today.AddYears(-1));
+            query["primary_release_date.lte"] =
+                FormatDate(releaseEnd);
         }
 
         public Task<TmdbResponse> SearchMoviesAsync(
@@ -176,6 +210,13 @@ namespace Catacombs.Services.Tmdb
         private static string FormatNumber(int value)
         {
             return value.ToString(CultureInfo.InvariantCulture);
+        }
+
+        private static string FormatDate(DateOnly value)
+        {
+            return value.ToString(
+                "yyyy-MM-dd",
+                CultureInfo.InvariantCulture);
         }
     }
 }

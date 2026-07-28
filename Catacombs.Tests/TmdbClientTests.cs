@@ -54,6 +54,76 @@ public sealed class TmdbClientTests
     }
 
     [Fact]
+    public async Task UpcomingListFiltersForNewHorrorTheatricalReleases()
+    {
+        var handler = new RecordingHandler();
+        var client = CreateClient(
+            handler,
+            TestToken,
+            new FixedTimeProvider(
+                new DateTimeOffset(
+                    2026,
+                    7,
+                    28,
+                    12,
+                    0,
+                    0,
+                    TimeSpan.Zero)));
+
+        await client.GetMovieListAsync(
+            TmdbMovieList.Upcoming,
+            1,
+            CancellationToken.None);
+
+        var query = Uri.UnescapeDataString(
+            handler.RequestUri?.Query ?? string.Empty);
+
+        Assert.Equal(
+            "/3/discover/movie",
+            handler.RequestUri?.AbsolutePath);
+        Assert.Contains("with_genres=27", query);
+        Assert.Contains("with_release_type=2|3", query);
+        Assert.Contains("release_date.gte=2026-07-28", query);
+        Assert.Contains("release_date.lte=2027-01-28", query);
+        Assert.Contains("primary_release_date.gte=2025-07-28", query);
+    }
+
+    [Fact]
+    public async Task NowPlayingListFiltersForRecentHorrorTheatricalReleases()
+    {
+        var handler = new RecordingHandler();
+        var client = CreateClient(
+            handler,
+            TestToken,
+            new FixedTimeProvider(
+                new DateTimeOffset(
+                    2026,
+                    7,
+                    28,
+                    12,
+                    0,
+                    0,
+                    TimeSpan.Zero)));
+
+        await client.GetMovieListAsync(
+            TmdbMovieList.NowPlaying,
+            1,
+            CancellationToken.None);
+
+        var query = Uri.UnescapeDataString(
+            handler.RequestUri?.Query ?? string.Empty);
+
+        Assert.Equal(
+            "/3/discover/movie",
+            handler.RequestUri?.AbsolutePath);
+        Assert.Contains("with_genres=27", query);
+        Assert.Contains("with_release_type=2|3", query);
+        Assert.Contains("release_date.gte=2026-06-13", query);
+        Assert.Contains("release_date.lte=2026-07-28", query);
+        Assert.Contains("primary_release_date.gte=2025-07-28", query);
+    }
+
+    [Fact]
     public async Task SearchSafelyEncodesTheUsersQuery()
     {
         var handler = new RecordingHandler();
@@ -117,7 +187,8 @@ public sealed class TmdbClientTests
 
     private static TmdbClient CreateClient(
         RecordingHandler handler,
-        string token)
+        string token,
+        TimeProvider? timeProvider = null)
     {
         var httpClient = new HttpClient(handler)
         {
@@ -128,7 +199,16 @@ public sealed class TmdbClientTests
             ReadAccessToken = token
         });
 
-        return new TmdbClient(httpClient, options);
+        return new TmdbClient(httpClient, options, timeProvider);
+    }
+
+    private sealed class FixedTimeProvider(DateTimeOffset utcNow)
+        : TimeProvider
+    {
+        public override DateTimeOffset GetUtcNow()
+        {
+            return utcNow;
+        }
     }
 
     private sealed class RecordingHandler : HttpMessageHandler

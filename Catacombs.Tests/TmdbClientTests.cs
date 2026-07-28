@@ -25,8 +25,32 @@ public sealed class TmdbClientTests
         Assert.Equal("Bearer", handler.Authorization?.Scheme);
         Assert.Equal(TestToken, handler.Authorization?.Parameter);
         Assert.Equal(
-            "/3/movie/popular?language=en-US&region=US&page=3",
+            "/3/discover/movie?language=en-US&region=US&page=3" +
+            "&include_adult=false&include_video=false&with_genres=27" +
+            "&with_original_language=en&sort_by=popularity.desc",
             handler.RequestUri?.PathAndQuery);
+    }
+
+    [Fact]
+    public async Task TopRatedListFiltersForEstablishedHorrorMovies()
+    {
+        var handler = new RecordingHandler();
+        var client = CreateClient(handler, TestToken);
+
+        await client.GetMovieListAsync(
+            TmdbMovieList.TopRated,
+            1,
+            CancellationToken.None);
+
+        Assert.Contains(
+            "with_genres=27",
+            handler.RequestUri?.Query);
+        Assert.Contains(
+            "sort_by=vote_average.desc",
+            handler.RequestUri?.Query);
+        Assert.Contains(
+            "vote_count.gte=200",
+            handler.RequestUri?.Query);
     }
 
     [Fact]

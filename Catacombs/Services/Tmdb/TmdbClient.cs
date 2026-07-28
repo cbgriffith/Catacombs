@@ -30,21 +30,41 @@ namespace Catacombs.Services.Tmdb
         {
             var path = list switch
             {
-                TmdbMovieList.Popular => "movie/popular",
-                TmdbMovieList.TopRated => "movie/top_rated",
+                TmdbMovieList.Popular => "discover/movie",
+                TmdbMovieList.TopRated => "discover/movie",
                 TmdbMovieList.Upcoming => "movie/upcoming",
                 TmdbMovieList.NowPlaying => "movie/now_playing",
                 _ => throw new ArgumentOutOfRangeException(nameof(list))
             };
 
+            var query = new Dictionary<string, string>
+            {
+                ["language"] = "en-US",
+                ["region"] = "US",
+                ["page"] = FormatNumber(page)
+            };
+
+            if (list == TmdbMovieList.Popular ||
+                list == TmdbMovieList.TopRated)
+            {
+                query["include_adult"] = "false";
+                query["include_video"] = "false";
+                query["with_genres"] = "27";
+                query["with_original_language"] = "en";
+                query["sort_by"] =
+                    list == TmdbMovieList.Popular
+                        ? "popularity.desc"
+                        : "vote_average.desc";
+            }
+
+            if (list == TmdbMovieList.TopRated)
+            {
+                query["vote_count.gte"] = "200";
+            }
+
             return GetAsync(
                 path,
-                new Dictionary<string, string>
-                {
-                    ["language"] = "en-US",
-                    ["region"] = "US",
-                    ["page"] = FormatNumber(page)
-                },
+                query,
                 cancellationToken);
         }
 

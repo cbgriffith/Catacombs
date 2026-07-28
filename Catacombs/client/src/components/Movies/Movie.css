@@ -12,7 +12,15 @@
 .pagination {
     justify-content: center;
     margin:30px;
-  }
+}
+
+.movie-loading {
+    align-items: center;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    min-height: 12rem;
+}
 
   /* #logout {
       margin: left 5rem;

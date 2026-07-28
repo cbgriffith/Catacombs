@@ -1,8 +1,8 @@
 using Catacombs.Models;
 using Catacombs.Utils;
 using Npgsql;
-using System.Data;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
 using System.Linq;
 
@@ -21,55 +21,55 @@ namespace Catacombs.Repositories
                    m.popularity,
                    m.vote_average,
                    m.release_date,
-                   m.movie_id,
-                   u.id AS owner_id,
-                   u.username AS owner_username,
-                   u.email AS owner_email,
-                   u.password AS owner_password
-              FROM movies m
-                   INNER JOIN users u ON m.user_id = u.id";
+                   m.movie_id
+              FROM movies m";
 
         public MoviesRepository(NpgsqlDataSource dataSource) : base(dataSource)
         {
         }
 
-        public List<Movies> GetAllMoviesByUser(int userId)
+        public Movies GetMovieById(int id, int userId)
         {
             return GetMovies(
-                " WHERE m.user_id = @userId",
-                "@userId",
-                userId);
-        }
-
-        public Movies GetMovieById(int id)
-        {
-            return GetMovies(" WHERE m.id = @id", "@id", id)
+                    " WHERE m.user_id = @userId AND m.id = @id",
+                    userId,
+                    id)
                 .SingleOrDefault();
         }
 
-        public List<Movies> GetAllMovies()
-        {
-            return GetMovies(" WHERE m.watched = false");
-        }
-
-        public List<Movies> GetAllSeenMovies()
-        {
-            return GetMovies(" WHERE m.watched = true");
-        }
-
-        public List<Movies> GetAllLikedMovies()
+        public List<Movies> GetAllMovies(int userId)
         {
             return GetMovies(
-                " WHERE m.watched = true AND m.rating = 1");
+                " WHERE m.user_id = @userId AND m.watched = false",
+                userId);
         }
 
-        public List<Movies> GetAllDislikedMovies()
+        public List<Movies> GetAllSeenMovies(int userId)
         {
             return GetMovies(
-                " WHERE m.watched = true AND m.rating = -1");
+                " WHERE m.user_id = @userId AND m.watched = true",
+                userId);
         }
 
-        public void Add(Movies movie)
+        public List<Movies> GetAllLikedMovies(int userId)
+        {
+            return GetMovies(
+                @" WHERE m.user_id = @userId
+                         AND m.watched = true
+                         AND m.rating = 1",
+                userId);
+        }
+
+        public List<Movies> GetAllDislikedMovies(int userId)
+        {
+            return GetMovies(
+                @" WHERE m.user_id = @userId
+                         AND m.watched = true
+                         AND m.rating = -1",
+                userId);
+        }
+
+        public void Add(Movies movie, int userId)
         {
             using var connection = Connection;
             connection.Open();
@@ -87,7 +87,7 @@ namespace Catacombs.Repositories
             DbUtils.AddParameter(
                 command,
                 "@userId",
-                movie.userId,
+                userId,
                 DbType.Int32);
             DbUtils.AddParameter(
                 command,
@@ -136,53 +136,70 @@ namespace Catacombs.Repositories
                 DbType.Int32);
 
             movie.id = (int)command.ExecuteScalar();
+            movie.userId = userId;
         }
 
-        public void Delete(int id)
+        public bool Delete(int id, int userId)
         {
-            ExecuteForMovie(
-                "DELETE FROM movies WHERE id = @id",
-                id);
+            return ExecuteForMovie(
+                @"DELETE FROM movies
+                   WHERE id = @id AND user_id = @userId",
+                id,
+                userId);
         }
 
-        public void SeenIt(int id)
+        public bool SeenIt(int id, int userId)
         {
-            ExecuteForMovie(
-                "UPDATE movies SET watched = true WHERE id = @id",
-                id);
+            return ExecuteForMovie(
+                @"UPDATE movies
+                     SET watched = true
+                   WHERE id = @id AND user_id = @userId",
+                id,
+                userId);
         }
 
-        public void LikedIt(int id)
+        public bool LikedIt(int id, int userId)
         {
-            ExecuteForMovie(
-                "UPDATE movies SET rating = 1 WHERE id = @id",
-                id);
+            return ExecuteForMovie(
+                @"UPDATE movies
+                     SET rating = 1
+                   WHERE id = @id AND user_id = @userId",
+                id,
+                userId);
         }
 
-        public void DislikedIt(int id)
+        public bool DislikedIt(int id, int userId)
         {
-            ExecuteForMovie(
-                "UPDATE movies SET rating = -1 WHERE id = @id",
-                id);
+            return ExecuteForMovie(
+                @"UPDATE movies
+                     SET rating = -1
+                   WHERE id = @id AND user_id = @userId",
+                id,
+                userId);
         }
 
         private List<Movies> GetMovies(
             string filterSql,
-            string parameterName = null,
-            object parameterValue = null)
+            int userId,
+            int? movieId = null)
         {
             using var connection = Connection;
             connection.Open();
 
             using var command = connection.CreateCommand();
             command.CommandText = MovieSelectSql + filterSql;
+            DbUtils.AddParameter(
+                command,
+                "@userId",
+                userId,
+                DbType.Int32);
 
-            if (parameterName != null)
+            if (movieId.HasValue)
             {
                 DbUtils.AddParameter(
                     command,
-                    parameterName,
-                    parameterValue,
+                    "@id",
+                    movieId.Value,
                     DbType.Int32);
             }
 
@@ -197,7 +214,10 @@ namespace Catacombs.Repositories
             return movies;
         }
 
-        private void ExecuteForMovie(string commandText, int id)
+        private bool ExecuteForMovie(
+            string commandText,
+            int id,
+            int userId)
         {
             using var connection = Connection;
             connection.Open();
@@ -205,7 +225,12 @@ namespace Catacombs.Repositories
             using var command = connection.CreateCommand();
             command.CommandText = commandText;
             DbUtils.AddParameter(command, "@id", id, DbType.Int32);
-            command.ExecuteNonQuery();
+            DbUtils.AddParameter(
+                command,
+                "@userId",
+                userId,
+                DbType.Int32);
+            return command.ExecuteNonQuery() > 0;
         }
 
         private static Movies NewMovieFromReader(DbDataReader reader)
@@ -223,14 +248,7 @@ namespace Catacombs.Repositories
                 vote_average = reader.GetDouble(
                     reader.GetOrdinal("vote_average")),
                 release_date = DbUtils.GetDateTime(reader, "release_date"),
-                movieId = DbUtils.GetInt(reader, "movie_id"),
-                Users = new Users
-                {
-                    id = DbUtils.GetInt(reader, "owner_id"),
-                    username = DbUtils.GetString(reader, "owner_username"),
-                    email = DbUtils.GetString(reader, "owner_email"),
-                    password = DbUtils.GetString(reader, "owner_password")
-                }
+                movieId = DbUtils.GetInt(reader, "movie_id")
             };
         }
     }

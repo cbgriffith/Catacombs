@@ -6,7 +6,6 @@ import "./Movie.css"
 
 export const LikedMoviesList = () => {
     const { movies, getAllLikedMovies } = useContext(MovieContext)
-    const user = JSON.parse(sessionStorage.getItem("userProfile"))
 
 
     //useEffect - reach out to the world for something
@@ -20,7 +19,7 @@ export const LikedMoviesList = () => {
             <Container>
                 <h1 style={{ textAlign: "center" }}>Movies I Liked</h1>
                 <div id="movielist">
-                    {movies.filter(m => m.userId === user.id).map((movie) => (
+                    {movies.map((movie) => (
                         <LikedDislikedMovieCard key={movie.id} movie={movie} />
                     ))}
                 </div>

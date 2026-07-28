@@ -2,9 +2,6 @@ import React from "react";
 import { Container } from "reactstrap";
 
 export const Home = () => {
-    const user = JSON.parse(sessionStorage.getItem("userProfile"))
-
-
     return (
         <div id="background">
             <Container>

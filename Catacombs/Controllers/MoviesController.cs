@@ -1,123 +1,165 @@
-﻿using Catacombs.Models;
+using Catacombs.Contracts.Movies;
 using Catacombs.Repositories;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using System;
+using System.Globalization;
+using System.Security.Claims;
 
 namespace Catacombs.Controllers
 {
+    [Authorize]
+    [AutoValidateAntiforgeryToken]
     [Route("api/[controller]")]
     [ApiController]
     public class MoviesController : ControllerBase
     {
-
         private readonly IMoviesRepository _moviesRepository;
+
         public MoviesController(IMoviesRepository moviesRepository)
         {
             _moviesRepository = moviesRepository;
         }
-        // GET: api/<MoviesController>
+
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public IActionResult Get()
         {
-            return Ok(_moviesRepository.GetAllMovies());
+            return ForCurrentUser(
+                userId => Ok(_moviesRepository.GetAllMovies(userId)));
         }
 
         [HttpGet("seen")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public IActionResult GetAllSeenMovies()
         {
-            return Ok(_moviesRepository.GetAllSeenMovies());
+            return ForCurrentUser(
+                userId => Ok(_moviesRepository.GetAllSeenMovies(userId)));
         }
 
         [HttpGet("liked")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public IActionResult GetAllLikedMovies()
         {
-            return Ok(_moviesRepository.GetAllLikedMovies());
+            return ForCurrentUser(
+                userId => Ok(_moviesRepository.GetAllLikedMovies(userId)));
         }
 
         [HttpGet("disliked")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public IActionResult GetAllDislikedMovies()
         {
-            return Ok(_moviesRepository.GetAllDislikedMovies());
+            return ForCurrentUser(
+                userId => Ok(_moviesRepository.GetAllDislikedMovies(userId)));
         }
 
-        // GET api/<MoviesController>/5
-        //[HttpGet("{id}")]
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
-
-        // GET api/<PostController>/5
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult Get(int id)
         {
-            var movie = _moviesRepository.GetMovieById(id);
-            if (movie == null)
+            return ForCurrentUser(userId =>
             {
-                return NotFound();
-            }
-            return Ok(movie);
+                var movie = _moviesRepository.GetMovieById(id, userId);
+                return movie == null ? NotFound() : Ok(movie);
+            });
         }
 
-        [HttpGet("user/{id}")]
-        public IActionResult GetByUserId(int id)
-        {
-            var movies = _moviesRepository.GetAllMoviesByUser(id);
-            if (movies == null)
-            {
-                return NotFound();
-            }
-            return Ok(movies);
-        }
-
-        // POST api/<MoviesController>
-        //[HttpPost]
-        //public void Post([FromBody] string value)
-        //{
-        //}
-
-        // POST api/<MoviesController>
         [HttpPost]
-        public IActionResult Movies(Movies movie)
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public IActionResult Add(CreateMovieRequest request)
         {
-            _moviesRepository.Add(movie);
-            return CreatedAtAction("Get", new { id = movie.id }, movie);
+            if (string.IsNullOrWhiteSpace(request.Title))
+            {
+                ModelState.AddModelError(
+                    nameof(request.Title),
+                    "Title must contain at least one character.");
+                return ValidationProblem(ModelState);
+            }
+
+            return ForCurrentUser(userId =>
+            {
+                var movie = request.ToMovie();
+                _moviesRepository.Add(movie, userId);
+
+                return CreatedAtAction(
+                    nameof(Get),
+                    new { id = movie.id },
+                    movie);
+            });
         }
 
-        // PUT api/<MoviesController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpDelete("{id:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult Delete(int id)
         {
+            return ForCurrentUser(
+                userId => _moviesRepository.Delete(id, userId)
+                    ? NoContent()
+                    : NotFound());
         }
 
-        // DELETE api/<MoviesController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpPatch("seenit/{id:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult SeenIt(int id)
         {
-            _moviesRepository.Delete(id);
+            return ForCurrentUser(
+                userId => _moviesRepository.SeenIt(id, userId)
+                    ? NoContent()
+                    : NotFound());
         }
 
-        // PATCH api/<MoviesController>/5
-        [HttpPatch("seenit/{id}")]
-        public void SeenIt(int id)
+        [HttpPatch("likedit/{id:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult LikedIt(int id)
         {
-            _moviesRepository.SeenIt(id);
+            return ForCurrentUser(
+                userId => _moviesRepository.LikedIt(id, userId)
+                    ? NoContent()
+                    : NotFound());
         }
 
-        // PATCH api/<MoviesController>/5
-        [HttpPatch("likedit/{id}")]
-        public void LikedIt(int id)
+        [HttpPatch("dislikedit/{id:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult DislikedIt(int id)
         {
-            _moviesRepository.LikedIt(id);
+            return ForCurrentUser(
+                userId => _moviesRepository.DislikedIt(id, userId)
+                    ? NoContent()
+                    : NotFound());
         }
 
-        // PATCH api/<MoviesController>/5
-        [HttpPatch("dislikedit/{id}")]
-        public void DislikedIt(int id)
+        private IActionResult ForCurrentUser(
+            Func<int, IActionResult> action)
         {
-            _moviesRepository.DislikedIt(id);
+            var userIdValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (!int.TryParse(
+                userIdValue,
+                NumberStyles.None,
+                CultureInfo.InvariantCulture,
+                out var userId))
+            {
+                return Unauthorized();
+            }
+
+            return action(userId);
         }
     }
 }

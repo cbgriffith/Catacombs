@@ -2,9 +2,33 @@ import React, { useState, createContext } from "react"
 
 export const MovieContext = createContext()
 
+const apiUrl = "https://localhost:44377";
+
+const authenticatedApiFetch = (path, options = {}) => {
+    return fetch(`${apiUrl}${path}`, {
+        ...options,
+        credentials: "include"
+    })
+}
+
+const secureApiFetch = async (path, options = {}) => {
+    const tokenResponse = await authenticatedApiFetch("/api/auth/antiforgery-token")
+    if (!tokenResponse.ok) {
+        throw new Error("Unable to prepare the secure request.")
+    }
+
+    const { token } = await tokenResponse.json()
+    return authenticatedApiFetch(path, {
+        ...options,
+        headers: {
+            ...options.headers,
+            "X-XSRF-TOKEN": token
+        }
+    })
+}
+
 export const MovieProvider = (props) => {
     const [movies, setMovies] = useState([])
-    const apiUrl = "https://localhost:44377";
 
     //each fetch call to themoviedb api limits every page to just 20 results, I'm going to need way more
     //I'm going to do at least 5 pages for each list from the tmdb api (by popularity and rating at least)
@@ -43,7 +67,7 @@ export const MovieProvider = (props) => {
 
     //add a movie to watch list
     const addMovie = (movie) => {
-        return fetch(`${apiUrl}/api/Movies`, {
+        return secureApiFetch("/api/Movies", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -54,7 +78,7 @@ export const MovieProvider = (props) => {
 
     //list all movies in watch list
     const getAllMovies = () => {
-        return fetch(`${apiUrl}/api/Movies`)
+        return authenticatedApiFetch("/api/Movies")
             .then((res) => res.json())
             .then(setMovies);
     };
@@ -120,35 +144,35 @@ export const MovieProvider = (props) => {
 
     //list all seen movies
     const getAllSeenMovies = () => {
-        return fetch(`${apiUrl}/api/Movies/seen`)
+        return authenticatedApiFetch("/api/Movies/seen")
             .then((res) => res.json())
             .then(setMovies);
     };
 
     //delete a movie from the watchlist
     const deleteMovie = movieId => {
-        return fetch(`${apiUrl}/api/Movies/${movieId}`, {
+        return secureApiFetch(`/api/Movies/${movieId}`, {
             method: "DELETE"
         })
     }
 
     //list all liked movies
     const getAllLikedMovies = () => {
-        return fetch(`${apiUrl}/api/Movies/liked`)
+        return authenticatedApiFetch("/api/Movies/liked")
             .then((res) => res.json())
             .then(setMovies);
     };
 
     //list all disliked movies
     const getAllDislikedMovies = () => {
-        return fetch(`${apiUrl}/api/Movies/disliked`)
+        return authenticatedApiFetch("/api/Movies/disliked")
             .then((res) => res.json())
             .then(setMovies);
     };
 
     //change watched to true
     const seenIt = (id) => {
-        return fetch(`${apiUrl}/api/Movies/seenit/${id}`, {
+        return secureApiFetch(`/api/Movies/seenit/${id}`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json"
@@ -158,7 +182,7 @@ export const MovieProvider = (props) => {
 
     //change rating to 1
     const likedIt = (id) => {
-        return fetch(`${apiUrl}/api/Movies/likedit/${id}`, {
+        return secureApiFetch(`/api/Movies/likedit/${id}`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json"
@@ -168,7 +192,7 @@ export const MovieProvider = (props) => {
 
     //change rating to -1
     const dislikedIt = (id) => {
-        return fetch(`${apiUrl}/api/Movies/dislikedit/${id}`, {
+        return secureApiFetch(`/api/Movies/dislikedit/${id}`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json"

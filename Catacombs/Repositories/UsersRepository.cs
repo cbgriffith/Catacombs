@@ -2,6 +2,7 @@ using Catacombs.Models;
 using Catacombs.Utils;
 using Npgsql;
 using System.Data;
+using System.Data.Common;
 
 namespace Catacombs.Repositories
 {
@@ -11,6 +12,23 @@ namespace Catacombs.Repositories
         {
         }
 
+        public Users GetById(int id)
+        {
+            using var connection = Connection;
+            connection.Open();
+
+            using var command = connection.CreateCommand();
+            command.CommandText = @"
+                SELECT u.id, u.username, u.email, u.password_hash
+                  FROM users u
+                 WHERE u.id = @id";
+
+            DbUtils.AddParameter(command, "@id", id, DbType.Int32);
+
+            using var reader = command.ExecuteReader();
+            return reader.Read() ? MapUser(reader) : null;
+        }
+
         public Users GetByEmail(string email)
         {
             using var connection = Connection;
@@ -18,7 +36,7 @@ namespace Catacombs.Repositories
 
             using var command = connection.CreateCommand();
             command.CommandText = @"
-                SELECT u.id, u.username, u.email, u.password
+                SELECT u.id, u.username, u.email, u.password_hash
                   FROM users u
                  WHERE u.email = @email";
 
@@ -30,13 +48,7 @@ namespace Catacombs.Repositories
                 return null;
             }
 
-            return new Users
-            {
-                id = DbUtils.GetInt(reader, "id"),
-                username = DbUtils.GetString(reader, "username"),
-                email = DbUtils.GetString(reader, "email"),
-                password = DbUtils.GetString(reader, "password")
-            };
+            return MapUser(reader);
         }
 
         public void Add(Users users)
@@ -46,8 +58,8 @@ namespace Catacombs.Repositories
 
             using var command = connection.CreateCommand();
             command.CommandText = @"
-                INSERT INTO users (username, email, password)
-                VALUES (@username, @email, @password)
+                INSERT INTO users (username, email, password_hash)
+                VALUES (@username, @email, @passwordHash)
                 RETURNING id";
 
             DbUtils.AddParameter(
@@ -62,11 +74,43 @@ namespace Catacombs.Repositories
                 DbType.String);
             DbUtils.AddParameter(
                 command,
-                "@password",
-                users.password,
+                "@passwordHash",
+                users.passwordHash,
                 DbType.String);
 
             users.id = (int)command.ExecuteScalar();
+        }
+
+        public void UpdatePasswordHash(int userId, string passwordHash)
+        {
+            using var connection = Connection;
+            connection.Open();
+
+            using var command = connection.CreateCommand();
+            command.CommandText = @"
+                UPDATE users
+                   SET password_hash = @passwordHash
+                 WHERE id = @id";
+
+            DbUtils.AddParameter(command, "@id", userId, DbType.Int32);
+            DbUtils.AddParameter(
+                command,
+                "@passwordHash",
+                passwordHash,
+                DbType.String);
+
+            command.ExecuteNonQuery();
+        }
+
+        private static Users MapUser(DbDataReader reader)
+        {
+            return new Users
+            {
+                id = DbUtils.GetInt(reader, "id"),
+                username = DbUtils.GetString(reader, "username"),
+                email = DbUtils.GetString(reader, "email"),
+                passwordHash = DbUtils.GetString(reader, "password_hash")
+            };
         }
     }
 }

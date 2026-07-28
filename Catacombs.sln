@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.32126.317
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catacombs", "Catacombs\Catacombs.csproj", "{4D171A32-1D43-444A-AC38-66240AD39495}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catacombs.Tests", "Catacombs.Tests\Catacombs.Tests.csproj", "{DC2D0792-12D2-4D67-82AA-E52B04EAF9E5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{4D171A32-1D43-444A-AC38-66240AD39495}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D171A32-1D43-444A-AC38-66240AD39495}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D171A32-1D43-444A-AC38-66240AD39495}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC2D0792-12D2-4D67-82AA-E52B04EAF9E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC2D0792-12D2-4D67-82AA-E52B04EAF9E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC2D0792-12D2-4D67-82AA-E52B04EAF9E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC2D0792-12D2-4D67-82AA-E52B04EAF9E5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

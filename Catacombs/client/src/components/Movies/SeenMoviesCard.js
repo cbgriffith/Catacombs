@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react"
 import { MovieContext } from "../Repositories/MovieProvider";
 import { Button, Card, CardBody, CardTitle, CardSubtitle, CardText, CardFooter } from "reactstrap";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
+import Swal from "../../sweetAlert";
 import "./Movie.css"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faImdb, faFacebookSquare, faTwitterSquare, faInstagramSquare } from "@fortawesome/free-brands-svg-icons";

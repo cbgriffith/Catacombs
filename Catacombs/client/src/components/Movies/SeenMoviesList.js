@@ -7,7 +7,6 @@ import "./Movie.css"
 export const SeenMoviesList = () => {
     const { movies, getAllSeenMovies } = useContext(MovieContext)
     const [reload, setReload] = useState();
-    const user = JSON.parse(sessionStorage.getItem("userProfile"))
 
 
     //useEffect - reach out to the world for something
@@ -21,7 +20,7 @@ export const SeenMoviesList = () => {
             <Container>
                 <h1 style={{ textAlign: "center" }}>Movies I've Seen</h1>
                 <div id="movielist">
-                    {movies.filter(m => m.userId === user.id).map((movie) => (
+                    {movies.map((movie) => (
                         <SeenMoviesCard key={movie.id} movie={movie} reloadProp={setReload} />
                     ))}
                 </div>

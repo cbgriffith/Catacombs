@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { NavLink as RRNavLink } from "react-router-dom";
+import { NavLink as RRNavLink, useNavigate } from "react-router-dom";
 import {
   Collapse,
   Navbar,
@@ -16,13 +16,38 @@ import {
 } from 'reactstrap';
 import { UserContext } from './Repositories/UserProvider';
 import icon from './Movies/images/icon.png'
+import Swal from "../sweetAlert";
 import "./Header.css"
 
 export default function Header() {
-  const { isLoggedIn, logout } = useContext(UserContext);
-  const user = JSON.parse(sessionStorage.getItem("userProfile"))
+  const { isLoggedIn, logout, userProfile } = useContext(UserContext);
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const toggle = () => setIsOpen(!isOpen);
+  const logoutClick = async (event) => {
+    event.preventDefault();
+
+    if (isLoggingOut) {
+      return;
+    }
+
+    setIsLoggingOut(true);
+
+    try {
+      await logout();
+      navigate("/login");
+    } catch (error) {
+      await Swal.fire({
+        title: "Unable to log out",
+        text: error.message,
+        icon: "error",
+        confirmButtonText: "Try again",
+      });
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
 
   return (
     <div>
@@ -94,11 +119,15 @@ export default function Header() {
             {isLoggedIn &&
               <>
                 <NavbarText id="username">
-                  {user.username}
+                  {userProfile.username}
                 </NavbarText>
                 <NavItem className="me-5" id="logout">
                   <a aria-current="page" id="logout" className="nav-link" href="/logout"
-                    style={{ cursor: "pointer" }} onClick={logout}>Logout</a>
+                    aria-disabled={isLoggingOut}
+                    style={{ cursor: isLoggingOut ? "wait" : "pointer" }}
+                    onClick={logoutClick}>
+                    {isLoggingOut ? "Logging out..." : "Logout"}
+                  </a>
                 </NavItem>
               </>
             }

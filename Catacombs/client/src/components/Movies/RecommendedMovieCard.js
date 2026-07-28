@@ -12,7 +12,6 @@ export const RecommendedMovieCard = ({ movie }) => {
     let formattedDate = date.toLocaleDateString('en-US')
     const { addMovie, getSocials } = useContext(MovieContext)
     const [socials, setSocials] = useState({});
-    const user = JSON.parse(sessionStorage.getItem("userProfile"))
     let link = "https://image.tmdb.org/t/p/w200";
     const imgNotFound = require('./images/broken-1.png');
     let poster = "";
@@ -35,10 +34,7 @@ export const RecommendedMovieCard = ({ movie }) => {
     const handleSaveMovie = (e) => {
         e.preventDefault();
         const newMovie = {
-            userId: user.id,
             title: movie.title,
-            rating: 0,
-            watched: false,
             poster_path: movie.poster_path,
             overview: movie.overview,
             popularity: movie.popularity,

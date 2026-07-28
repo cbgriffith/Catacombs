@@ -5,16 +5,15 @@ namespace Catacombs.Repositories
 {
     public interface IMoviesRepository
     {
-        List<Movies> GetAllMoviesByUser(int userId);
-        Movies GetMovieById(int id);
-        void Add(Movies movie);
-        List<Movies> GetAllMovies();
-        List<Movies> GetAllSeenMovies();
-        void Delete(int id);
-        List<Movies> GetAllLikedMovies();
-        List<Movies> GetAllDislikedMovies();
-        void SeenIt(int id);
-        void LikedIt(int id);
-        void DislikedIt(int id);
-    }                      
+        Movies GetMovieById(int id, int userId);
+        void Add(Movies movie, int userId);
+        List<Movies> GetAllMovies(int userId);
+        List<Movies> GetAllSeenMovies(int userId);
+        bool Delete(int id, int userId);
+        List<Movies> GetAllLikedMovies(int userId);
+        List<Movies> GetAllDislikedMovies(int userId);
+        bool SeenIt(int id, int userId);
+        bool LikedIt(int id, int userId);
+        bool DislikedIt(int id, int userId);
+    }
 }

@@ -32,12 +32,10 @@ export function UserProvider({ children }) {
   const isLoggedIn = userProfile !== null;
 
   const saveUserProfile = (profile) => {
-    sessionStorage.setItem("userProfile", JSON.stringify(profile));
     setUserProfile(profile);
   };
 
   const clearUserProfile = () => {
-    sessionStorage.removeItem("userProfile");
     setUserProfile(null);
   };
 

@@ -6,7 +6,6 @@ import "./Movie.css"
 
 export const MovieWatchList = () => {
   let { movies, getAllMovies } = useContext(MovieContext)
-  const user = JSON.parse(sessionStorage.getItem("userProfile"))
   const [reload, setReload] = useState();
 
 
@@ -22,7 +21,7 @@ export const MovieWatchList = () => {
         <Container>
           <h1 style={{ textAlign: "center" }}>Watchlist</h1>
           <div id="movielist">
-            {movies.filter(m => m.userId === user.id).map((movie) => (
+            {movies.map((movie) => (
               <MovieWatchListCard key={movie.id} movie={movie} reloadProp={setReload} />
             ))}
           </div>

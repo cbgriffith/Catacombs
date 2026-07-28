@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
 namespace Catacombs.Models
 {
     public class Movies
     {
         public int id { get; set; }
+
+        [JsonIgnore]
         public int userId { get; set; }
         public string title { get; set; }
         public int rating { get; set; }
@@ -15,6 +18,7 @@ namespace Catacombs.Models
         public double vote_average { get; set; }
         public DateTime release_date { get; set; }
         public int movieId { get; set; }
-        public Users Users { get; set; }   
+        [JsonIgnore]
+        public Users Users { get; set; }
     }
 }

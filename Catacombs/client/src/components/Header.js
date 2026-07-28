@@ -118,7 +118,7 @@ export default function Header() {
 
             {isLoggedIn &&
               <>
-                <NavbarText id="username">
+                <NavbarText className="header-username">
                   {userProfile.username}
                 </NavbarText>
                 <NavItem className="me-5" id="logout">

@@ -16,18 +16,37 @@ import {
 } from 'reactstrap';
 import { UserContext } from './Repositories/UserProvider';
 import icon from './Movies/images/icon.png'
+import Swal from "../sweetAlert";
 import "./Header.css"
 
 export default function Header() {
   const { isLoggedIn, logout, userProfile } = useContext(UserContext);
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const toggle = () => setIsOpen(!isOpen);
-  const logoutClick = (event) => {
+  const logoutClick = async (event) => {
     event.preventDefault();
-    logout()
-      .then(() => navigate("/login"))
-      .catch((error) => alert(error.message));
+
+    if (isLoggingOut) {
+      return;
+    }
+
+    setIsLoggingOut(true);
+
+    try {
+      await logout();
+      navigate("/login");
+    } catch (error) {
+      await Swal.fire({
+        title: "Unable to log out",
+        text: error.message,
+        icon: "error",
+        confirmButtonText: "Try again",
+      });
+    } finally {
+      setIsLoggingOut(false);
+    }
   };
 
   return (
@@ -104,7 +123,11 @@ export default function Header() {
                 </NavbarText>
                 <NavItem className="me-5" id="logout">
                   <a aria-current="page" id="logout" className="nav-link" href="/logout"
-                    style={{ cursor: "pointer" }} onClick={logoutClick}>Logout</a>
+                    aria-disabled={isLoggingOut}
+                    style={{ cursor: isLoggingOut ? "wait" : "pointer" }}
+                    onClick={logoutClick}>
+                    {isLoggingOut ? "Logging out..." : "Logout"}
+                  </a>
                 </NavItem>
               </>
             }

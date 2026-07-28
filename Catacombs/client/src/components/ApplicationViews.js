@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
+import { Spinner } from "reactstrap";
 import { UserContext } from "./Repositories/UserProvider"
 import Login from "./auth/Login";
 import Register from "./auth/Register";
@@ -22,13 +23,19 @@ import { LikedMoviesList } from "./Movies/LikedMoviesList";
 import { DislikedMoviesList } from "./Movies/DislikedMoviesList";
 import { RecommendedMovieList } from "./Movies/RecommendedMoviesList";
 import { Home } from "./Home";
+import "./auth/Auth.css";
 
 
 export default function ApplicationViews() {
    const { isLoadingUser, isLoggedIn } = useContext(UserContext);
 
    if (isLoadingUser) {
-      return null;
+      return (
+         <div className="session-loading" role="status" aria-live="polite">
+            <Spinner size="sm" aria-hidden="true" />
+            <span>Restoring your session...</span>
+         </div>
+      );
    }
 
    if (!isLoggedIn) {
@@ -36,7 +43,7 @@ export default function ApplicationViews() {
          <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="*" element={<Navigate to="/login" />} />
+            <Route path="*" element={<Navigate to="/login" replace />} />
          </Routes>
       );
    }
@@ -70,6 +77,9 @@ export default function ApplicationViews() {
             <Route path="/movies/seen" element={<SeenMoviesList />} />
             <Route path="/movies/liked" element={<LikedMoviesList />} />
             <Route path="/movies/disliked" element={<DislikedMoviesList />} />
+            <Route path="/login" element={<Navigate to="/" replace />} />
+            <Route path="/register" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
          </Routes>
       );
    }

@@ -7,7 +7,10 @@ const apiUrl = "https://localhost:44377";
 async function getErrorMessage(response, fallbackMessage) {
   try {
     const responseBody = await response.json();
-    return responseBody.title ?? fallbackMessage;
+    const validationMessage = Object.values(responseBody.errors ?? {})
+      .flat()
+      .find(Boolean);
+    return validationMessage ?? responseBody.title ?? fallbackMessage;
   } catch {
     return fallbackMessage;
   }

@@ -24,8 +24,7 @@ namespace Catacombs.Repositories
                    m.movie_id,
                    u.id AS owner_id,
                    u.username AS owner_username,
-                   u.email AS owner_email,
-                   u.password AS owner_password
+                   u.email AS owner_email
               FROM movies m
                    INNER JOIN users u ON m.user_id = u.id";
 
@@ -228,8 +227,7 @@ namespace Catacombs.Repositories
                 {
                     id = DbUtils.GetInt(reader, "owner_id"),
                     username = DbUtils.GetString(reader, "owner_username"),
-                    email = DbUtils.GetString(reader, "owner_email"),
-                    password = DbUtils.GetString(reader, "owner_password")
+                    email = DbUtils.GetString(reader, "owner_email")
                 }
             };
         }

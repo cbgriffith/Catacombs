@@ -7,19 +7,23 @@ export default function Register() {
   const navigate = useNavigate();
   const { register } = useContext(UserContext);
 
-  const [username, setUsername] = useState();
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
-  const [confirmPassword, setConfirmPassword] = useState();
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const registerClick = (e) => {
     e.preventDefault();
-    if (password && password !== confirmPassword) {
+    if (password !== confirmPassword) {
       alert("Passwords don't match. Try again.");
     } else {
       const userProfile = { username, email, password };
-      register(userProfile, password)
-        .then(() => navigate("/"));
+      register(userProfile)
+        .then(() => {
+          alert("Account created. You can now log in.");
+          navigate("/login");
+        })
+        .catch((error) => alert(error.message));
     }
   };
 
@@ -29,19 +33,19 @@ export default function Register() {
         <fieldset>
           <FormGroup>
             <Label htmlFor="username">Username</Label>
-            <Input style={{color: "black"}} id="username" type="text" onChange={e => setUsername(e.target.value)} />
+            <Input style={{color: "black"}} id="username" type="text" required minLength="2" maxLength="50" onChange={e => setUsername(e.target.value)} />
           </FormGroup>
           <FormGroup>
             <Label for="email">Email</Label>
-            <Input id="email" type="text" onChange={e => setEmail(e.target.value)} />
+            <Input id="email" type="email" required maxLength="320" onChange={e => setEmail(e.target.value)} />
           </FormGroup>
           <FormGroup>
             <Label for="password">Password</Label>
-            <Input id="password" type="password" onChange={e => setPassword(e.target.value)} />
+            <Input id="password" type="password" required minLength="15" maxLength="128" onChange={e => setPassword(e.target.value)} />
           </FormGroup>
           <FormGroup>
             <Label for="confirmPassword">Confirm Password</Label>
-            <Input id="confirmPassword" type="password" onChange={e => setConfirmPassword(e.target.value)} />
+            <Input id="confirmPassword" type="password" required minLength="15" maxLength="128" onChange={e => setConfirmPassword(e.target.value)} />
           </FormGroup>
           <FormGroup>
             <Button>Register</Button>

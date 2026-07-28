@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createContext } from "react";
+import React, { useState, createContext } from "react";
 
 export const UserContext = createContext();
 
@@ -30,18 +30,24 @@ export function UserProvider(props) {
     setIsLoggedIn(false);
   };
 
-  const register = (userObject, password) => {
-    return fetch(`${apiUrl}/api/Users`, {
+  const register = (userObject) => {
+    return fetch(`${apiUrl}/api/auth/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(userObject),
     })
-      .then((response) => response.json())
-      .then((savedUserProfile) => {
-        sessionStorage.setItem("userProfile", JSON.stringify(savedUserProfile))
-        setIsLoggedIn(true);
+      .then(async (response) => {
+        const responseBody = await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            responseBody.title ?? "Unable to create the account."
+          );
+        }
+
+        return responseBody;
       });
   };
 

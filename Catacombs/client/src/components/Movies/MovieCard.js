@@ -6,7 +6,7 @@ import "./Movie.css"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faImdb, faFacebookSquare, faTwitterSquare, faInstagramSquare } from "@fortawesome/free-brands-svg-icons";
 import { faClapperboard, faSquarePlus } from "@fortawesome/free-solid-svg-icons";
-import Swal from "sweetalert2";
+import Swal from "../../sweetAlert";
 
 export const MovieCard = ({ movie }) => {
     let date = new Date(movie.release_date);

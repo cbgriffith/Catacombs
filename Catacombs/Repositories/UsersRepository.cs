@@ -18,7 +18,7 @@ namespace Catacombs.Repositories
 
             using var command = connection.CreateCommand();
             command.CommandText = @"
-                SELECT u.id, u.username, u.email, u.password
+                SELECT u.id, u.username, u.email, u.password_hash
                   FROM users u
                  WHERE u.email = @email";
 
@@ -35,7 +35,7 @@ namespace Catacombs.Repositories
                 id = DbUtils.GetInt(reader, "id"),
                 username = DbUtils.GetString(reader, "username"),
                 email = DbUtils.GetString(reader, "email"),
-                password = DbUtils.GetString(reader, "password")
+                passwordHash = DbUtils.GetString(reader, "password_hash")
             };
         }
 
@@ -46,8 +46,8 @@ namespace Catacombs.Repositories
 
             using var command = connection.CreateCommand();
             command.CommandText = @"
-                INSERT INTO users (username, email, password)
-                VALUES (@username, @email, @password)
+                INSERT INTO users (username, email, password_hash)
+                VALUES (@username, @email, @passwordHash)
                 RETURNING id";
 
             DbUtils.AddParameter(
@@ -62,8 +62,8 @@ namespace Catacombs.Repositories
                 DbType.String);
             DbUtils.AddParameter(
                 command,
-                "@password",
-                users.password,
+                "@passwordHash",
+                users.passwordHash,
                 DbType.String);
 
             users.id = (int)command.ExecuteScalar();

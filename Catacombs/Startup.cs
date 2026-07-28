@@ -1,9 +1,11 @@
 using Catacombs.Database;
 using Catacombs.HealthChecks;
+using Catacombs.Models;
 using Catacombs.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -42,6 +44,11 @@ namespace Catacombs
 
             services.AddTransient<IUsersRepository, UsersRepository>();
             services.AddTransient<IMoviesRepository, MoviesRepository>();
+            services.Configure<PasswordHasherOptions>(options =>
+            {
+                options.IterationCount = 210_000;
+            });
+            services.AddScoped<IPasswordHasher<Users>, PasswordHasher<Users>>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

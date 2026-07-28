@@ -1,5 +1,8 @@
+using Catacombs.Database;
+using Catacombs.HealthChecks;
 using Catacombs.Repositories;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +31,15 @@ namespace Catacombs
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var postgresConnectionString = Configuration.GetConnectionString("Catacombs")
+                ?? throw new InvalidOperationException(
+                    "The PostgreSQL connection string 'Catacombs' is not configured.");
+
+            services.AddSingleton(_ => NpgsqlDataSource.Create(postgresConnectionString));
+            services.AddHostedService<DatabaseInitializationService>();
+            services.AddHealthChecks()
+                .AddCheck<PostgreSqlHealthCheck>("postgresql");
+
             services.AddTransient<IUsersRepository, UsersRepository>();
             services.AddTransient<IMoviesRepository, MoviesRepository>();
 
@@ -62,6 +75,7 @@ namespace Catacombs
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHealthChecks("/health");
                 endpoints.MapControllers();
             });
         }

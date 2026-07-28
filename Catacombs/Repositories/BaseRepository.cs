@@ -1,23 +1,16 @@
-﻿using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
+using Npgsql;
 
 namespace Catacombs.Repositories
 {
     public abstract class BaseRepository
     {
-        private readonly string _connectionString;
+        private readonly NpgsqlDataSource _dataSource;
 
-        public BaseRepository(IConfiguration configuration)
+        protected BaseRepository(NpgsqlDataSource dataSource)
         {
-            _connectionString = configuration.GetConnectionString("DefaultConnection");
+            _dataSource = dataSource;
         }
 
-        protected SqlConnection Connection
-        {
-            get
-            {
-                return new SqlConnection(_connectionString);
-            }
-        }
-    } 
+        protected NpgsqlConnection Connection => _dataSource.CreateConnection();
+    }
 }

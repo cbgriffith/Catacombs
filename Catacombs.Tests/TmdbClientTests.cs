@@ -84,6 +84,23 @@ public sealed class TmdbClientTests
     }
 
     [Fact]
+    public async Task MetadataCombinesSocialIdsAndVideosInOneRequest()
+    {
+        var handler = new RecordingHandler();
+        var client = CreateClient(handler, TestToken);
+
+        await client.GetMovieMetadataAsync(
+            348,
+            CancellationToken.None);
+
+        Assert.Equal(
+            "/3/movie/348?append_to_response=external_ids,videos" +
+            "&language=en-US",
+            handler.RequestUri?.PathAndQuery);
+        Assert.Equal(1, handler.RequestCount);
+    }
+
+    [Fact]
     public async Task MissingTokenStopsTheRequestBeforeItLeavesTheApp()
     {
         var handler = new RecordingHandler();

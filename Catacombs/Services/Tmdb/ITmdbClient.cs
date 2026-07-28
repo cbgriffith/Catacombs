@@ -27,5 +27,9 @@ namespace Catacombs.Services.Tmdb
         Task<TmdbResponse> GetVideosAsync(
             int movieId,
             CancellationToken cancellationToken);
+
+        Task<TmdbResponse> GetMovieMetadataAsync(
+            int movieId,
+            CancellationToken cancellationToken);
     }
 }

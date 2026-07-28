@@ -126,6 +126,18 @@ namespace Catacombs.Controllers
                 cancellationToken);
         }
 
+        [HttpGet("movies/{movieId:int}/metadata")]
+        public Task<IActionResult> Metadata(
+            [FromRoute, Range(1, int.MaxValue)] int movieId,
+            CancellationToken cancellationToken = default)
+        {
+            return ProxyAsync(
+                token => _tmdbClient.GetMovieMetadataAsync(
+                    movieId,
+                    token),
+                cancellationToken);
+        }
+
         private async Task<IActionResult> ProxyAsync(
             Func<CancellationToken, Task<TmdbResponse>> request,
             CancellationToken cancellationToken)

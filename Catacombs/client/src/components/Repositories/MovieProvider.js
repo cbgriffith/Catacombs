@@ -128,16 +128,13 @@ export const MovieProvider = (props) => {
         )
     }
 
-    const getSocials = (movieId) => {
+    const getMovieMetadata = (movieId) => {
         return tmdbApiFetch(
-            `/api/tmdb/movies/${movieId}/external-ids`
-        ).catch(() => ({}))
-    }
-
-    const getVideos = (movieId) => {
-        return tmdbApiFetch(
-            `/api/tmdb/movies/${movieId}/videos`
-        ).catch(() => ({ results: [] }))
+            `/api/tmdb/movies/${movieId}/metadata`
+        ).catch(() => ({
+            external_ids: {},
+            videos: { results: [] }
+        }))
     }
 
     const addMovie = (movie) => {
@@ -219,8 +216,7 @@ export const MovieProvider = (props) => {
             seenIt,
             likedIt,
             dislikedIt,
-            getSocials,
-            getVideos
+            getMovieMetadata
         }}>
             {props.children}
         </MovieContext.Provider>

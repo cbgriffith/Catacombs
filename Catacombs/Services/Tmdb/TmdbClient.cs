@@ -124,6 +124,20 @@ namespace Catacombs.Services.Tmdb
                 cancellationToken);
         }
 
+        public Task<TmdbResponse> GetMovieMetadataAsync(
+            int movieId,
+            CancellationToken cancellationToken)
+        {
+            return GetAsync(
+                $"movie/{FormatNumber(movieId)}",
+                new Dictionary<string, string>
+                {
+                    ["append_to_response"] = "external_ids,videos",
+                    ["language"] = "en-US"
+                },
+                cancellationToken);
+        }
+
         private async Task<TmdbResponse> GetAsync(
             string path,
             IDictionary<string, string> query,

@@ -96,7 +96,7 @@
     line-height: 1.6;
 }
 
-.movie-empty-state-action.btn {
+.movie-return-action.btn {
     display: inline-flex;
     gap: 0.55rem;
     align-items: center;
@@ -108,17 +108,23 @@
     box-shadow: none;
 }
 
-.movie-empty-state-action.btn:hover,
-.movie-empty-state-action.btn:focus-visible {
+.movie-return-action.btn:hover,
+.movie-return-action.btn:focus-visible {
     border-color: #ef174c;
     background: #ef174c;
     color: #fff;
     box-shadow: 0 0.65rem 1.5rem rgba(239, 23, 76, 0.22);
 }
 
-.movie-empty-state-action.btn span {
+.movie-return-action.btn span {
     font-size: 1.2rem;
     line-height: 1;
+}
+
+.similar-movies-footer {
+    display: flex;
+    justify-content: center;
+    padding: 0.25rem 0 2rem;
 }
 
 .movie-grid-item {

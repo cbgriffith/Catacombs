@@ -90,7 +90,7 @@ export const SimilarMovieList = () => {
                             </p>
                             <Button
                                 type="button"
-                                className="movie-empty-state-action"
+                                className="movie-return-action"
                                 onClick={() => navigate(-1)}
                             >
                                 <span aria-hidden="true">←</span>
@@ -108,9 +108,16 @@ export const SimilarMovieList = () => {
                         </div>
                     )}
                     {!isLoadingMovies && movies.length > 0 && (
-                        <Button onClick={() => navigate(-1)}>
-                            Go back
-                        </Button>
+                        <div className="similar-movies-footer">
+                            <Button
+                                type="button"
+                                className="movie-return-action"
+                                onClick={() => navigate(-1)}
+                            >
+                                <span aria-hidden="true">←</span>
+                                Back to previous page
+                            </Button>
+                        </div>
                     )}
                 </Container>
             </div>

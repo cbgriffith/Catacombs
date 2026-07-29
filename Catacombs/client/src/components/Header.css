@@ -1,4 +1,178 @@
+.catacombs-navbar {
+    padding: 0.65rem 0;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(35, 39, 43, 0.98),
+            rgba(24, 27, 30, 0.98)
+        );
+    border-bottom: 1px solid rgba(230, 30, 77, 0.48);
+    box-shadow: 0 0.65rem 1.75rem rgba(0, 0, 0, 0.28);
+}
+
+.catacombs-navbar-inner {
+    display: flex;
+    flex-wrap: inherit;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.catacombs-brand {
+    display: inline-flex;
+    gap: 0.75rem;
+    align-items: center;
+    padding: 0;
+    margin-right: clamp(1rem, 4vw, 3rem);
+}
+
+.catacombs-brand-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    filter: drop-shadow(0 0.25rem 0.4rem rgba(0, 0, 0, 0.38));
+}
+
+.catacombs-brand-copy {
+    display: grid;
+}
+
+.catacombs-brand-title {
+    color: #ffffff;
+    font-size: 1.05rem;
+    font-weight: 750;
+    line-height: 1.1;
+    letter-spacing: 0.01em;
+}
+
+.catacombs-brand-subtitle {
+    margin-top: 0.2rem;
+    color: #aeb4ba;
+    font-size: 0.68rem;
+    font-weight: 650;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.catacombs-navbar .navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.18);
+    border-radius: 0.6rem;
+}
+
+.catacombs-navbar .navbar-toggler:focus {
+    box-shadow: 0 0 0 0.2rem rgba(230, 30, 77, 0.3);
+}
+
+.catacombs-navbar .navbar-collapse {
+    align-items: center;
+}
+
+.catacombs-main-nav,
+.catacombs-account-nav {
+    gap: 0.35rem;
+    align-items: center;
+}
+
+.catacombs-navbar .nav-link {
+    padding: 0.55rem 0.75rem;
+    color: #cbd0d4;
+    border-radius: 0.55rem;
+    font-weight: 650;
+    transition:
+        background-color 150ms ease,
+        color 150ms ease;
+}
+
+.catacombs-navbar .nav-link:hover,
+.catacombs-navbar .nav-link:focus-visible {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.catacombs-navbar .nav-link.active {
+    color: #ffffff;
+    background-color: rgba(230, 30, 77, 0.2);
+}
+
+.catacombs-navbar .dropdown-menu {
+    min-width: 12rem;
+    padding: 0.45rem;
+    background-color: #181b1e;
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 0.75rem;
+    box-shadow: 0 1rem 2.25rem rgba(0, 0, 0, 0.38);
+}
+
+.catacombs-navbar .dropdown-item {
+    padding: 0.6rem 0.75rem;
+    color: #cbd0d4;
+    border-radius: 0.45rem;
+    font-weight: 600;
+}
+
+.catacombs-navbar .dropdown-item:hover,
+.catacombs-navbar .dropdown-item:focus,
+.catacombs-navbar .dropdown-item.active {
+    color: #ffffff;
+    background-color: rgba(230, 30, 77, 0.22);
+}
+
 .header-username {
-    color:white;
-    font-style:italic;
+    padding: 0.45rem 0.7rem;
+    color: #f8f9fa;
+    background-color: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 650;
+}
+
+.header-logout-button {
+    width: 100%;
+    background: transparent;
+    border: 0;
+    text-align: left;
+}
+
+.header-logout-button:disabled {
+    color: #858c93;
+    cursor: wait;
+}
+
+.catacombs-navbar .header-register-link {
+    color: #ffffff;
+    background-color: #e61e4d;
+}
+
+.catacombs-navbar .header-register-link:hover,
+.catacombs-navbar .header-register-link:focus-visible,
+.catacombs-navbar .header-register-link.active {
+    color: #ffffff;
+    background-color: #c91845;
+}
+
+@media (max-width: 991.98px) {
+    .catacombs-navbar .navbar-collapse {
+        padding-top: 1rem;
+    }
+
+    .catacombs-main-nav,
+    .catacombs-account-nav {
+        gap: 0.3rem;
+        align-items: stretch;
+    }
+
+    .catacombs-account-nav {
+        padding-top: 0.75rem;
+        margin-top: 0.75rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .catacombs-navbar .dropdown-menu {
+        margin-top: 0.35rem;
+        box-shadow: none;
+    }
+
+    .header-username {
+        align-self: flex-start;
+        margin-bottom: 0.25rem;
+    }
 }

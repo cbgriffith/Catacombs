@@ -38,6 +38,19 @@ const formatReleaseDate = (releaseDate) => {
     ).toLocaleDateString("en-US");
 };
 
+const formatRating = (rating) => {
+    const numericRating = Number(rating);
+
+    if (
+        !Number.isFinite(numericRating) ||
+        numericRating <= 0
+    ) {
+        return "Not rated yet";
+    }
+
+    return `${numericRating.toFixed(1)} / 10`;
+};
+
 export const MovieCardContent = ({ movie }) => (
     <CardBody className="movie-card-body">
         <img
@@ -51,14 +64,25 @@ export const MovieCardContent = ({ movie }) => (
                 {movie.title}
             </CardTitle>
             <div className="movie-card-meta">
-                <CardSubtitle tag="p">
-                    Release date: {formatReleaseDate(movie.release_date)}
+                <CardSubtitle
+                    className="movie-card-meta-item"
+                    tag="p"
+                >
+                    <span className="movie-card-meta-label">
+                        Release date
+                    </span>
+                    <span>
+                        {formatReleaseDate(movie.release_date)}
+                    </span>
                 </CardSubtitle>
-                <CardSubtitle tag="p">
-                    Vote score: {movie.vote_average}
-                </CardSubtitle>
-                <CardSubtitle tag="p">
-                    Popularity score: {movie.popularity}
+                <CardSubtitle
+                    className="movie-card-meta-item"
+                    tag="p"
+                >
+                    <span className="movie-card-meta-label">
+                        TMDB rating
+                    </span>
+                    <span>{formatRating(movie.vote_average)}</span>
                 </CardSubtitle>
             </div>
             <CardText className="movie-card-overview">

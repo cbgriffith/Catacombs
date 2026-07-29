@@ -57,13 +57,28 @@
 
 .movie-card-meta {
     display: grid;
-    gap: 0.2rem;
-    color: #aeb4ba;
-    font-size: 0.88rem;
+    gap: 0.45rem;
+    color: #e1e3e5;
+    font-size: 0.9rem;
 }
 
 .movie-card-meta p {
     margin: 0;
+}
+
+.movie-card-meta-item {
+    display: grid;
+    grid-template-columns: minmax(6.4rem, auto) 1fr;
+    gap: 0.65rem;
+    align-items: baseline;
+}
+
+.movie-card-meta-label {
+    color: #9ca3a9;
+    font-size: 0.68rem;
+    font-weight: 750;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
 }
 
 .movie-card-overview {

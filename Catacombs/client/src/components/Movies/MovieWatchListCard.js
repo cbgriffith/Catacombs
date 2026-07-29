@@ -64,7 +64,7 @@ export const MovieWatchListCard = ({ movie, reloadProp }) => {
     }
 
 
-    const handleRecommendedMovies = () => {
+    const handleSimilarMovies = () => {
         Swal.fire({
             title: `View a list of similar movies to ${movie.title}?`,
             icon: 'question',
@@ -73,7 +73,7 @@ export const MovieWatchListCard = ({ movie, reloadProp }) => {
             cancelButtonText: 'No'
         }).then((result) => {
             if (result.isConfirmed) {
-                navigate(`/movies/recommended/${movie.movieId}`)
+                navigate(`/movies/similar/${movie.movieId}`)
             }
         })
     }
@@ -97,7 +97,7 @@ export const MovieWatchListCard = ({ movie, reloadProp }) => {
                             <MovieActionButton
                                 icon={faClapperboard}
                                 label={`View movies similar to ${movie.title}`}
-                                onClick={handleRecommendedMovies}
+                                onClick={handleSimilarMovies}
                             />
                             <MovieActionButton
                                 icon={faEye}

@@ -16,7 +16,7 @@ user build their own horror movie collection.
 - View IMDb and social links when they are available
 - Save movies to a personal watch list
 - Track watched, liked, and disliked movies
-- View recommended movies
+- View similar movies based on genres and keywords
 - Create an account, log in securely, and change your password
 - Browse paginated movie lists with a responsive card layout
 

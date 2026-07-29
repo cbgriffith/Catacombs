@@ -128,9 +128,9 @@ export const MovieProvider = (props) => {
         )
     }
 
-    const recommendedMovies = (movieId, page = 1) => {
+    const similarMovies = (movieId, page = 1) => {
         return loadTmdbMovies(
-            `/api/tmdb/movies/${movieId}/recommendations?page=${page}`
+            `/api/tmdb/movies/${movieId}/similar?page=${page}`
         )
     }
 
@@ -215,7 +215,7 @@ export const MovieProvider = (props) => {
             searchMovies,
             comingSoon,
             nowPlaying,
-            recommendedMovies,
+            similarMovies,
             getAllSeenMovies,
             deleteMovie,
             getAllLikedMovies,

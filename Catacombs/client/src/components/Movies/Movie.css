@@ -1,12 +1,80 @@
-#movie {
-    flex-basis: 46%;
-    margin-left: 1rem;
+#movielist {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+    align-items: stretch;
+    margin: 1.5rem 0 2rem;
 }
 
-#movielist {
+.movie-grid-item {
+    min-width: 0;
     display: flex;
+}
+
+.movie-card {
     width: 100%;
-    flex-wrap: wrap;
+    height: 100%;
+    overflow: visible;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 1rem;
+    box-shadow: 0 0.85rem 2rem rgba(0, 0, 0, 0.22);
+}
+
+.movie-card-body {
+    min-height: 22rem;
+    display: grid;
+    grid-template-columns: 10.5rem minmax(0, 1fr);
+    gap: 1.15rem;
+    padding: 1.15rem;
+}
+
+.movie-card-poster {
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.7rem;
+    box-shadow: 0 0.6rem 1.25rem rgba(0, 0, 0, 0.28);
+}
+
+.movie-card-details {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.movie-card-title {
+    min-height: 2.5em;
+    display: -webkit-box;
+    margin-bottom: 0.65rem;
+    overflow: hidden;
+    font-size: clamp(1.25rem, 2.2vw, 1.55rem);
+    line-height: 1.25;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.movie-card-meta {
+    display: grid;
+    gap: 0.2rem;
+    color: #aeb4ba;
+    font-size: 0.88rem;
+}
+
+.movie-card-meta p {
+    margin: 0;
+}
+
+.movie-card-overview {
+    display: -webkit-box;
+    margin-top: 0.9rem;
+    margin-bottom: 0;
+    overflow: hidden;
+    color: #e1e3e5;
+    line-height: 1.45;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 7;
 }
 
 .movie-pagination {
@@ -183,6 +251,7 @@
 }
 
 .movie-card-footer {
+    min-height: 4.55rem;
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
@@ -350,4 +419,35 @@
 .movie-social-link--instagram:hover {
     background-color: #c13584;
     border-color: #ff83bd;
+}
+
+@media (max-width: 991.98px) {
+    #movielist {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 575.98px) {
+    #movielist {
+        gap: 1rem;
+    }
+
+    .movie-card-body {
+        min-height: 0;
+        grid-template-columns: 1fr;
+    }
+
+    .movie-card-poster {
+        width: min(100%, 14rem);
+        justify-self: center;
+    }
+
+    .movie-card-title {
+        min-height: 0;
+    }
+
+    .movie-card-footer {
+        align-items: flex-start;
+        flex-direction: column;
+    }
 }

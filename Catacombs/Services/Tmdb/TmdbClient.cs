@@ -48,7 +48,8 @@ namespace Catacombs.Services.Tmdb
                 ["page"] = FormatNumber(page),
                 ["include_adult"] = "false",
                 ["include_video"] = "false",
-                ["with_genres"] = "27"
+                ["with_genres"] = "27",
+                ["without_genres"] = "10751,10770"
             };
 
             if (list == TmdbMovieList.Popular ||
@@ -93,7 +94,6 @@ namespace Catacombs.Services.Tmdb
             query["vote_average.gte"] = "6";
             query["vote_count.gte"] = "100";
             query["vote_count.lte"] = "2500";
-            query["without_genres"] = "10751,10770";
             query["primary_release_date.lte"] = FormatDate(today);
         }
 

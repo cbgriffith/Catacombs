@@ -11,6 +11,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../Repositories/UserProvider";
 import Swal from "../../sweetAlert";
+import PasswordInput from "./PasswordInput";
 import "./Auth.css";
 
 export default function Register() {
@@ -97,10 +98,9 @@ export default function Register() {
               />
             </FormGroup>
             <FormGroup>
-              <Label htmlFor="password">Password</Label>
-              <Input
+              <PasswordInput
                 id="password"
-                type="password"
+                label="Password"
                 value={password}
                 required
                 minLength="8"
@@ -114,10 +114,9 @@ export default function Register() {
               </p>
             </FormGroup>
             <FormGroup>
-              <Label htmlFor="confirmPassword">Confirm password</Label>
-              <Input
+              <PasswordInput
                 id="confirmPassword"
-                type="password"
+                label="Confirm password"
                 value={confirmPassword}
                 required
                 minLength="8"

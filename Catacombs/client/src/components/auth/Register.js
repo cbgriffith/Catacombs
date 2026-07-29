@@ -11,6 +11,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../Repositories/UserProvider";
 import Swal from "../../sweetAlert";
+import PasswordInput from "./PasswordInput";
 import "./Auth.css";
 
 export default function Register() {
@@ -97,30 +98,28 @@ export default function Register() {
               />
             </FormGroup>
             <FormGroup>
-              <Label htmlFor="password">Password</Label>
-              <Input
+              <PasswordInput
                 id="password"
-                type="password"
+                label="Password"
                 value={password}
                 required
-                minLength="15"
+                minLength="8"
                 maxLength="128"
                 autoComplete="new-password"
                 aria-describedby="password-help"
                 onChange={(event) => setPassword(event.target.value)}
               />
               <p id="password-help" className="auth-help">
-                Use at least 15 characters. A memorable passphrase works well.
+                Use at least 8 characters. Longer passwords are more secure.
               </p>
             </FormGroup>
             <FormGroup>
-              <Label htmlFor="confirmPassword">Confirm password</Label>
-              <Input
+              <PasswordInput
                 id="confirmPassword"
-                type="password"
+                label="Confirm password"
                 value={confirmPassword}
                 required
-                minLength="15"
+                minLength="8"
                 maxLength="128"
                 autoComplete="new-password"
                 onChange={(event) => setConfirmPassword(event.target.value)}

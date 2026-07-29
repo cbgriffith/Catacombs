@@ -4,6 +4,7 @@ import { Spinner } from "reactstrap";
 import { UserContext } from "./Repositories/UserProvider"
 import Login from "./auth/Login";
 import Register from "./auth/Register";
+import ChangePassword from "./auth/ChangePassword";
 import { TopRatedMovieList } from "./Movies/TopRated/TopRatedMovieList";
 import { PopularMovieList } from "./Movies/Popular/PopularMovieList";
 import { HiddenGemsList } from "./Movies/HiddenGemsList";
@@ -67,6 +68,10 @@ export default function ApplicationViews() {
             <Route path="/movies/seen" element={<SeenMoviesList />} />
             <Route path="/movies/liked" element={<LikedMoviesList />} />
             <Route path="/movies/disliked" element={<DislikedMoviesList />} />
+            <Route
+              path="/account/password"
+              element={<ChangePassword />}
+            />
             <Route path="/login" element={<Navigate to="/" replace />} />
             <Route path="/register" element={<Navigate to="/" replace />} />
             <Route path="*" element={<Navigate to="/" replace />} />

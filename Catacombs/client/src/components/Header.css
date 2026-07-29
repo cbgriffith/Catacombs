@@ -115,7 +115,7 @@
     background-color: rgba(230, 30, 77, 0.22);
 }
 
-.header-username {
+.catacombs-navbar .header-account-toggle.nav-link {
     padding: 0.45rem 0.7rem;
     color: #f8f9fa;
     background-color: rgba(255, 255, 255, 0.07);
@@ -125,14 +125,28 @@
     font-weight: 650;
 }
 
-.header-logout-button {
-    width: 100%;
-    background: transparent;
-    border: 0;
-    text-align: left;
+.catacombs-navbar .header-account-toggle.nav-link:hover,
+.catacombs-navbar .header-account-toggle.nav-link:focus-visible,
+.catacombs-navbar .header-account-toggle.nav-link.active {
+    color: #ffffff;
+    background-color: rgba(230, 30, 77, 0.2);
+    border-color: rgba(255, 113, 143, 0.45);
 }
 
-.header-logout-button:disabled {
+.header-account-menu .dropdown-divider {
+    border-top-color: rgba(255, 255, 255, 0.12);
+}
+
+.catacombs-navbar .header-logout-item.dropdown-item {
+    color: #ff718f;
+}
+
+.catacombs-navbar .header-logout-item.dropdown-item:hover,
+.catacombs-navbar .header-logout-item.dropdown-item:focus {
+    color: #ffffff;
+}
+
+.header-logout-item:disabled {
     color: #858c93;
     cursor: wait;
 }
@@ -171,8 +185,18 @@
         box-shadow: none;
     }
 
-    .header-username {
+    .header-account-dropdown {
         align-self: flex-start;
-        margin-bottom: 0.25rem;
+        width: 100%;
+    }
+
+    .catacombs-navbar .header-account-toggle.nav-link {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .header-account-menu {
+        width: 100%;
     }
 }

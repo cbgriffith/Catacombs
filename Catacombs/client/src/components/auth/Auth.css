@@ -102,6 +102,49 @@
   opacity: 0.8;
 }
 
+.auth-password-field {
+  position: relative;
+}
+
+.auth-password-field .form-control {
+  padding-right: 5.4rem;
+}
+
+.auth-password-toggle.btn {
+  position: absolute;
+  top: 50%;
+  right: 0.45rem;
+  min-width: 4.5rem;
+  min-height: 2.15rem;
+  display: inline-flex;
+  gap: 0.4rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.3rem 0.55rem;
+  color: #5a1a2a;
+  background-color: transparent;
+  border: 0;
+  border-radius: 0.45rem;
+  font-size: 0.8rem;
+  font-weight: 750;
+  transform: translateY(-50%);
+}
+
+.auth-password-toggle.btn:hover,
+.auth-password-toggle.btn:focus-visible {
+  color: #ffffff;
+  background-color: #c91845;
+}
+
+.auth-password-toggle.btn:focus-visible {
+  box-shadow: 0 0 0 0.18rem rgba(230, 30, 77, 0.3);
+}
+
+.auth-card fieldset:disabled .auth-password-toggle.btn {
+  color: #777d84;
+  background-color: transparent;
+}
+
 .auth-help {
   margin-top: 0.45rem;
   margin-bottom: 0;

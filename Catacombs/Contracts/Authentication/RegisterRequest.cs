@@ -14,7 +14,7 @@ namespace Catacombs.Contracts.Authentication
         public string Email { get; set; }
 
         [Required]
-        [StringLength(128, MinimumLength = 15)]
+        [StringLength(128, MinimumLength = 8)]
         public string Password { get; set; }
     }
 }

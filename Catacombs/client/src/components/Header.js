@@ -15,8 +15,7 @@ import {
   UncontrolledDropdown,
   DropdownToggle,
   DropdownMenu,
-  DropdownItem,
-  NavbarText
+  DropdownItem
 } from 'reactstrap';
 import { UserContext } from './Repositories/UserProvider';
 import icon from './Movies/images/icon.png'
@@ -213,23 +212,46 @@ export default function Header() {
 
           <Nav className="catacombs-account-nav" navbar>
             {isLoggedIn ? (
-              <>
-                <NavbarText className="header-username">
+              <UncontrolledDropdown
+                nav
+                inNavbar
+                className="header-account-dropdown"
+              >
+                <DropdownToggle
+                  nav
+                  caret
+                  className={
+                    location.pathname.startsWith("/account/")
+                      ? "header-account-toggle active"
+                      : "header-account-toggle"
+                  }
+                >
                   {userProfile.username}
-                </NavbarText>
-                <NavItem>
-                  <button
-                    type="button"
-                    className="nav-link header-logout-button"
+                </DropdownToggle>
+                <DropdownMenu
+                  dark
+                  end
+                  className="header-account-menu"
+                >
+                  <DropdownItem
+                    tag={RRNavLink}
+                    to="/account/password"
+                    onClick={closeMenu}
+                  >
+                    Change password
+                  </DropdownItem>
+                  <DropdownItem divider />
+                  <DropdownItem
+                    className="header-logout-item"
                     disabled={isLoggingOut}
                     onClick={logoutClick}
                   >
                     {isLoggingOut
                       ? "Logging out..."
                       : "Log out"}
-                  </button>
-                </NavItem>
-              </>
+                  </DropdownItem>
+                </DropdownMenu>
+              </UncontrolledDropdown>
             ) : (
               <>
                 <NavItem>

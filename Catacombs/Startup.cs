@@ -31,6 +31,8 @@ namespace Catacombs
         private const string DevelopmentClientCorsPolicy =
             "DevelopmentClient";
         private const string LoginRateLimitPolicy = "Login";
+        private const string PasswordChangeRateLimitPolicy =
+            "PasswordChange";
 
         public Startup(IConfiguration configuration)
         {
@@ -122,6 +124,18 @@ namespace Catacombs
                     StatusCodes.Status429TooManyRequests;
                 options.AddPolicy(
                     LoginRateLimitPolicy,
+                    context => RateLimitPartition.GetFixedWindowLimiter(
+                        context.Connection.RemoteIpAddress?.ToString()
+                            ?? "unknown",
+                        _ => new FixedWindowRateLimiterOptions
+                        {
+                            AutoReplenishment = true,
+                            PermitLimit = 5,
+                            QueueLimit = 0,
+                            Window = TimeSpan.FromMinutes(1)
+                        }));
+                options.AddPolicy(
+                    PasswordChangeRateLimitPolicy,
                     context => RateLimitPartition.GetFixedWindowLimiter(
                         context.Connection.RemoteIpAddress?.ToString()
                             ?? "unknown",

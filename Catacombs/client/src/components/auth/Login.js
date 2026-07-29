@@ -11,6 +11,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../Repositories/UserProvider";
 import Swal from "../../sweetAlert";
+import PasswordInput from "./PasswordInput";
 import "./Auth.css";
 
 export default function Login() {
@@ -65,10 +66,9 @@ export default function Login() {
               />
             </FormGroup>
             <FormGroup>
-              <Label htmlFor="password">Password</Label>
-              <Input
+              <PasswordInput
                 id="password"
-                type="password"
+                label="Password"
                 value={password}
                 required
                 maxLength="128"

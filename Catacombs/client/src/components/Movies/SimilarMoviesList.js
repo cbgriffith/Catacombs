@@ -44,10 +44,20 @@ export const SimilarMovieList = () => {
         <>
             <div id="main">
                 <Container>
-                    <Button onClick={() => navigate(-1)}>Go back</Button>
-                    <div className="movie-list-heading">
-                        <h1>Similar Movies</h1>
-                    </div>
+                    <header className="similar-movies-header">
+                        <Button
+                            type="button"
+                            className="movie-back-link"
+                            aria-label="Return to the previous page"
+                            onClick={() => navigate(-1)}
+                        >
+                            <span aria-hidden="true">←</span>
+                            Back
+                        </Button>
+                        <div className="movie-list-heading">
+                            <h1>Similar Movies</h1>
+                        </div>
+                    </header>
                     {movieLoadError && (
                         <Alert color="danger" role="alert">
                             {movieLoadError}
@@ -78,8 +88,13 @@ export const SimilarMovieList = () => {
                                 listed for this movie yet. Try heading back
                                 and choosing another.
                             </p>
-                            <Button onClick={() => navigate(-1)}>
-                                Go back
+                            <Button
+                                type="button"
+                                className="movie-empty-state-action"
+                                onClick={() => navigate(-1)}
+                            >
+                                <span aria-hidden="true">←</span>
+                                Choose another movie
                             </Button>
                         </section>
                     ) : (

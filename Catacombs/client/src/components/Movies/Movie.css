@@ -25,6 +25,40 @@
     line-height: 1.55;
 }
 
+.similar-movies-header {
+    padding-top: 1rem;
+}
+
+.similar-movies-header .movie-list-heading {
+    padding-top: 0.75rem;
+}
+
+.movie-back-link.btn {
+    display: inline-flex;
+    gap: 0.45rem;
+    align-items: center;
+    padding: 0.4rem 0.6rem;
+    border-color: transparent;
+    background: transparent;
+    color: #c5c9cd;
+    font-weight: 700;
+    box-shadow: none;
+}
+
+.movie-back-link.btn:hover,
+.movie-back-link.btn:focus-visible {
+    border-color: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+    box-shadow: none;
+}
+
+.movie-back-link.btn span {
+    color: #ef174c;
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
 .movie-empty-state {
     max-width: 42rem;
     margin: 2rem auto;
@@ -60,6 +94,31 @@
     margin: 0 auto 1.5rem;
     color: #c5c9cd;
     line-height: 1.6;
+}
+
+.movie-empty-state-action.btn {
+    display: inline-flex;
+    gap: 0.55rem;
+    align-items: center;
+    padding: 0.65rem 1rem;
+    border-color: rgba(239, 23, 76, 0.65);
+    background: rgba(239, 23, 76, 0.12);
+    color: #fff;
+    font-weight: 750;
+    box-shadow: none;
+}
+
+.movie-empty-state-action.btn:hover,
+.movie-empty-state-action.btn:focus-visible {
+    border-color: #ef174c;
+    background: #ef174c;
+    color: #fff;
+    box-shadow: 0 0.65rem 1.5rem rgba(239, 23, 76, 0.22);
+}
+
+.movie-empty-state-action.btn span {
+    font-size: 1.2rem;
+    line-height: 1;
 }
 
 .movie-grid-item {

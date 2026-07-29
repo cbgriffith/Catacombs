@@ -69,6 +69,111 @@
     transform: none;
 }
 
+.search-page {
+    padding-top: 2rem;
+}
+
+.movie-search-panel {
+    width: min(100%, 56rem);
+    margin: 0 auto 2rem;
+    padding: clamp(1.4rem, 4vw, 2.25rem);
+    color: #f8f9fa;
+    background-color: #212529;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 1rem;
+    box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.26);
+}
+
+.movie-search-eyebrow {
+    margin-bottom: 0.4rem;
+    color: #ff718f;
+    font-size: 0.78rem;
+    font-weight: 750;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+}
+
+.movie-search-heading {
+    margin-bottom: 1.25rem;
+    font-size: clamp(1.75rem, 5vw, 2.5rem);
+}
+
+.movie-search-form {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.movie-search-input {
+    min-width: 0;
+    min-height: 3.1rem;
+    flex: 1;
+    padding: 0.7rem 1rem;
+    color: #111418;
+    background-color: #f8f9fa;
+    border: 2px solid transparent;
+    border-radius: 0.65rem;
+    font-size: 1rem;
+    transition:
+        border-color 150ms ease,
+        box-shadow 150ms ease;
+}
+
+.movie-search-input:focus {
+    border-color: #e61e4d;
+    box-shadow: 0 0 0 0.2rem rgba(230, 30, 77, 0.25);
+    outline: none;
+}
+
+.movie-search-input::placeholder {
+    color: #6c757d;
+}
+
+.movie-search-button.btn {
+    min-width: 8.5rem;
+    padding: 0.7rem 1.35rem;
+    color: #ffffff;
+    background-color: #e61e4d;
+    border-color: #e61e4d;
+    border-radius: 0.65rem;
+    font-weight: 750;
+    transition:
+        background-color 150ms ease,
+        border-color 150ms ease,
+        box-shadow 150ms ease,
+        transform 150ms ease;
+}
+
+.movie-search-button.btn:hover,
+.movie-search-button.btn:focus-visible {
+    color: #ffffff;
+    background-color: #c91845;
+    border-color: #ff5579;
+    box-shadow: 0 0.4rem 1rem rgba(230, 30, 77, 0.28);
+    transform: translateY(-1px);
+}
+
+.movie-search-button.btn:focus-visible {
+    box-shadow: 0 0 0 0.2rem rgba(255, 85, 121, 0.35);
+}
+
+.movie-search-button.btn:disabled {
+    color: #aeb4ba;
+    background-color: #343a40;
+    border-color: rgba(255, 255, 255, 0.12);
+    opacity: 1;
+    transform: none;
+}
+
+@media (max-width: 575.98px) {
+    .movie-search-form {
+        flex-direction: column;
+    }
+
+    .movie-search-button.btn {
+        width: 100%;
+    }
+}
+
 .movie-loading {
     align-items: center;
     display: flex;

@@ -14,7 +14,8 @@ export const SearchMovies = () => {
         movieLoadError
     } = useContext(MovieContext);
 
-    const handleSearch = async () => {
+    const handleSearch = async (event) => {
+        event?.preventDefault()
         const query = searchTerm.trim()
         if (!query) {
             return
@@ -33,29 +34,55 @@ export const SearchMovies = () => {
     return (
         <>
             <div>
-                <Container className="pt-4">
-                    <input
-                        type="search"
-                        id="search"
-                        autoFocus
-                        placeholder="Enter movie title"
-                        value={searchTerm}
-                        onKeyDown={(event) =>
-                            event.key === "Enter" && handleSearch()
-                        }
-                        onChange={(event) =>
-                            setSearchTerm(event.target.value)
-                        }
-                    />
-                    <Button
-                        style={{ backgroundColor: "#0D6EFD" }}
-                        onClick={handleSearch}
-                        disabled={
-                            isLoadingMovies || !searchTerm.trim()
-                        }
+                <Container className="search-page">
+                    <section
+                        className="movie-search-panel"
+                        aria-labelledby="movie-search-heading"
                     >
-                        {isLoadingMovies ? "Searching..." : "Search"}
-                    </Button>
+                        <p className="movie-search-eyebrow">
+                            Find your next scare
+                        </p>
+                        <h1
+                            id="movie-search-heading"
+                            className="movie-search-heading"
+                        >
+                            Search horror movies
+                        </h1>
+                        <form
+                            className="movie-search-form"
+                            onSubmit={handleSearch}
+                        >
+                            <label
+                                className="visually-hidden"
+                                htmlFor="movie-search"
+                            >
+                                Movie title
+                            </label>
+                            <input
+                                className="movie-search-input"
+                                type="search"
+                                id="movie-search"
+                                autoFocus
+                                placeholder="Enter a movie title"
+                                value={searchTerm}
+                                onChange={(event) =>
+                                    setSearchTerm(event.target.value)
+                                }
+                            />
+                            <Button
+                                className="movie-search-button"
+                                type="submit"
+                                disabled={
+                                    isLoadingMovies ||
+                                    !searchTerm.trim()
+                                }
+                            >
+                                {isLoadingMovies
+                                    ? "Searching..."
+                                    : "Search"}
+                            </Button>
+                        </form>
+                    </section>
                 </Container>
                 <Container>
                     <h1 style={{ textAlign: "center" }}>Search Results</h1>

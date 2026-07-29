@@ -76,7 +76,7 @@ export default function Login() {
                 onChange={(event) => setPassword(event.target.value)}
               />
             </FormGroup>
-            <Button color="primary" className="auth-submit" type="submit">
+            <Button className="auth-submit" type="submit">
               {isSubmitting ? (
                 <>
                   <Spinner size="sm" aria-hidden="true" />

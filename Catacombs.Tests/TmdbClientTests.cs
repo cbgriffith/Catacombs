@@ -54,6 +54,46 @@ public sealed class TmdbClientTests
     }
 
     [Fact]
+    public async Task HiddenGemsBalanceQualityAndLowerExposure()
+    {
+        var handler = new RecordingHandler();
+        var client = CreateClient(
+            handler,
+            TestToken,
+            new FixedTimeProvider(
+                new DateTimeOffset(
+                    2026,
+                    7,
+                    29,
+                    12,
+                    0,
+                    0,
+                    TimeSpan.Zero)));
+
+        await client.GetMovieListAsync(
+            TmdbMovieList.HiddenGems,
+            2,
+            CancellationToken.None);
+
+        var query = Uri.UnescapeDataString(
+            handler.RequestUri?.Query ?? string.Empty);
+
+        Assert.Equal(
+            "/3/discover/movie",
+            handler.RequestUri?.AbsolutePath);
+        Assert.Contains("page=2", query);
+        Assert.Contains("with_genres=27", query);
+        Assert.Contains("sort_by=vote_average.desc", query);
+        Assert.Contains("vote_average.gte=6", query);
+        Assert.Contains("vote_count.gte=100", query);
+        Assert.Contains("vote_count.lte=2500", query);
+        Assert.Contains("without_genres=10751,10770", query);
+        Assert.Contains(
+            "primary_release_date.lte=2026-07-29",
+            query);
+    }
+
+    [Fact]
     public async Task UpcomingListFiltersForNewHorrorTheatricalReleases()
     {
         var handler = new RecordingHandler();

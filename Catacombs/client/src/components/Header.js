@@ -34,6 +34,7 @@ export default function Header() {
   const browseMoviesIsActive = [
     "/movies/rating",
     "/movies/popular",
+    "/movies/hidden-gems",
     "/movies/nowplaying",
     "/movies/comingsoon",
     "/movies/search",
@@ -133,6 +134,13 @@ export default function Header() {
                       onClick={closeMenu}
                     >
                       Most Popular
+                    </DropdownItem>
+                    <DropdownItem
+                      tag={RRNavLink}
+                      to="/movies/hidden-gems"
+                      onClick={closeMenu}
+                    >
+                      Hidden Gems
                     </DropdownItem>
                     <DropdownItem
                       tag={RRNavLink}

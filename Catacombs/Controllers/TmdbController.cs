@@ -50,6 +50,19 @@ namespace Catacombs.Controllers
                 cancellationToken);
         }
 
+        [HttpGet("movies/hidden-gems")]
+        public Task<IActionResult> HiddenGems(
+            [FromQuery, Range(1, 500)] int page = 1,
+            CancellationToken cancellationToken = default)
+        {
+            return ProxyAsync(
+                token => _tmdbClient.GetMovieListAsync(
+                    TmdbMovieList.HiddenGems,
+                    page,
+                    token),
+                cancellationToken);
+        }
+
         [HttpGet("movies/upcoming")]
         public Task<IActionResult> Upcoming(
             [FromQuery, Range(1, 500)] int page = 1,

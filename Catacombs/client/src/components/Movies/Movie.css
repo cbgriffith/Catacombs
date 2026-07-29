@@ -7,6 +7,24 @@
     margin: 1.5rem 0 2rem;
 }
 
+.movie-list-heading {
+    max-width: 46rem;
+    margin: 0 auto;
+    padding-top: 2rem;
+    text-align: center;
+}
+
+.movie-list-heading h1 {
+    margin-bottom: 0;
+}
+
+.movie-list-heading p {
+    margin: 0.75rem 0 0;
+    color: #c5c9cd;
+    font-size: 1rem;
+    line-height: 1.55;
+}
+
 .movie-grid-item {
     min-width: 0;
     display: flex;

@@ -8,6 +8,7 @@ import "./Movie.css";
 
 export const PaginatedMovieList = ({
     title,
+    description,
     basePath,
     loadMovies
 }) => {
@@ -48,7 +49,10 @@ export const PaginatedMovieList = ({
 
     return (
         <Container>
-            <h1 style={{ textAlign: "center" }}>{title}</h1>
+            <header className="movie-list-heading">
+                <h1>{title}</h1>
+                {description && <p>{description}</p>}
+            </header>
             {pagination}
 
             {movieLoadError && (

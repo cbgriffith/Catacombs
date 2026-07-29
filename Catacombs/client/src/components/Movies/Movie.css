@@ -9,9 +9,64 @@
     flex-wrap: wrap;
 }
 
-.pagination {
+.movie-pagination {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
     justify-content: center;
-    margin:30px;
+    margin: 2rem 0;
+}
+
+.movie-pagination .page-link {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.55rem 0.8rem;
+    color: #f8f9fa;
+    background-color: #202428;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 0.6rem !important;
+    box-shadow: 0 0.3rem 0.8rem rgba(0, 0, 0, 0.16);
+    font-weight: 650;
+    transition:
+        background-color 150ms ease,
+        border-color 150ms ease,
+        box-shadow 150ms ease,
+        transform 150ms ease;
+}
+
+.movie-pagination .page-link:hover {
+    color: #ffffff;
+    background-color: #343a40;
+    border-color: #e61e4d;
+    box-shadow: 0 0.45rem 1rem rgba(0, 0, 0, 0.24);
+    transform: translateY(-1px);
+}
+
+.movie-pagination .page-link:focus-visible {
+    color: #ffffff;
+    background-color: #343a40;
+    border-color: #ff5579;
+    box-shadow: 0 0 0 0.2rem rgba(230, 30, 77, 0.32);
+    outline: none;
+}
+
+.movie-pagination .page-item.active .page-link {
+    color: #ffffff;
+    background-color: #e61e4d;
+    border-color: #e61e4d;
+    box-shadow: 0 0.45rem 1.1rem rgba(230, 30, 77, 0.3);
+}
+
+.movie-pagination .page-item.disabled .page-link {
+    color: #858c93;
+    background-color: rgba(32, 36, 40, 0.62);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: none;
+    opacity: 1;
+    transform: none;
 }
 
 .movie-loading {

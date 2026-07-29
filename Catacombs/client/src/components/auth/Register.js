@@ -103,14 +103,14 @@ export default function Register() {
                 type="password"
                 value={password}
                 required
-                minLength="15"
+                minLength="8"
                 maxLength="128"
                 autoComplete="new-password"
                 aria-describedby="password-help"
                 onChange={(event) => setPassword(event.target.value)}
               />
               <p id="password-help" className="auth-help">
-                Use at least 15 characters. A memorable passphrase works well.
+                Use at least 8 characters. Longer passwords are more secure.
               </p>
             </FormGroup>
             <FormGroup>
@@ -120,7 +120,7 @@ export default function Register() {
                 type="password"
                 value={confirmPassword}
                 required
-                minLength="15"
+                minLength="8"
                 maxLength="128"
                 autoComplete="new-password"
                 onChange={(event) => setConfirmPassword(event.target.value)}

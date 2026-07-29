@@ -90,6 +90,30 @@ public sealed class SecurityIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task RegistrationRequiresAtLeastEightPasswordCharacters()
+    {
+        var shortPasswordResponse = await RegisterAsync(
+            _client,
+            "Short Password",
+            NewEmail("short-password"),
+            "Seven77");
+
+        Assert.Equal(
+            HttpStatusCode.BadRequest,
+            shortPasswordResponse.StatusCode);
+
+        var minimumPasswordResponse = await RegisterAsync(
+            _client,
+            "Minimum Password",
+            NewEmail("minimum-password"),
+            "Eight888");
+
+        Assert.Equal(
+            HttpStatusCode.Created,
+            minimumPasswordResponse.StatusCode);
+    }
+
+    [Fact]
     public async Task LoginRejectsTheWrongPasswordAndMaintainsASession()
     {
         var email = NewEmail("session");
@@ -349,7 +373,8 @@ public sealed class SecurityIntegrationTests : IAsyncLifetime
     private static async Task<HttpResponseMessage> RegisterAsync(
         HttpClient client,
         string username,
-        string email)
+        string email,
+        string password = TestPassword)
     {
         return await SendWithAntiforgeryAsync(
             client,
@@ -359,7 +384,7 @@ public sealed class SecurityIntegrationTests : IAsyncLifetime
             {
                 username,
                 email,
-                password = TestPassword
+                password
             });
     }
 

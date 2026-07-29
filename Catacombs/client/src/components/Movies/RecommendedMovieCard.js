@@ -1,10 +1,10 @@
 import React, { useContext } from "react"
 import { MovieContext } from "../Repositories/MovieProvider";
-import { Button, Card, CardBody, CardTitle, CardSubtitle, CardText, CardFooter } from "reactstrap";
+import { Card, CardBody, CardTitle, CardSubtitle, CardText, CardFooter } from "reactstrap";
 import "./Movie.css"
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSquarePlus } from "@fortawesome/free-solid-svg-icons";
+import { faBookmark } from "@fortawesome/free-solid-svg-icons";
 import Swal from "../../sweetAlert";
+import { MovieActionButton } from "./MovieActionButton";
 import { SocialLinks } from "./SocialLinks";
 import { TrailerButton } from "./TrailerButton";
 import { useMovieMetadata } from "./useMovieMetadata";
@@ -78,14 +78,23 @@ export const RecommendedMovieCard = ({ movie }) => {
                             {movie.overview}
                         </CardText>
                     </CardBody>
-                    <CardFooter>
+                    <CardFooter className="movie-card-footer">
                         <SocialLinks socials={socials} />
-                        <br />
-                        <TrailerButton
-                            trailer={trailer}
-                            title={movie.title}
-                        />{" "}
-                        <Button size="sm" style={{ backgroundColor: "#0D6EFD" }} onClick={handleSaveMovie}><FontAwesomeIcon icon={faSquarePlus} style={{ backgroundColor: "#0D6EFD", color: "#202428" }} size="2x" /></Button>
+                        <div
+                            className="movie-card-actions"
+                            role="group"
+                            aria-label={`Actions for ${movie.title}`}
+                        >
+                            <TrailerButton
+                                trailer={trailer}
+                                title={movie.title}
+                            />
+                            <MovieActionButton
+                                icon={faBookmark}
+                                label={`Add ${movie.title} to your Watch List`}
+                                onClick={handleSaveMovie}
+                            />
+                        </div>
                     </CardFooter>
                 </Card>
             </div>

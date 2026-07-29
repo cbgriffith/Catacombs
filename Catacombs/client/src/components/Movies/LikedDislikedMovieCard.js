@@ -1,10 +1,10 @@
 import React from "react"
-import { Button, Card, CardBody, CardTitle, CardSubtitle, CardText, CardFooter } from "reactstrap";
+import { Card, CardBody, CardTitle, CardSubtitle, CardText, CardFooter } from "reactstrap";
 import { useNavigate } from "react-router-dom";
 import Swal from "../../sweetAlert";
 import "./Movie.css"
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClapperboard } from "@fortawesome/free-solid-svg-icons";
+import { MovieActionButton } from "./MovieActionButton";
 import { SocialLinks } from "./SocialLinks";
 import { TrailerButton } from "./TrailerButton";
 import { useMovieMetadata } from "./useMovieMetadata";
@@ -63,14 +63,23 @@ export const LikedDislikedMovieCard = ({ movie }) => {
                             {movie.overview}
                         </CardText>
                     </CardBody>
-                    <CardFooter>
+                    <CardFooter className="movie-card-footer">
                         <SocialLinks socials={socials} />
-                        <br />
-                        <TrailerButton
-                            trailer={trailer}
-                            title={movie.title}
-                        />{" "}
-                        <Button size="sm" style={{ backgroundColor: "#0D6EFD" }} onClick={handleRecommendedMovies}><FontAwesomeIcon icon={faClapperboard} style={{ backgroundColor: "#0D6EFD", color: "#202428" }} size="2x" /></Button>
+                        <div
+                            className="movie-card-actions"
+                            role="group"
+                            aria-label={`Actions for ${movie.title}`}
+                        >
+                            <TrailerButton
+                                trailer={trailer}
+                                title={movie.title}
+                            />
+                            <MovieActionButton
+                                icon={faClapperboard}
+                                label={`View movies similar to ${movie.title}`}
+                                onClick={handleRecommendedMovies}
+                            />
+                        </div>
                     </CardFooter>
                 </Card>
             </div>

@@ -182,30 +182,172 @@
     min-height: 12rem;
 }
 
-.movie-action-button {
-    background-color: #0D6EFD;
-    color: #202428;
-    margin-right: 0.25rem;
+.movie-card-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1rem;
+    background-color: rgba(15, 17, 19, 0.45);
+    border-top-color: rgba(255, 255, 255, 0.1);
 }
 
-  /* #logout {
-      margin: left 5rem;
-  } */
+.movie-social-links,
+.movie-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    align-items: center;
+}
 
-  /* .paginationitem{
-      background-color: #e61e4d;
-  }
+.movie-icon-button,
+.movie-icon-button.btn {
+    position: relative;
+    width: 2.7rem;
+    height: 2.7rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    color: #e7e9eb;
+    background-color: #2d3338;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 0.65rem;
+    box-shadow: 0 0.25rem 0.65rem rgba(0, 0, 0, 0.18);
+    font-size: 1.05rem;
+    line-height: 1;
+    text-decoration: none;
+    transition:
+        background-color 150ms ease,
+        border-color 150ms ease,
+        box-shadow 150ms ease,
+        color 150ms ease,
+        transform 150ms ease;
+}
 
-  .page-item.active .page-link {
+.movie-icon-button::before,
+.movie-icon-button::after {
+    position: absolute;
+    left: 50%;
+    z-index: 20;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+        opacity 140ms ease,
+        transform 140ms ease,
+        visibility 140ms ease;
+}
+
+.movie-icon-button::before {
+    content: "";
+    bottom: calc(100% + 0.25rem);
+    border-top: 0.4rem solid #111418;
+    border-right: 0.4rem solid transparent;
+    border-left: 0.4rem solid transparent;
+    transform: translate(-50%, 0.2rem);
+}
+
+.movie-icon-button::after {
+    content: attr(data-tooltip);
+    width: max-content;
+    max-width: 13rem;
+    bottom: calc(100% + 0.65rem);
+    padding: 0.45rem 0.65rem;
+    color: #f8f9fa;
+    background-color: #111418;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 0.45rem;
+    box-shadow: 0 0.5rem 1.1rem rgba(0, 0, 0, 0.34);
+    font-size: 0.76rem;
+    font-weight: 650;
+    line-height: 1.25;
+    text-align: center;
+    transform: translate(-50%, 0.35rem);
+}
+
+.movie-icon-button:hover::before,
+.movie-icon-button:hover::after,
+.movie-icon-button:focus-visible::before,
+.movie-icon-button:focus-visible::after {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
+}
+
+.movie-icon-button:hover,
+.movie-icon-button.btn:hover {
+    color: #ffffff;
+    background-color: #e61e4d;
+    border-color: #ff5579;
+    box-shadow: 0 0.4rem 0.9rem rgba(230, 30, 77, 0.28);
+    transform: translateY(-1px);
+}
+
+.movie-icon-button:focus-visible,
+.movie-icon-button.btn:focus-visible {
+    color: #ffffff;
+    background-color: #343a40;
+    border-color: #ff5579;
+    box-shadow: 0 0 0 0.2rem rgba(255, 85, 121, 0.35);
+    outline: none;
+}
+
+.movie-icon-button--trailer.btn {
+    color: #ffffff;
     background-color: #e61e4d;
     border-color: #e61e4d;
-  } */
+}
 
-  /* #main {
-      background-color: blue;
-  } */
+.movie-icon-button--trailer.btn:hover {
+    background-color: #c91845;
+    border-color: #ff5579;
+}
 
-  #previous {
-      background-color: #202428;
-      color: white;
-  }
+.movie-icon-button--danger.btn {
+    color: #ff8aa3;
+}
+
+.movie-icon-button--danger.btn:hover {
+    color: #ffffff;
+    background-color: #b4233f;
+    border-color: #e61e4d;
+}
+
+.movie-social-link--imdb {
+    color: #f5c518;
+}
+
+.movie-social-link--imdb:hover {
+    color: #111418;
+    background-color: #f5c518;
+    border-color: #f5c518;
+}
+
+.movie-social-link--facebook {
+    color: #78a7ff;
+}
+
+.movie-social-link--facebook:hover {
+    background-color: #1877f2;
+    border-color: #559cff;
+}
+
+.movie-social-link--twitter {
+    color: #72c9f7;
+}
+
+.movie-social-link--twitter:hover {
+    background-color: #1d9bf0;
+    border-color: #72c9f7;
+}
+
+.movie-social-link--instagram {
+    color: #ff83bd;
+}
+
+.movie-social-link--instagram:hover {
+    background-color: #c13584;
+    border-color: #ff83bd;
+}

@@ -12,7 +12,21 @@
 .pagination {
     justify-content: center;
     margin:30px;
-  }
+}
+
+.movie-loading {
+    align-items: center;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    min-height: 12rem;
+}
+
+.movie-action-button {
+    background-color: #0D6EFD;
+    color: #202428;
+    margin-right: 0.25rem;
+}
 
   /* #logout {
       margin: left 5rem;

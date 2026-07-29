@@ -140,6 +140,12 @@ public sealed class SecurityIntegrationTests : IAsyncLifetime
             HttpStatusCode.Unauthorized,
             anonymousResponse.StatusCode);
 
+        var anonymousTmdbResponse =
+            await _client.GetAsync("/api/tmdb/movies/popular");
+        Assert.Equal(
+            HttpStatusCode.Unauthorized,
+            anonymousTmdbResponse.StatusCode);
+
         await RegisterAndLoginAsync(_client, "antiforgery");
 
         var missingTokenResponse = await _client.PostAsJsonAsync(

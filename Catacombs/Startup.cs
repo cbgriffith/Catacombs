@@ -2,6 +2,7 @@ using Catacombs.Database;
 using Catacombs.HealthChecks;
 using Catacombs.Models;
 using Catacombs.Repositories;
+using Catacombs.Services.Tmdb;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -52,6 +53,14 @@ namespace Catacombs
 
             services.AddTransient<IUsersRepository, UsersRepository>();
             services.AddTransient<IMoviesRepository, MoviesRepository>();
+            services.Configure<TmdbOptions>(
+                Configuration.GetSection(TmdbOptions.SectionName));
+            services.AddHttpClient<ITmdbClient, TmdbClient>(client =>
+            {
+                client.BaseAddress =
+                    new Uri("https://api.themoviedb.org/3/");
+                client.Timeout = TimeSpan.FromSeconds(15);
+            });
             services.Configure<PasswordHasherOptions>(options =>
             {
                 options.IterationCount = 210_000;

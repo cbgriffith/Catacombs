@@ -1,17 +1,19 @@
-import React, { useContext, useEffect, useState } from "react"
+import React, { useContext } from "react"
 import { MovieContext } from "../Repositories/MovieProvider";
 import { Button, Card, CardBody, CardTitle, CardSubtitle, CardText, CardFooter } from "reactstrap";
 import "./Movie.css"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faImdb, faFacebookSquare, faTwitterSquare, faInstagramSquare } from "@fortawesome/free-brands-svg-icons";
 import { faSquarePlus } from "@fortawesome/free-solid-svg-icons";
 import Swal from "../../sweetAlert";
+import { SocialLinks } from "./SocialLinks";
+import { TrailerButton } from "./TrailerButton";
+import { useMovieMetadata } from "./useMovieMetadata";
 
 export const RecommendedMovieCard = ({ movie }) => {
     let date = new Date(movie.release_date);
     let formattedDate = date.toLocaleDateString('en-US')
-    const { addMovie, getSocials } = useContext(MovieContext)
-    const [socials, setSocials] = useState({});
+    const { addMovie } = useContext(MovieContext)
+    const { socials, trailer } = useMovieMetadata(movie.id);
     let link = "https://image.tmdb.org/t/p/w200";
     const imgNotFound = require('./images/broken-1.png');
     let poster = "";
@@ -24,12 +26,6 @@ export const RecommendedMovieCard = ({ movie }) => {
         poster = movie.poster_path;
     }
 
-
-    useEffect(() => {
-        getSocials(movie.id)
-            .then(setSocials)
-        //eslint-disable-next-line
-    }, [])
 
     const handleSaveMovie = (e) => {
         e.preventDefault();
@@ -83,11 +79,12 @@ export const RecommendedMovieCard = ({ movie }) => {
                         </CardText>
                     </CardBody>
                     <CardFooter>
-                        {socials.imdb_id ? <a href={`https://www.imdb.com/title/${socials.imdb_id}`} target="_blank" rel="noreferrer"><FontAwesomeIcon icon={faImdb} size="3x" /></a> : ""}
-                        {socials.facebook_id ? <a href={`https://www.facebook.com/${socials.facebook_id}`} target="_blank" rel="noreferrer"><FontAwesomeIcon className="ms-1" icon={faFacebookSquare} size="3x" /></a> : ""}
-                        {socials.twitter_id ? <a href={`https://www.twitter.com/${socials.twitter_id}`} target="_blank" rel="noreferrer"><FontAwesomeIcon className="ms-1" icon={faTwitterSquare} size="3x" /></a> : ""}
-                        {socials.instagram_id ? <a href={`https://www.instagram.com/${socials.instagram_id}`} target="_blank" rel="noreferrer"><FontAwesomeIcon className="ms-1" icon={faInstagramSquare} size="3x" /></a> : ""}
+                        <SocialLinks socials={socials} />
                         <br />
+                        <TrailerButton
+                            trailer={trailer}
+                            title={movie.title}
+                        />{" "}
                         <Button size="sm" style={{ backgroundColor: "#0D6EFD" }} onClick={handleSaveMovie}><FontAwesomeIcon icon={faSquarePlus} style={{ backgroundColor: "#0D6EFD", color: "#202428" }} size="2x" /></Button>
                     </CardFooter>
                 </Card>

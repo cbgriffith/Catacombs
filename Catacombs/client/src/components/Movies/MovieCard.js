@@ -31,8 +31,6 @@ export const MovieCard = ({ movie }) => {
             title: `Add <strong>${movie.title}</strong> to your Watch List?`,
             icon: 'question',
             showCancelButton: true,
-            confirmButtonColor: '#0D6EFD',
-            cancelButtonColor: '#0D6EFD',
             confirmButtonText: 'Yes',
             cancelButtonText: 'No'
         }).then((result) => {
@@ -52,8 +50,6 @@ export const MovieCard = ({ movie }) => {
             title: `View a list of similar movies to <strong>${movie.title}</strong>?`,
             icon: 'question',
             showCancelButton: true,
-            confirmButtonColor: '#0D6EFD',
-            cancelButtonColor: '#0D6EFD',
             confirmButtonText: 'Yes',
             cancelButtonText: 'No'
         }).then((result) => {

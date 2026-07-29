@@ -29,8 +29,6 @@ export const RecommendedMovieCard = ({ movie }) => {
             title: `Add <strong>${movie.title}</strong> to your Watch List?`,
             icon: 'question',
             showCancelButton: true,
-            confirmButtonColor: '#0D6EFD',
-            cancelButtonColor: '#0D6EFD',
             confirmButtonText: 'Yes',
             cancelButtonText: 'No'
         }).then((result) => {

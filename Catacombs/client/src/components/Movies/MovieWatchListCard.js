@@ -30,8 +30,6 @@ export const MovieWatchListCard = ({ movie, reloadProp }) => {
             title: `Delete ${movie.title}?`,
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#0D6EFD',
-            cancelButtonColor: '#0D6EFD',
             confirmButtonText: 'Yes',
             cancelButtonText: 'No'
         }).then((result) => {
@@ -51,8 +49,6 @@ export const MovieWatchListCard = ({ movie, reloadProp }) => {
             title: `You've seen ${movie.title}?`,
             icon: 'question',
             showCancelButton: true,
-            confirmButtonColor: '#0D6EFD',
-            cancelButtonColor: '#0D6EFD',
             confirmButtonText: 'Yes',
             cancelButtonText: 'No'
         }).then((result) => {
@@ -73,8 +69,6 @@ export const MovieWatchListCard = ({ movie, reloadProp }) => {
             title: `View a list of similar movies to ${movie.title}?`,
             icon: 'question',
             showCancelButton: true,
-            confirmButtonColor: '#0D6EFD',
-            cancelButtonColor: '#0D6EFD',
             confirmButtonText: 'Yes',
             cancelButtonText: 'No'
         }).then((result) => {

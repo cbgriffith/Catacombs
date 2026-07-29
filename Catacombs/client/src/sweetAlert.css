@@ -1,0 +1,86 @@
+.catacombs-alert {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 1rem;
+  box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.48);
+}
+
+.catacombs-alert-title {
+  color: #f8f9fa;
+  font-size: clamp(1.45rem, 4vw, 2rem);
+}
+
+.catacombs-alert-content {
+  color: #cdd1d5;
+}
+
+.catacombs-alert-actions {
+  gap: 0.65rem;
+}
+
+.catacombs-alert-button {
+  min-width: 6.5rem;
+  padding: 0.7rem 1.2rem;
+  border: 1px solid transparent;
+  border-radius: 0.65rem;
+  box-shadow: 0 0.35rem 0.9rem rgba(0, 0, 0, 0.22);
+  font-weight: 700;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
+}
+
+.catacombs-alert-button:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.3);
+  transform: translateY(-1px);
+}
+
+.catacombs-alert-button:focus-visible {
+  box-shadow: 0 0 0 0.2rem rgba(255, 85, 121, 0.38);
+  outline: none;
+}
+
+.catacombs-alert-confirm {
+  color: #ffffff;
+  background-color: #e61e4d;
+  border-color: #e61e4d;
+}
+
+.catacombs-alert-confirm:hover {
+  background-color: #c91845;
+  border-color: #ff5579;
+}
+
+.catacombs-alert-cancel {
+  color: #f8f9fa;
+  background-color: #343a40;
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.catacombs-alert-cancel:hover {
+  background-color: #495057;
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.catacombs-alert-deny {
+  color: #ffffff;
+  background-color: #6f2a3b;
+  border-color: #994158;
+}
+
+.catacombs-alert-deny:hover {
+  background-color: #8b334a;
+  border-color: #c65b76;
+}
+
+@media (max-width: 575.98px) {
+  .catacombs-alert-actions {
+    width: calc(100% - 2rem);
+    flex-direction: column;
+  }
+
+  .catacombs-alert-button {
+    width: 100%;
+  }
+}

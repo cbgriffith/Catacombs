@@ -103,6 +103,12 @@ export const MovieProvider = (props) => {
         )
     }
 
+    const hiddenGems = (page = 1) => {
+        return loadTmdbMovies(
+            `/api/tmdb/movies/hidden-gems?page=${page}`
+        )
+    }
+
     const searchMovies = (query, page = 1) => {
         return loadTmdbMovies(
             `/api/tmdb/movies/search?query=${encodeURIComponent(query)}` +
@@ -203,6 +209,7 @@ export const MovieProvider = (props) => {
             movieLoadError,
             getMoviesByRating,
             popularMovies,
+            hiddenGems,
             addMovie,
             getAllMovies,
             searchMovies,

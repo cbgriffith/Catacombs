@@ -35,6 +35,7 @@ namespace Catacombs.Services.Tmdb
             {
                 TmdbMovieList.Popular => "discover/movie",
                 TmdbMovieList.TopRated => "discover/movie",
+                TmdbMovieList.HiddenGems => "discover/movie",
                 TmdbMovieList.Upcoming => "discover/movie",
                 TmdbMovieList.NowPlaying => "discover/movie",
                 _ => throw new ArgumentOutOfRangeException(nameof(list))
@@ -47,7 +48,8 @@ namespace Catacombs.Services.Tmdb
                 ["page"] = FormatNumber(page),
                 ["include_adult"] = "false",
                 ["include_video"] = "false",
-                ["with_genres"] = "27"
+                ["with_genres"] = "27",
+                ["without_genres"] = "10751,10770"
             };
 
             if (list == TmdbMovieList.Popular ||
@@ -66,6 +68,11 @@ namespace Catacombs.Services.Tmdb
                 AddTheatricalReleaseFilters(query, list);
             }
 
+            if (list == TmdbMovieList.HiddenGems)
+            {
+                AddHiddenGemFilters(query);
+            }
+
             if (list == TmdbMovieList.TopRated)
             {
                 query["vote_count.gte"] = "200";
@@ -75,6 +82,19 @@ namespace Catacombs.Services.Tmdb
                 path,
                 query,
                 cancellationToken);
+        }
+
+        private void AddHiddenGemFilters(
+            IDictionary<string, string> query)
+        {
+            var today = DateOnly.FromDateTime(
+                _timeProvider.GetUtcNow().UtcDateTime);
+
+            query["sort_by"] = "vote_average.desc";
+            query["vote_average.gte"] = "6";
+            query["vote_count.gte"] = "100";
+            query["vote_count.lte"] = "2500";
+            query["primary_release_date.lte"] = FormatDate(today);
         }
 
         private void AddTheatricalReleaseFilters(

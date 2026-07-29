@@ -1,5 +1,9 @@
 import React, { useState, useContext } from 'react';
-import { NavLink as RRNavLink, useNavigate } from "react-router-dom";
+import {
+  NavLink as RRNavLink,
+  useLocation,
+  useNavigate
+} from "react-router-dom";
 import {
   Collapse,
   Navbar,
@@ -21,10 +25,28 @@ import "./Header.css"
 
 export default function Header() {
   const { isLoggedIn, logout, userProfile } = useContext(UserContext);
+  const location = useLocation();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const toggle = () => setIsOpen(!isOpen);
+  const closeMenu = () => setIsOpen(false);
+  const browseMoviesIsActive = [
+    "/movies/rating",
+    "/movies/popular",
+    "/movies/hidden-gems",
+    "/movies/nowplaying",
+    "/movies/comingsoon",
+    "/movies/search",
+    "/movies/recommended"
+  ].some(path => location.pathname.startsWith(path));
+  const myMoviesIsActive = [
+    "/movies/watchlist",
+    "/movies/seen",
+    "/movies/liked",
+    "/movies/disliked"
+  ].some(path => location.pathname.startsWith(path));
+
   const logoutClick = async (event) => {
     event.preventDefault();
 
@@ -36,6 +58,7 @@ export default function Header() {
 
     try {
       await logout();
+      closeMenu();
       navigate("/login");
     } catch (error) {
       await Swal.fire({
@@ -50,101 +73,189 @@ export default function Header() {
   };
 
   return (
-    <div>
-      <Navbar color="dark" dark expand="md">
-        <NavbarBrand tag={RRNavLink} to="/">
-          <img className="me-3 ms-5" src={icon} alt="icon" width="30" height="30" />
-          The Catacombs</NavbarBrand>
-        <NavbarToggler onClick={toggle} />
+    <Navbar
+      dark
+      expand="lg"
+      sticky="top"
+      className="catacombs-navbar"
+    >
+      <div className="container-xl catacombs-navbar-inner">
+        <NavbarBrand
+          tag={RRNavLink}
+          to="/"
+          className="catacombs-brand"
+          onClick={closeMenu}
+        >
+          <img
+            className="catacombs-brand-icon"
+            src={icon}
+            alt=""
+            width="40"
+            height="40"
+          />
+          <span className="catacombs-brand-copy">
+            <span className="catacombs-brand-title">
+              The Catacombs
+            </span>
+            <span className="catacombs-brand-subtitle">
+              Horror movie archive
+            </span>
+          </span>
+        </NavbarBrand>
+        <NavbarToggler
+          onClick={toggle}
+          aria-label="Toggle navigation"
+        />
         <Collapse isOpen={isOpen} navbar>
-          <Nav className="me-auto" navbar>
-            { /* When isLoggedIn === true, we will render the Home link */}
-            {isLoggedIn &&
+          <Nav className="catacombs-main-nav me-auto" navbar>
+            {isLoggedIn && (
               <>
-                {/* <NavItem>
-                  <NavLink tag={RRNavLink} to="/">Home</NavLink>
-                </NavItem> */}
-
                 <UncontrolledDropdown nav inNavbar>
-                  <DropdownToggle nav caret>
+                  <DropdownToggle
+                    nav
+                    caret
+                    className={
+                      browseMoviesIsActive ? "active" : ""
+                    }
+                  >
                     Movies
                   </DropdownToggle>
-                  <DropdownMenu dark end>
-                    <DropdownItem>
-                      <NavLink tag={RRNavLink} to="/movies/rating">Top Rated</NavLink>
+                  <DropdownMenu dark>
+                    <DropdownItem
+                      tag={RRNavLink}
+                      to="/movies/rating"
+                      onClick={closeMenu}
+                    >
+                      Top Rated
                     </DropdownItem>
-                    <DropdownItem>
-                      <NavLink tag={RRNavLink} to="/movies/popular">Most Popular</NavLink>
+                    <DropdownItem
+                      tag={RRNavLink}
+                      to="/movies/popular"
+                      onClick={closeMenu}
+                    >
+                      Most Popular
                     </DropdownItem>
-                    <DropdownItem>
-                      <NavLink tag={RRNavLink} to="/movies/nowplaying">Now Playing</NavLink>
+                    <DropdownItem
+                      tag={RRNavLink}
+                      to="/movies/hidden-gems"
+                      onClick={closeMenu}
+                    >
+                      Hidden Gems
                     </DropdownItem>
-                    <DropdownItem>
-                      <NavLink tag={RRNavLink} to="/movies/comingsoon">Coming Soon</NavLink>
+                    <DropdownItem
+                      tag={RRNavLink}
+                      to="/movies/nowplaying"
+                      onClick={closeMenu}
+                    >
+                      Now Playing
                     </DropdownItem>
-                    <DropdownItem>
-                      <NavLink tag={RRNavLink} to="/movies/search">Search</NavLink>
+                    <DropdownItem
+                      tag={RRNavLink}
+                      to="/movies/comingsoon"
+                      onClick={closeMenu}
+                    >
+                      Coming Soon
                     </DropdownItem>
-                    {/* <DropdownItem divider />
-                    <DropdownItem>
-                      Reset
-                    </DropdownItem> */}
+                    <DropdownItem
+                      tag={RRNavLink}
+                      to="/movies/search"
+                      onClick={closeMenu}
+                    >
+                      Search
+                    </DropdownItem>
                   </DropdownMenu>
                 </UncontrolledDropdown>
 
                 <UncontrolledDropdown nav inNavbar>
-                  <DropdownToggle nav caret>
+                  <DropdownToggle
+                    nav
+                    caret
+                    className={
+                      myMoviesIsActive ? "active" : ""
+                    }
+                  >
                     My Movies
                   </DropdownToggle>
-                  <DropdownMenu dark end>
-                    <DropdownItem>
-                      <NavLink tag={RRNavLink} to="/movies/watchlist">Watchlist</NavLink>
+                  <DropdownMenu dark>
+                    <DropdownItem
+                      tag={RRNavLink}
+                      to="/movies/watchlist"
+                      onClick={closeMenu}
+                    >
+                      Watch List
                     </DropdownItem>
-                    <DropdownItem>
-                      <NavLink tag={RRNavLink} to="/movies/seen">Movies I've Seen</NavLink>
+                    <DropdownItem
+                      tag={RRNavLink}
+                      to="/movies/seen"
+                      onClick={closeMenu}
+                    >
+                      Movies I've Seen
                     </DropdownItem>
-                    <DropdownItem>
-                      <NavLink tag={RRNavLink} to="/movies/liked">Liked Movies</NavLink>
+                    <DropdownItem
+                      tag={RRNavLink}
+                      to="/movies/liked"
+                      onClick={closeMenu}
+                    >
+                      Liked Movies
                     </DropdownItem>
-                    <DropdownItem>
-                      <NavLink tag={RRNavLink} to="/movies/disliked">Disliked Movies</NavLink>
+                    <DropdownItem
+                      tag={RRNavLink}
+                      to="/movies/disliked"
+                      onClick={closeMenu}
+                    >
+                      Disliked Movies
                     </DropdownItem>
                   </DropdownMenu>
                 </UncontrolledDropdown>
               </>
-            }
+            )}
           </Nav>
-          <Nav navbar>
 
-            {isLoggedIn &&
+          <Nav className="catacombs-account-nav" navbar>
+            {isLoggedIn ? (
               <>
                 <NavbarText className="header-username">
                   {userProfile.username}
                 </NavbarText>
-                <NavItem className="me-5" id="logout">
-                  <a aria-current="page" id="logout" className="nav-link" href="/logout"
-                    aria-disabled={isLoggingOut}
-                    style={{ cursor: isLoggingOut ? "wait" : "pointer" }}
-                    onClick={logoutClick}>
-                    {isLoggingOut ? "Logging out..." : "Logout"}
-                  </a>
+                <NavItem>
+                  <button
+                    type="button"
+                    className="nav-link header-logout-button"
+                    disabled={isLoggingOut}
+                    onClick={logoutClick}
+                  >
+                    {isLoggingOut
+                      ? "Logging out..."
+                      : "Log out"}
+                  </button>
                 </NavItem>
               </>
-            }
-
-            {!isLoggedIn &&
+            ) : (
               <>
                 <NavItem>
-                  <NavLink tag={RRNavLink} to="/login">Login</NavLink>
+                  <NavLink
+                    tag={RRNavLink}
+                    to="/login"
+                    onClick={closeMenu}
+                  >
+                    Log in
+                  </NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink tag={RRNavLink} to="/register">Register</NavLink>
+                  <NavLink
+                    tag={RRNavLink}
+                    to="/register"
+                    className="header-register-link"
+                    onClick={closeMenu}
+                  >
+                    Create account
+                  </NavLink>
                 </NavItem>
               </>
-            }
+            )}
           </Nav>
         </Collapse>
-      </Navbar>
-    </div>
+      </div>
+    </Navbar>
   );
 }

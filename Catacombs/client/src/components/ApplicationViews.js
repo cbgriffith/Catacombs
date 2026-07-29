@@ -6,6 +6,7 @@ import Login from "./auth/Login";
 import Register from "./auth/Register";
 import { TopRatedMovieList } from "./Movies/TopRated/TopRatedMovieList";
 import { PopularMovieList } from "./Movies/Popular/PopularMovieList";
+import { HiddenGemsList } from "./Movies/HiddenGemsList";
 import { MovieWatchList } from "./Movies/MovieWatchList";
 import { SearchMovies } from "./Movies/SearchMovies";
 import { ComingSoonList } from "./Movies/ComingSoonList";
@@ -50,6 +51,9 @@ export default function ApplicationViews() {
             {/*Most Popular Horror Movies*/}
             <Route path="/movies/popular" element={<PopularMovieList />} />
             <Route path="/movies/popular/:page" element={<PopularMovieList />} />
+
+            <Route path="/movies/hidden-gems" element={<HiddenGemsList />} />
+            <Route path="/movies/hidden-gems/:page" element={<HiddenGemsList />} />
 
             <Route path="/movies/search" element={<SearchMovies />} />
             <Route path="/movies/comingsoon" element={<ComingSoonList />} />

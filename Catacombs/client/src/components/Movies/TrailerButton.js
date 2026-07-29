@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlay } from "@fortawesome/free-solid-svg-icons";
 import {
-    Button,
     Modal,
     ModalBody,
     ModalHeader
 } from "reactstrap";
+import { MovieActionButton } from "./MovieActionButton";
 
 export const TrailerButton = ({ trailer, title }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -22,15 +21,12 @@ export const TrailerButton = ({ trailer, title }) => {
 
     return (
         <>
-            <Button
-                size="sm"
-                className="movie-action-button"
+            <MovieActionButton
+                icon={faPlay}
+                label={`Watch the trailer for ${title}`}
                 onClick={toggle}
-                aria-label={`Watch the trailer for ${title}`}
-                title="Watch trailer"
-            >
-                <FontAwesomeIcon icon={faPlay} size="2x" />
-            </Button>
+                variant="trailer"
+            />
             <Modal
                 isOpen={isOpen}
                 toggle={toggle}

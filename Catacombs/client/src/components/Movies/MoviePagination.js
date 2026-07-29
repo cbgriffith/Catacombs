@@ -42,15 +42,23 @@ export const MoviePagination = ({
         pageNumbers[pageNumbers.length - 1] < lastPage;
 
     return (
-        <Pagination aria-label="Movie result pages">
+        <Pagination
+            className="movie-pagination"
+            aria-label="Movie result pages"
+        >
             <PaginationItem disabled={currentPage === 1}>
                 {currentPage === 1 ? (
-                    <PaginationLink previous tag="span" />
+                    <PaginationLink
+                        previous
+                        tag="span"
+                        aria-label="Previous page"
+                    />
                 ) : (
                     <PaginationLink
                         previous
                         tag={RouterNavLink}
                         to={pagePath(currentPage - 1)}
+                        aria-label="Previous page"
                     />
                 )}
             </PaginationItem>
@@ -61,6 +69,7 @@ export const MoviePagination = ({
                         <PaginationLink
                             tag={RouterNavLink}
                             to={pagePath(1)}
+                            aria-label="Page 1"
                         >
                             1
                         </PaginationLink>
@@ -81,6 +90,7 @@ export const MoviePagination = ({
                     <PaginationLink
                         tag={RouterNavLink}
                         to={pagePath(page)}
+                        aria-label={`Page ${page}`}
                         aria-current={
                             page === currentPage ? "page" : undefined
                         }
@@ -102,6 +112,7 @@ export const MoviePagination = ({
                         <PaginationLink
                             tag={RouterNavLink}
                             to={pagePath(lastPage)}
+                            aria-label={`Page ${lastPage}`}
                         >
                             {lastPage}
                         </PaginationLink>
@@ -111,12 +122,17 @@ export const MoviePagination = ({
 
             <PaginationItem disabled={currentPage === lastPage}>
                 {currentPage === lastPage ? (
-                    <PaginationLink next tag="span" />
+                    <PaginationLink
+                        next
+                        tag="span"
+                        aria-label="Next page"
+                    />
                 ) : (
                     <PaginationLink
                         next
                         tag={RouterNavLink}
                         to={pagePath(currentPage + 1)}
+                        aria-label="Next page"
                     />
                 )}
             </PaginationItem>

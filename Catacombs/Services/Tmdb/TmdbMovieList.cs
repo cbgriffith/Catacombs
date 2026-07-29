@@ -4,6 +4,7 @@ namespace Catacombs.Services.Tmdb
     {
         Popular,
         TopRated,
+        HiddenGems,
         Upcoming,
         NowPlaying
     }

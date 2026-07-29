@@ -27,8 +27,32 @@ public sealed class TmdbClientTests
         Assert.Equal(
             "/3/discover/movie?language=en-US&region=US&page=3" +
             "&include_adult=false&include_video=false&with_genres=27" +
+            "&without_genres=10751,10770" +
             "&with_original_language=en&sort_by=popularity.desc",
             handler.RequestUri?.PathAndQuery);
+    }
+
+    [Theory]
+    [InlineData(TmdbMovieList.Popular)]
+    [InlineData(TmdbMovieList.TopRated)]
+    [InlineData(TmdbMovieList.HiddenGems)]
+    [InlineData(TmdbMovieList.Upcoming)]
+    [InlineData(TmdbMovieList.NowPlaying)]
+    public async Task CuratedMovieListsExcludeFamilyAndTvMovies(
+        TmdbMovieList list)
+    {
+        var handler = new RecordingHandler();
+        var client = CreateClient(handler, TestToken);
+
+        await client.GetMovieListAsync(
+            list,
+            1,
+            CancellationToken.None);
+
+        var query = Uri.UnescapeDataString(
+            handler.RequestUri?.Query ?? string.Empty);
+
+        Assert.Contains("without_genres=10751,10770", query);
     }
 
     [Fact]
@@ -51,6 +75,46 @@ public sealed class TmdbClientTests
         Assert.Contains(
             "vote_count.gte=200",
             handler.RequestUri?.Query);
+    }
+
+    [Fact]
+    public async Task HiddenGemsBalanceQualityAndLowerExposure()
+    {
+        var handler = new RecordingHandler();
+        var client = CreateClient(
+            handler,
+            TestToken,
+            new FixedTimeProvider(
+                new DateTimeOffset(
+                    2026,
+                    7,
+                    29,
+                    12,
+                    0,
+                    0,
+                    TimeSpan.Zero)));
+
+        await client.GetMovieListAsync(
+            TmdbMovieList.HiddenGems,
+            2,
+            CancellationToken.None);
+
+        var query = Uri.UnescapeDataString(
+            handler.RequestUri?.Query ?? string.Empty);
+
+        Assert.Equal(
+            "/3/discover/movie",
+            handler.RequestUri?.AbsolutePath);
+        Assert.Contains("page=2", query);
+        Assert.Contains("with_genres=27", query);
+        Assert.Contains("sort_by=vote_average.desc", query);
+        Assert.Contains("vote_average.gte=6", query);
+        Assert.Contains("vote_count.gte=100", query);
+        Assert.Contains("vote_count.lte=2500", query);
+        Assert.Contains("without_genres=10751,10770", query);
+        Assert.Contains(
+            "primary_release_date.lte=2026-07-29",
+            query);
     }
 
     [Fact]

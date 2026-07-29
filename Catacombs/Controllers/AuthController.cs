@@ -202,6 +202,77 @@ namespace Catacombs.Controllers
         }
 
         [Authorize]
+        [HttpPost("change-password")]
+        [ValidateAntiForgeryToken]
+        [EnableRateLimiting("PasswordChange")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
+        public async Task<IActionResult> ChangePassword(
+            ChangePasswordRequest request)
+        {
+            var userIdValue = User.FindFirstValue(
+                ClaimTypes.NameIdentifier);
+
+            if (!int.TryParse(
+                userIdValue,
+                NumberStyles.None,
+                CultureInfo.InvariantCulture,
+                out var userId))
+            {
+                await HttpContext.SignOutAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme);
+                return Unauthorized();
+            }
+
+            var user = _usersRepository.GetById(userId);
+            if (user == null)
+            {
+                await HttpContext.SignOutAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme);
+                return Unauthorized();
+            }
+
+            var verificationResult = _passwordHasher.VerifyHashedPassword(
+                user,
+                user.passwordHash,
+                request.CurrentPassword);
+
+            if (verificationResult == PasswordVerificationResult.Failed)
+            {
+                return BadRequest(new ProblemDetails
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    Title = "The current password is incorrect."
+                });
+            }
+
+            if (string.Equals(
+                request.CurrentPassword,
+                request.NewPassword,
+                StringComparison.Ordinal))
+            {
+                ModelState.AddModelError(
+                    nameof(request.NewPassword),
+                    "The new password must be different from the current password.");
+                return ValidationProblem(ModelState);
+            }
+
+            user.passwordHash = _passwordHasher.HashPassword(
+                user,
+                request.NewPassword);
+            _usersRepository.UpdatePasswordHash(
+                user.id,
+                user.passwordHash);
+
+            await HttpContext.SignOutAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme);
+
+            return NoContent();
+        }
+
+        [Authorize]
         [HttpPost("logout")]
         [ValidateAntiForgeryToken]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

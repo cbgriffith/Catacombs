@@ -150,9 +150,36 @@ export function UserProvider({ children }) {
     return response.json();
   };
 
+  const changePassword = async (passwords) => {
+    const antiforgeryToken = await getAntiforgeryToken();
+    const response = await fetch(`${apiUrl}/api/auth/change-password`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        "X-XSRF-TOKEN": antiforgeryToken,
+      },
+      body: JSON.stringify(passwords),
+    });
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        clearUserProfile();
+      }
+
+      const fallbackMessage = response.status === 429
+        ? "Too many password attempts. Please wait a minute and try again."
+        : "Unable to change the password.";
+      throw new Error(await getErrorMessage(response, fallbackMessage));
+    }
+
+    clearUserProfile();
+  };
+
   return (
     <UserContext.Provider
       value={{
+        changePassword,
         isLoadingUser,
         isLoggedIn,
         login,

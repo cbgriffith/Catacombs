@@ -218,6 +218,15 @@ export default function Header() {
                   {userProfile.username}
                 </NavbarText>
                 <NavItem>
+                  <NavLink
+                    tag={RRNavLink}
+                    to="/account/password"
+                    onClick={closeMenu}
+                  >
+                    Change password
+                  </NavLink>
+                </NavItem>
+                <NavItem>
                   <button
                     type="button"
                     className="nav-link header-logout-button"

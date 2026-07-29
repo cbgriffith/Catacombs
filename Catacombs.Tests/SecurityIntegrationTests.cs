@@ -157,6 +157,83 @@ public sealed class SecurityIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ChangingPasswordValidatesTheRequestAndSignsOut()
+    {
+        const string newPassword =
+            "A new Catacombs password! 2026";
+        var email = NewEmail("change-password");
+
+        var registerResponse = await RegisterAsync(
+            _client,
+            "Password Tester",
+            email);
+        Assert.Equal(HttpStatusCode.Created, registerResponse.StatusCode);
+
+        var loginResponse = await LoginAsync(
+            _client,
+            email,
+            TestPassword);
+        Assert.Equal(HttpStatusCode.OK, loginResponse.StatusCode);
+
+        var wrongCurrentPassword = await ChangePasswordAsync(
+            _client,
+            "Not the current password",
+            newPassword,
+            newPassword);
+        Assert.Equal(
+            HttpStatusCode.BadRequest,
+            wrongCurrentPassword.StatusCode);
+
+        var mismatchedPasswords = await ChangePasswordAsync(
+            _client,
+            TestPassword,
+            newPassword,
+            "A different confirmation password");
+        Assert.Equal(
+            HttpStatusCode.BadRequest,
+            mismatchedPasswords.StatusCode);
+
+        var unchangedPassword = await ChangePasswordAsync(
+            _client,
+            TestPassword,
+            TestPassword,
+            TestPassword);
+        Assert.Equal(
+            HttpStatusCode.BadRequest,
+            unchangedPassword.StatusCode);
+
+        var changedPassword = await ChangePasswordAsync(
+            _client,
+            TestPassword,
+            newPassword,
+            newPassword);
+        Assert.Equal(
+            HttpStatusCode.NoContent,
+            changedPassword.StatusCode);
+
+        var signedOutUser = await _client.GetAsync("/api/auth/me");
+        Assert.Equal(
+            HttpStatusCode.Unauthorized,
+            signedOutUser.StatusCode);
+
+        var oldPasswordLogin = await LoginAsync(
+            _client,
+            email,
+            TestPassword);
+        Assert.Equal(
+            HttpStatusCode.Unauthorized,
+            oldPasswordLogin.StatusCode);
+
+        var newPasswordLogin = await LoginAsync(
+            _client,
+            email,
+            newPassword);
+        Assert.Equal(
+            HttpStatusCode.OK,
+            newPasswordLogin.StatusCode);
+    }
+
+    [Fact]
     public async Task MovieChangesRequireAuthenticationAndAnAntiforgeryToken()
     {
         var anonymousResponse = await _client.GetAsync("/api/movies");
@@ -401,6 +478,24 @@ public sealed class SecurityIntegrationTests : IAsyncLifetime
             {
                 email,
                 password
+            });
+    }
+
+    private static async Task<HttpResponseMessage> ChangePasswordAsync(
+        HttpClient client,
+        string currentPassword,
+        string newPassword,
+        string confirmNewPassword)
+    {
+        return await SendWithAntiforgeryAsync(
+            client,
+            HttpMethod.Post,
+            "/api/auth/change-password",
+            new
+            {
+                currentPassword,
+                newPassword,
+                confirmNewPassword
             });
     }
 

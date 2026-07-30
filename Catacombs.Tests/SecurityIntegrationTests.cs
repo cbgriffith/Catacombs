@@ -241,6 +241,12 @@ public sealed class SecurityIntegrationTests : IAsyncLifetime
             HttpStatusCode.Unauthorized,
             anonymousResponse.StatusCode);
 
+        var anonymousSummaryResponse =
+            await _client.GetAsync("/api/movies/summary");
+        Assert.Equal(
+            HttpStatusCode.Unauthorized,
+            anonymousSummaryResponse.StatusCode);
+
         var anonymousTmdbResponse =
             await _client.GetAsync("/api/tmdb/movies/popular");
         Assert.Equal(
@@ -490,6 +496,54 @@ public sealed class SecurityIntegrationTests : IAsyncLifetime
             movie => movie.GetProperty("movieId").GetInt32()
                 == secondTmdbMovieId
                 && movie.GetProperty("watched").GetBoolean());
+    }
+
+    [Fact]
+    public async Task MovieSummaryCountsTheCurrentUsersCollection()
+    {
+        await RegisterAndLoginAsync(_client, "movie-summary");
+
+        var movieStates = new[]
+        {
+            new { MovieId = 44001, Watched = false, Rating = 0 },
+            new { MovieId = 44002, Watched = true, Rating = 1 },
+            new { MovieId = 44003, Watched = true, Rating = -1 },
+            new { MovieId = 44004, Watched = true, Rating = 0 }
+        };
+
+        foreach (var movieState in movieStates)
+        {
+            var response = await SendWithAntiforgeryAsync(
+                _client,
+                HttpMethod.Put,
+                "/api/movies/status",
+                NewMovieStatusRequest(
+                    movieState.MovieId,
+                    movieState.Watched,
+                    movieState.Rating));
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        var summaryResponse =
+            await _client.GetAsync("/api/movies/summary");
+        Assert.Equal(HttpStatusCode.OK, summaryResponse.StatusCode);
+
+        using var document = await ReadJsonAsync(summaryResponse);
+        var summary = document.RootElement;
+
+        Assert.Equal(
+            1,
+            summary.GetProperty("watchlistCount").GetInt32());
+        Assert.Equal(
+            3,
+            summary.GetProperty("watchedCount").GetInt32());
+        Assert.Equal(
+            1,
+            summary.GetProperty("likedCount").GetInt32());
+        Assert.Equal(
+            1,
+            summary.GetProperty("dislikedCount").GetInt32());
     }
 
     [Fact]

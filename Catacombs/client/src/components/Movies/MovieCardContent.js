@@ -9,7 +9,7 @@ import {
 const posterBaseUrl = "https://image.tmdb.org/t/p/w342";
 const missingPoster = require("./images/broken-1.png");
 
-const posterUrl = (posterPath) => {
+export const getMoviePosterUrl = (posterPath) => {
     if (
         !posterPath ||
         posterPath === "string"
@@ -55,7 +55,7 @@ export const MovieCardContent = ({ movie }) => (
     <CardBody className="movie-card-body">
         <img
             className="movie-card-poster"
-            src={posterUrl(movie.poster_path)}
+            src={getMoviePosterUrl(movie.poster_path)}
             alt={`${movie.title} poster`}
             loading="lazy"
         />

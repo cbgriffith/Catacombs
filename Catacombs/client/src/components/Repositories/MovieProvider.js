@@ -218,9 +218,13 @@ export const MovieProvider = (props) => {
         return rememberSavedMovie(savedMovie)
     }
 
-    const getAllMovies = () => {
+    const getWatchlist = () => {
         return apiFetch("/api/Movies")
             .then((response) => response.json())
+    }
+
+    const getAllMovies = () => {
+        return getWatchlist()
             .then(setMovies)
     }
 
@@ -252,6 +256,11 @@ export const MovieProvider = (props) => {
             .then(setMovies)
     }
 
+    const getMovieSummary = () => {
+        return apiFetch("/api/Movies/summary")
+            .then((response) => response.json())
+    }
+
     return (
         <MovieContext.Provider value={{
             movies,
@@ -266,6 +275,7 @@ export const MovieProvider = (props) => {
             hiddenGems,
             addMovie,
             setMovieStatus,
+            getWatchlist,
             getAllMovies,
             searchMovies,
             comingSoon,
@@ -275,6 +285,7 @@ export const MovieProvider = (props) => {
             deleteMovie,
             getAllLikedMovies,
             getAllDislikedMovies,
+            getMovieSummary,
             getMovieMetadata
         }}>
             {props.children}

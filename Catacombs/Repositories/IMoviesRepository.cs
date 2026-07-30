@@ -9,6 +9,7 @@ namespace Catacombs.Repositories
         Movies GetMovieByTmdbId(int movieId, int userId);
         void Add(Movies movie, int userId);
         Movies SetStatus(Movies movie, int userId);
+        MovieCollectionSummary GetSummary(int userId);
         List<Movies> GetCollection(int userId);
         List<Movies> GetAllMovies(int userId);
         List<Movies> GetAllSeenMovies(int userId);

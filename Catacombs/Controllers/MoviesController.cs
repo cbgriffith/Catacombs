@@ -40,6 +40,15 @@ namespace Catacombs.Controllers
                 userId => Ok(_moviesRepository.GetCollection(userId)));
         }
 
+        [HttpGet("summary")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public IActionResult GetSummary()
+        {
+            return ForCurrentUser(
+                userId => Ok(_moviesRepository.GetSummary(userId)));
+        }
+
         [HttpGet("seen")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]

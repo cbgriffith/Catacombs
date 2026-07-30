@@ -54,6 +54,43 @@ namespace Catacombs.Repositories
                 userId);
         }
 
+        public MovieCollectionSummary GetSummary(int userId)
+        {
+            using var connection = Connection;
+            connection.Open();
+
+            using var command = connection.CreateCommand();
+            command.CommandText = @"
+                SELECT (COUNT(*) FILTER (
+                            WHERE watched = false))::integer,
+                       (COUNT(*) FILTER (
+                            WHERE watched = true))::integer,
+                       (COUNT(*) FILTER (
+                            WHERE watched = true
+                              AND rating = 1))::integer,
+                       (COUNT(*) FILTER (
+                            WHERE watched = true
+                              AND rating = -1))::integer
+                  FROM movies
+                 WHERE user_id = @userId";
+            DbUtils.AddParameter(
+                command,
+                "@userId",
+                userId,
+                DbType.Int32);
+
+            using var reader = command.ExecuteReader();
+            reader.Read();
+
+            return new MovieCollectionSummary
+            {
+                WatchlistCount = reader.GetInt32(0),
+                WatchedCount = reader.GetInt32(1),
+                LikedCount = reader.GetInt32(2),
+                DislikedCount = reader.GetInt32(3)
+            };
+        }
+
         public List<Movies> GetAllMovies(int userId)
         {
             return GetMovies(

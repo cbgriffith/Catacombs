@@ -37,7 +37,7 @@ export default function Header() {
     "/movies/nowplaying",
     "/movies/comingsoon",
     "/movies/search",
-    "/movies/recommended"
+    "/movies/similar"
   ].some(path => location.pathname.startsWith(path));
   const myMoviesIsActive = [
     "/movies/watchlist",

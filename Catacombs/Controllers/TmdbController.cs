@@ -103,14 +103,14 @@ namespace Catacombs.Controllers
                 cancellationToken);
         }
 
-        [HttpGet("movies/{movieId:int}/recommendations")]
-        public Task<IActionResult> Recommendations(
+        [HttpGet("movies/{movieId:int}/similar")]
+        public Task<IActionResult> SimilarMovies(
             [FromRoute, Range(1, int.MaxValue)] int movieId,
             [FromQuery, Range(1, 500)] int page = 1,
             CancellationToken cancellationToken = default)
         {
             return ProxyAsync(
-                token => _tmdbClient.GetRecommendationsAsync(
+                token => _tmdbClient.GetSimilarMoviesAsync(
                     movieId,
                     page,
                     token),

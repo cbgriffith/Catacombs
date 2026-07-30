@@ -10,7 +10,7 @@ import { SocialLinks } from "./SocialLinks";
 import { TrailerButton } from "./TrailerButton";
 import { useMovieMetadata } from "./useMovieMetadata";
 
-export const RecommendedMovieCard = ({ movie }) => {
+export const SimilarMovieCard = ({ movie }) => {
     const { addMovie } = useContext(MovieContext)
     const { socials, trailer } = useMovieMetadata(movie.id);
 

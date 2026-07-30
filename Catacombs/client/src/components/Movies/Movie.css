@@ -25,9 +25,118 @@
     line-height: 1.55;
 }
 
+.similar-movies-header {
+    padding-top: 1rem;
+}
+
+.similar-movies-header .movie-list-heading {
+    padding-top: 0.75rem;
+}
+
+.movie-back-link.btn {
+    display: inline-flex;
+    gap: 0.45rem;
+    align-items: center;
+    padding: 0.4rem 0.6rem;
+    border-color: transparent;
+    background: transparent;
+    color: #c5c9cd;
+    font-weight: 700;
+    box-shadow: none;
+}
+
+.movie-back-link.btn:hover,
+.movie-back-link.btn:focus-visible {
+    border-color: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+    box-shadow: none;
+}
+
+.movie-back-link.btn span {
+    color: #ef174c;
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+.movie-empty-state {
+    max-width: 42rem;
+    margin: 2rem auto;
+    padding: 2.5rem 2rem;
+    border: 1px solid rgba(239, 23, 76, 0.28);
+    border-radius: 1rem;
+    background:
+        radial-gradient(
+            circle at top,
+            rgba(239, 23, 76, 0.12),
+            transparent 55%
+        ),
+        rgba(15, 17, 19, 0.78);
+    box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.28);
+    text-align: center;
+}
+
+.movie-empty-state-eyebrow {
+    margin: 0 0 0.5rem;
+    color: #ef174c;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.movie-empty-state h2 {
+    margin-bottom: 0.75rem;
+}
+
+.movie-empty-state > p:not(.movie-empty-state-eyebrow) {
+    max-width: 32rem;
+    margin: 0 auto 1.5rem;
+    color: #c5c9cd;
+    line-height: 1.6;
+}
+
+.movie-return-action.btn {
+    display: inline-flex;
+    gap: 0.55rem;
+    align-items: center;
+    padding: 0.65rem 1rem;
+    border-color: rgba(239, 23, 76, 0.65);
+    background: rgba(239, 23, 76, 0.12);
+    color: #fff;
+    font-weight: 750;
+    box-shadow: none;
+}
+
+.movie-return-action.btn:hover,
+.movie-return-action.btn:focus-visible {
+    border-color: #ef174c;
+    background: #ef174c;
+    color: #fff;
+    box-shadow: 0 0.65rem 1.5rem rgba(239, 23, 76, 0.22);
+}
+
+.movie-return-action.btn span {
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+.similar-movies-footer {
+    display: flex;
+    justify-content: center;
+    padding: 0.25rem 0 2rem;
+}
+
 .movie-grid-item {
+    position: relative;
+    z-index: 0;
     min-width: 0;
     display: flex;
+}
+
+.movie-grid-item:hover,
+.movie-grid-item:focus-within {
+    z-index: 30;
 }
 
 .movie-card {

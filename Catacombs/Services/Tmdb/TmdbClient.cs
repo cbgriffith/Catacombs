@@ -140,13 +140,13 @@ namespace Catacombs.Services.Tmdb
                 cancellationToken);
         }
 
-        public Task<TmdbResponse> GetRecommendationsAsync(
+        public Task<TmdbResponse> GetSimilarMoviesAsync(
             int movieId,
             int page,
             CancellationToken cancellationToken)
         {
             return GetAsync(
-                $"movie/{FormatNumber(movieId)}/recommendations",
+                $"movie/{FormatNumber(movieId)}/similar",
                 new Dictionary<string, string>
                 {
                     ["language"] = "en-US",

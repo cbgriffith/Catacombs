@@ -205,6 +205,22 @@ public sealed class TmdbClientTests
     }
 
     [Fact]
+    public async Task SimilarMoviesUseTheOfficialSimilarEndpoint()
+    {
+        var handler = new RecordingHandler();
+        var client = CreateClient(handler, TestToken);
+
+        await client.GetSimilarMoviesAsync(
+            348,
+            2,
+            CancellationToken.None);
+
+        Assert.Equal(
+            "/3/movie/348/similar?language=en-US&page=2",
+            handler.RequestUri?.PathAndQuery);
+    }
+
+    [Fact]
     public async Task VideosUseTheOfficialMovieVideosEndpoint()
     {
         var handler = new RecordingHandler();

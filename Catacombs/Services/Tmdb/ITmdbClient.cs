@@ -15,7 +15,7 @@ namespace Catacombs.Services.Tmdb
             int page,
             CancellationToken cancellationToken);
 
-        Task<TmdbResponse> GetRecommendationsAsync(
+        Task<TmdbResponse> GetSimilarMoviesAsync(
             int movieId,
             int page,
             CancellationToken cancellationToken);

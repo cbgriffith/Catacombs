@@ -14,7 +14,7 @@ export const LikedDislikedMovieCard = ({ movie }) => {
     const { socials, trailer } = useMovieMetadata(movie.movieId);
     const navigate = useNavigate();
 
-    const handleRecommendedMovies = () => {
+    const handleSimilarMovies = () => {
         Swal.fire({
             title: `View a list of similar movies to ${movie.title}?`,
             icon: 'question',
@@ -23,7 +23,7 @@ export const LikedDislikedMovieCard = ({ movie }) => {
             cancelButtonText: 'No'
         }).then((result) => {
             if (result.isConfirmed) {
-                navigate(`/movies/recommended/${movie.movieId}`)
+                navigate(`/movies/similar/${movie.movieId}`)
             }
         })
     }
@@ -46,7 +46,7 @@ export const LikedDislikedMovieCard = ({ movie }) => {
                             <MovieActionButton
                                 icon={faClapperboard}
                                 label={`View movies similar to ${movie.title}`}
-                                onClick={handleRecommendedMovies}
+                                onClick={handleSimilarMovies}
                             />
                         </div>
                     </CardFooter>

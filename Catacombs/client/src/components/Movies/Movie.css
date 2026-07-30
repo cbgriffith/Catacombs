@@ -25,6 +25,15 @@
     line-height: 1.55;
 }
 
+.movie-list-heading .movie-list-eyebrow {
+    margin: 0 0 0.55rem;
+    color: #ef174c;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
 .similar-movies-header {
     padding-top: 1rem;
 }
@@ -514,6 +523,31 @@
 .movie-icon-button--trailer.btn:hover {
     background-color: #c91845;
     border-color: #ff5579;
+}
+
+.movie-icon-button--selected.btn {
+    color: #ffffff;
+    background-color: rgba(230, 30, 77, 0.28);
+    border-color: #e61e4d;
+    box-shadow: 0 0.3rem 0.8rem rgba(230, 30, 77, 0.18);
+}
+
+.movie-icon-button--selected.btn:hover {
+    color: #ffffff;
+    background-color: #c91845;
+    border-color: #ff5579;
+}
+
+.movie-icon-button[aria-disabled="true"],
+.movie-icon-button.btn[aria-disabled="true"],
+.movie-icon-button[aria-disabled="true"]:hover,
+.movie-icon-button.btn[aria-disabled="true"]:hover {
+    color: #ff8aa3;
+    background-color: rgba(230, 30, 77, 0.18);
+    border-color: rgba(230, 30, 77, 0.55);
+    box-shadow: none;
+    cursor: default;
+    transform: none;
 }
 
 .movie-icon-button--danger.btn {

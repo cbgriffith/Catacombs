@@ -2,75 +2,85 @@ import React, { useContext } from "react"
 import { MovieContext } from "../Repositories/MovieProvider";
 import { Card, CardFooter } from "reactstrap";
 import { useNavigate } from "react-router-dom";
-import Swal from "../../sweetAlert";
 import "./Movie.css"
 import {
+    faArrowRotateLeft,
     faClapperboard,
-    faThumbsUp,
+    faPen,
     faTrashCan
 } from "@fortawesome/free-solid-svg-icons";
 import { MovieActionButton } from "./MovieActionButton";
 import { MovieCardContent } from "./MovieCardContent";
+import {
+    chooseUpdatedMovieRating,
+    confirmMoveToWatchlist,
+    confirmRemoveMovie,
+    showMovedToWatchlist,
+    showMovieActionError,
+    showRemovedMovie,
+    showUpdatedMovieRating
+} from "./movieAlerts";
 import { SocialLinks } from "./SocialLinks";
 import { TrailerButton } from "./TrailerButton";
 import { useMovieMetadata } from "./useMovieMetadata";
 
 export const SeenMoviesCard = ({ movie, reloadProp }) => {
-    const { deleteMovie, likedIt, dislikedIt } = useContext(MovieContext)
+    const { deleteMovie, setMovieStatus } = useContext(MovieContext)
     const { socials, trailer } = useMovieMetadata(movie.movieId);
     const navigate = useNavigate();
 
-    const handleDeleteMovie = () => {
-        Swal.fire({
-            title: `Delete ${movie.title}?`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Yes',
-            cancelButtonText: 'No'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                deleteMovie(movie.id).then(reloadProp)
-                Swal.fire(
-                    'Deleted!',
-                    `${movie.title} has been deleted.`,
-                    'success'
-                )
-            }
-        })
+    const handleDeleteMovie = async () => {
+        if (!await confirmRemoveMovie(movie.title, "your movie history")) {
+            return
+        }
+
+        try {
+            await deleteMovie(movie.id)
+            reloadProp(currentValue => !currentValue)
+            await showRemovedMovie(movie.title)
+        } catch (error) {
+            await showMovieActionError("Unable to remove movie", error)
+        }
     }
 
-    const handleRating = () => {
-        Swal.fire({
-            title: `Did you like ${movie.title}?`,
-            icon: 'question',
-            showDenyButton: true,
-            showCancelButton: true,
-            confirmButtonText: `Yes`,
-            denyButtonText: `No`,
-        }).then((result) => {
-            /* Read more about isConfirmed, isDenied below */
-            if (result.isConfirmed) {
-                likedIt(movie.id)
-                Swal.fire('Movie liked!', '', 'success')
-            } else if (result.isDenied) {
-                dislikedIt(movie.id)
-                Swal.fire('Movie disliked', '', 'success')
-            }
-        })
+    const handleRating = async () => {
+        const rating = await chooseUpdatedMovieRating(
+            movie.title,
+            movie.rating
+        )
+
+        if (rating === null) {
+            return
+        }
+
+        try {
+            await setMovieStatus(movie, true, rating)
+            await showUpdatedMovieRating(movie.title, rating)
+            reloadProp(currentValue => !currentValue)
+        } catch (error) {
+            await showMovieActionError("Unable to rate movie", error)
+        }
+    }
+
+    const handleMoveToWatchlist = async () => {
+        if (!await confirmMoveToWatchlist(movie.title)) {
+            return
+        }
+
+        try {
+            await setMovieStatus(movie, false, 0)
+            await showMovedToWatchlist(movie.title)
+            reloadProp(currentValue => !currentValue)
+        } catch (error) {
+            await showMovieActionError(
+                "Unable to move movie",
+                error
+            )
+        }
     }
 
     const handleSimilarMovies = () => {
-        Swal.fire({
-            title: `View a list of similar movies to ${movie.title}?`,
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Yes',
-            cancelButtonText: 'No'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                navigate(`/movies/similar/${movie.movieId}`)
-            }
-        })
+        navigate(`/movies/similar/${movie.movieId}`)
     }
 
     return (
@@ -94,13 +104,18 @@ export const SeenMoviesCard = ({ movie, reloadProp }) => {
                                 onClick={handleSimilarMovies}
                             />
                             <MovieActionButton
-                                icon={faThumbsUp}
-                                label={`Rate ${movie.title}`}
+                                icon={faPen}
+                                label={`Change the rating for ${movie.title}`}
                                 onClick={handleRating}
                             />
                             <MovieActionButton
+                                icon={faArrowRotateLeft}
+                                label={`Move ${movie.title} back to your watchlist`}
+                                onClick={handleMoveToWatchlist}
+                            />
+                            <MovieActionButton
                                 icon={faTrashCan}
-                                label={`Remove ${movie.title} from your Seen list`}
+                                label={`Remove ${movie.title} from your movie history`}
                                 onClick={handleDeleteMovie}
                                 variant="danger"
                             />

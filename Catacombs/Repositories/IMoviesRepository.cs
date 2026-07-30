@@ -6,7 +6,10 @@ namespace Catacombs.Repositories
     public interface IMoviesRepository
     {
         Movies GetMovieById(int id, int userId);
+        Movies GetMovieByTmdbId(int movieId, int userId);
         void Add(Movies movie, int userId);
+        Movies SetStatus(Movies movie, int userId);
+        List<Movies> GetCollection(int userId);
         List<Movies> GetAllMovies(int userId);
         List<Movies> GetAllSeenMovies(int userId);
         bool Delete(int id, int userId);

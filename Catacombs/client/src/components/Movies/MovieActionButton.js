@@ -6,7 +6,9 @@ export const MovieActionButton = ({
     icon,
     label,
     onClick,
-    variant
+    variant,
+    isDisabled = false,
+    isSelected = false
 }) => {
     const className = [
         "movie-icon-button",
@@ -17,8 +19,17 @@ export const MovieActionButton = ({
         <Button
             type="button"
             className={className}
-            onClick={onClick}
+            onClick={(event) => {
+                if (isDisabled) {
+                    event.preventDefault();
+                    return;
+                }
+
+                onClick?.(event);
+            }}
             aria-label={label}
+            aria-disabled={isDisabled || undefined}
+            aria-pressed={isSelected || undefined}
             data-tooltip={label}
         >
             <FontAwesomeIcon icon={icon} aria-hidden="true" />

@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react"
 import { MovieContext } from "../Repositories/MovieProvider"
 import { SeenMoviesCard } from "./SeenMoviesCard"
+import { MovieCollectionHeading } from "./MovieCollectionHeading"
 import { Container } from "reactstrap";
 import "./Movie.css"
 
@@ -18,7 +19,13 @@ export const SeenMoviesList = () => {
     return (
         <>
             <Container>
-                <h1 style={{ textAlign: "center" }}>Movies I've Seen</h1>
+                <MovieCollectionHeading
+                    eyebrow="The Viewing Log"
+                    title="Movies You've Seen"
+                    description={
+                        "Every horror movie you've survived so far."
+                    }
+                />
                 <div id="movielist">
                     {movies.map((movie) => (
                         <SeenMoviesCard key={movie.id} movie={movie} reloadProp={setReload} />

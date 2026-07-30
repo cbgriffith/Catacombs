@@ -31,6 +31,15 @@ namespace Catacombs.Controllers
                 userId => Ok(_moviesRepository.GetAllMovies(userId)));
         }
 
+        [HttpGet("collection")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public IActionResult GetCollection()
+        {
+            return ForCurrentUser(
+                userId => Ok(_moviesRepository.GetCollection(userId)));
+        }
+
         [HttpGet("seen")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -73,6 +82,7 @@ namespace Catacombs.Controllers
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public IActionResult Add(CreateMovieRequest request)
@@ -87,6 +97,15 @@ namespace Catacombs.Controllers
 
             return ForCurrentUser(userId =>
             {
+                var existingMovie = _moviesRepository.GetMovieByTmdbId(
+                    request.MovieId,
+                    userId);
+
+                if (existingMovie != null)
+                {
+                    return Ok(existingMovie);
+                }
+
                 var movie = request.ToMovie();
                 _moviesRepository.Add(movie, userId);
 
@@ -94,6 +113,27 @@ namespace Catacombs.Controllers
                     nameof(Get),
                     new { id = movie.id },
                     movie);
+            });
+        }
+
+        [HttpPut("status")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public IActionResult SetStatus(SetMovieStatusRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.Title))
+            {
+                ModelState.AddModelError(
+                    nameof(request.Title),
+                    "Title must contain at least one character.");
+                return ValidationProblem(ModelState);
+            }
+
+            return ForCurrentUser(userId =>
+            {
+                var movie = request.ToMovie();
+                return Ok(_moviesRepository.SetStatus(movie, userId));
             });
         }
 

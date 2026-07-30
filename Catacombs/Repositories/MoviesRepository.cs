@@ -33,8 +33,25 @@ namespace Catacombs.Repositories
             return GetMovies(
                     " WHERE m.user_id = @userId AND m.id = @id",
                     userId,
-                    id)
+                    id: id)
                 .SingleOrDefault();
+        }
+
+        public Movies GetMovieByTmdbId(int movieId, int userId)
+        {
+            return GetMovies(
+                    @" WHERE m.user_id = @userId
+                             AND m.movie_id = @movieId",
+                    userId,
+                    tmdbMovieId: movieId)
+                .SingleOrDefault();
+        }
+
+        public List<Movies> GetCollection(int userId)
+        {
+            return GetMovies(
+                " WHERE m.user_id = @userId",
+                userId);
         }
 
         public List<Movies> GetAllMovies(int userId)
@@ -71,18 +88,46 @@ namespace Catacombs.Repositories
 
         public void Add(Movies movie, int userId)
         {
+            UpsertMovie(movie, userId, updateStatus: false);
+        }
+
+        public Movies SetStatus(Movies movie, int userId)
+        {
+            UpsertMovie(movie, userId, updateStatus: true);
+            return movie;
+        }
+
+        private void UpsertMovie(
+            Movies movie,
+            int userId,
+            bool updateStatus)
+        {
             using var connection = Connection;
             connection.Open();
 
             using var command = connection.CreateCommand();
-            command.CommandText = @"
+            var statusUpdateSql = updateStatus
+                ? @"rating = EXCLUDED.rating,
+                     watched = EXCLUDED.watched,"
+                : string.Empty;
+
+            command.CommandText = $@"
                 INSERT INTO movies
                     (user_id, title, rating, watched, poster_path, overview,
                      popularity, vote_average, release_date, movie_id)
                 VALUES
                     (@userId, @title, @rating, @watched, @posterPath, @overview,
                      @popularity, @voteAverage, @releaseDate, @movieId)
-                RETURNING id";
+                ON CONFLICT (user_id, movie_id)
+                DO UPDATE SET
+                    {statusUpdateSql}
+                    title = EXCLUDED.title,
+                    poster_path = EXCLUDED.poster_path,
+                    overview = EXCLUDED.overview,
+                    popularity = EXCLUDED.popularity,
+                    vote_average = EXCLUDED.vote_average,
+                    release_date = EXCLUDED.release_date
+                RETURNING id, rating, watched";
 
             DbUtils.AddParameter(
                 command,
@@ -135,7 +180,12 @@ namespace Catacombs.Repositories
                 movie.movieId,
                 DbType.Int32);
 
-            movie.id = (int)command.ExecuteScalar();
+            using var reader = command.ExecuteReader();
+            reader.Read();
+
+            movie.id = reader.GetInt32(0);
+            movie.rating = reader.GetInt32(1);
+            movie.watched = reader.GetBoolean(2);
             movie.userId = userId;
         }
 
@@ -181,7 +231,8 @@ namespace Catacombs.Repositories
         private List<Movies> GetMovies(
             string filterSql,
             int userId,
-            int? movieId = null)
+            int? id = null,
+            int? tmdbMovieId = null)
         {
             using var connection = Connection;
             connection.Open();
@@ -194,12 +245,21 @@ namespace Catacombs.Repositories
                 userId,
                 DbType.Int32);
 
-            if (movieId.HasValue)
+            if (id.HasValue)
             {
                 DbUtils.AddParameter(
                     command,
                     "@id",
-                    movieId.Value,
+                    id.Value,
+                    DbType.Int32);
+            }
+
+            if (tmdbMovieId.HasValue)
+            {
+                DbUtils.AddParameter(
+                    command,
+                    "@movieId",
+                    tmdbMovieId.Value,
                     DbType.Int32);
             }
 

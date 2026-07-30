@@ -44,7 +44,10 @@ export const SeenMoviesCard = ({ movie, reloadProp }) => {
     }
 
     const handleRating = async () => {
-        const rating = await chooseUpdatedMovieRating(movie.title)
+        const rating = await chooseUpdatedMovieRating(
+            movie.title,
+            movie.rating
+        )
 
         if (rating === null) {
             return

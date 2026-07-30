@@ -306,6 +306,15 @@ public sealed class SecurityIntegrationTests : IAsyncLifetime
             Assert.Equal(0, document.RootElement.GetArrayLength());
         }
 
+        var secondUsersCollection =
+            await secondClient.GetAsync("/api/movies/collection");
+        Assert.Equal(HttpStatusCode.OK, secondUsersCollection.StatusCode);
+
+        using (var document = await ReadJsonAsync(secondUsersCollection))
+        {
+            Assert.Equal(0, document.RootElement.GetArrayLength());
+        }
+
         var forbiddenRead =
             await secondClient.GetAsync($"/api/movies/{movieId}");
         Assert.Equal(HttpStatusCode.NotFound, forbiddenRead.StatusCode);
@@ -424,6 +433,16 @@ public sealed class SecurityIntegrationTests : IAsyncLifetime
             Assert.Equal(0, movie.GetProperty("rating").GetInt32());
         }
 
+        var duplicateWatchlistResponse = await SendWithAntiforgeryAsync(
+            _client,
+            HttpMethod.Post,
+            "/api/movies",
+            NewMovieRequest(tmdbMovieId));
+
+        Assert.Equal(
+            HttpStatusCode.OK,
+            duplicateWatchlistResponse.StatusCode);
+
         var invalidResponse = await SendWithAntiforgeryAsync(
             _client,
             HttpMethod.Put,
@@ -438,6 +457,39 @@ public sealed class SecurityIntegrationTests : IAsyncLifetime
         var watchlist = await _client.GetAsync("/api/movies");
         using var watchlistDocument = await ReadJsonAsync(watchlist);
         Assert.Single(watchlistDocument.RootElement.EnumerateArray());
+
+        const int secondTmdbMovieId = 43002;
+        var secondMovieResponse = await SendWithAntiforgeryAsync(
+            _client,
+            HttpMethod.Put,
+            "/api/movies/status",
+            NewMovieStatusRequest(
+                secondTmdbMovieId,
+                watched: true,
+                rating: 1));
+
+        Assert.Equal(HttpStatusCode.OK, secondMovieResponse.StatusCode);
+
+        var collection = await _client.GetAsync(
+            "/api/movies/collection");
+        Assert.Equal(HttpStatusCode.OK, collection.StatusCode);
+
+        using var collectionDocument = await ReadJsonAsync(collection);
+        var collectionMovies = collectionDocument.RootElement
+            .EnumerateArray()
+            .ToList();
+
+        Assert.Equal(2, collectionMovies.Count);
+        Assert.Contains(
+            collectionMovies,
+            movie => movie.GetProperty("movieId").GetInt32()
+                == tmdbMovieId
+                && !movie.GetProperty("watched").GetBoolean());
+        Assert.Contains(
+            collectionMovies,
+            movie => movie.GetProperty("movieId").GetInt32()
+                == secondTmdbMovieId
+                && movie.GetProperty("watched").GetBoolean());
     }
 
     [Fact]

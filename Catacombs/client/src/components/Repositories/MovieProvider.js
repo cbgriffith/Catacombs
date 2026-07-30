@@ -1,4 +1,4 @@
-import React, { useState, createContext } from "react"
+import React, { useMemo, useState, createContext } from "react"
 
 export const MovieContext = createContext()
 
@@ -59,9 +59,43 @@ const secureApiFetch = async (path, options = {}) => {
 
 export const MovieProvider = (props) => {
     const [movies, setMovies] = useState([])
+    const [savedMovies, setSavedMovies] = useState([])
     const [moviePage, setMoviePage] = useState(emptyMoviePage)
     const [isLoadingMovies, setIsLoadingMovies] = useState(false)
     const [movieLoadError, setMovieLoadError] = useState("")
+    const savedMovieByTmdbId = useMemo(
+        () => new Map(
+            savedMovies.map((movie) => [movie.movieId, movie])
+        ),
+        [savedMovies]
+    )
+
+    const rememberSavedMovie = (savedMovie) => {
+        setSavedMovies((currentMovies) => {
+            const existingIndex = currentMovies.findIndex(
+                (movie) => movie.movieId === savedMovie.movieId
+            )
+
+            if (existingIndex === -1) {
+                return [...currentMovies, savedMovie]
+            }
+
+            return currentMovies.map((movie, index) => (
+                index === existingIndex ? savedMovie : movie
+            ))
+        })
+
+        return savedMovie
+    }
+
+    const loadMovieCollection = () => {
+        return apiFetch("/api/Movies/collection")
+            .then((response) => response.json())
+            .then((collection) => {
+                setSavedMovies(collection)
+                return collection
+            })
+    }
 
     const loadTmdbMovies = async (path) => {
         setIsLoadingMovies(true)
@@ -69,7 +103,10 @@ export const MovieProvider = (props) => {
         setMovies([])
 
         try {
-            const movieObject = await tmdbApiFetch(path)
+            const [movieObject] = await Promise.all([
+                tmdbApiFetch(path),
+                loadMovieCollection()
+            ])
             setMovies(movieObject.results || [])
             setMoviePage({
                 page: movieObject.page || 1,
@@ -143,18 +180,24 @@ export const MovieProvider = (props) => {
         }))
     }
 
-    const addMovie = (movie) => {
-        return secureApiFetch("/api/Movies", {
+    const addMovie = async (movie) => {
+        const response = await secureApiFetch("/api/Movies", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(movie),
         })
+        const savedMovie = await response.json()
+        rememberSavedMovie(savedMovie)
+        return {
+            movie: savedMovie,
+            wasAlreadySaved: response.status === 200
+        }
     }
 
-    const setMovieStatus = (movie, watched, rating) => {
-        return secureApiFetch("/api/Movies/status", {
+    const setMovieStatus = async (movie, watched, rating) => {
+        const response = await secureApiFetch("/api/Movies/status", {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -170,7 +213,9 @@ export const MovieProvider = (props) => {
                 watched,
                 rating
             }),
-        }).then((response) => response.json())
+        })
+        const savedMovie = await response.json()
+        return rememberSavedMovie(savedMovie)
     }
 
     const getAllMovies = () => {
@@ -185,10 +230,14 @@ export const MovieProvider = (props) => {
             .then(setMovies)
     }
 
-    const deleteMovie = movieId => {
-        return secureApiFetch(`/api/Movies/${movieId}`, {
+    const deleteMovie = async (movieId) => {
+        const response = await secureApiFetch(`/api/Movies/${movieId}`, {
             method: "DELETE"
         })
+        setSavedMovies((currentMovies) => (
+            currentMovies.filter((movie) => movie.id !== movieId)
+        ))
+        return response
     }
 
     const getAllLikedMovies = () => {
@@ -209,6 +258,9 @@ export const MovieProvider = (props) => {
             moviePage,
             isLoadingMovies,
             movieLoadError,
+            getSavedMovie: (movieId) => (
+                savedMovieByTmdbId.get(movieId) || null
+            ),
             getMoviesByRating,
             popularMovies,
             hiddenGems,

@@ -525,6 +525,31 @@
     border-color: #ff5579;
 }
 
+.movie-icon-button--selected.btn {
+    color: #ffffff;
+    background-color: rgba(230, 30, 77, 0.28);
+    border-color: #e61e4d;
+    box-shadow: 0 0.3rem 0.8rem rgba(230, 30, 77, 0.18);
+}
+
+.movie-icon-button--selected.btn:hover {
+    color: #ffffff;
+    background-color: #c91845;
+    border-color: #ff5579;
+}
+
+.movie-icon-button[aria-disabled="true"],
+.movie-icon-button.btn[aria-disabled="true"],
+.movie-icon-button[aria-disabled="true"]:hover,
+.movie-icon-button.btn[aria-disabled="true"]:hover {
+    color: #ff8aa3;
+    background-color: rgba(230, 30, 77, 0.18);
+    border-color: rgba(230, 30, 77, 0.55);
+    box-shadow: none;
+    cursor: default;
+    transform: none;
+}
+
 .movie-icon-button--danger.btn {
     color: #ff8aa3;
 }

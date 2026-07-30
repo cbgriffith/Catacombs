@@ -21,6 +21,17 @@ export const showAddedToWatchlist = (title) => (
     })
 )
 
+export const showAlreadySavedMovie = (title, watched) => (
+    Swal.fire({
+        title: watched
+            ? "Already in Movies You've Seen"
+            : "Already in your watchlist",
+        text: `${title}'s saved status has been refreshed.`,
+        icon: "info",
+        confirmButtonText: "Done"
+    })
+)
+
 export const confirmRemoveMovie = async (title, collectionName) => {
     const result = await Swal.fire({
         titleText: `Remove ${title} from ${collectionName}?`,
@@ -79,28 +90,36 @@ export const showMarkedAsWatched = (title) => (
     })
 )
 
-export const chooseUpdatedMovieRating = async (title) => {
+export const chooseUpdatedMovieRating = async (
+    title,
+    currentRating = 0
+) => {
+    const isLiked = currentRating === 1
+    const isUnrated = currentRating === 0
     const result = await Swal.fire({
         titleText: `Update your rating for ${title}`,
-        text: "Choose a new rating or clear the current one.",
+        text: isUnrated
+            ? "Choose how you felt about it."
+            : "Choose a new rating or clear the current one.",
         icon: "question",
+        showConfirmButton: true,
         showDenyButton: true,
         showCancelButton: true,
-        confirmButtonText: "I liked it",
-        denyButtonText: "Not for me",
-        cancelButtonText: "Clear rating"
+        confirmButtonText: isLiked ? "Not for me" : "I liked it",
+        denyButtonText: isUnrated ? "Not for me" : "Clear rating",
+        cancelButtonText: "Cancel"
     })
 
     if (result.isConfirmed) {
-        return 1
+        return isLiked ? -1 : 1
     }
 
     if (result.isDenied) {
-        return -1
+        return isUnrated ? -1 : 0
     }
 
     if (result.dismiss === Swal.DismissReason.cancel) {
-        return 0
+        return null
     }
 
     return null

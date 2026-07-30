@@ -33,8 +33,25 @@ namespace Catacombs.Repositories
             return GetMovies(
                     " WHERE m.user_id = @userId AND m.id = @id",
                     userId,
-                    id)
+                    id: id)
                 .SingleOrDefault();
+        }
+
+        public Movies GetMovieByTmdbId(int movieId, int userId)
+        {
+            return GetMovies(
+                    @" WHERE m.user_id = @userId
+                             AND m.movie_id = @movieId",
+                    userId,
+                    tmdbMovieId: movieId)
+                .SingleOrDefault();
+        }
+
+        public List<Movies> GetCollection(int userId)
+        {
+            return GetMovies(
+                " WHERE m.user_id = @userId",
+                userId);
         }
 
         public List<Movies> GetAllMovies(int userId)
@@ -214,7 +231,8 @@ namespace Catacombs.Repositories
         private List<Movies> GetMovies(
             string filterSql,
             int userId,
-            int? movieId = null)
+            int? id = null,
+            int? tmdbMovieId = null)
         {
             using var connection = Connection;
             connection.Open();
@@ -227,12 +245,21 @@ namespace Catacombs.Repositories
                 userId,
                 DbType.Int32);
 
-            if (movieId.HasValue)
+            if (id.HasValue)
             {
                 DbUtils.AddParameter(
                     command,
                     "@id",
-                    movieId.Value,
+                    id.Value,
+                    DbType.Int32);
+            }
+
+            if (tmdbMovieId.HasValue)
+            {
+                DbUtils.AddParameter(
+                    command,
+                    "@movieId",
+                    tmdbMovieId.Value,
                     DbType.Int32);
             }
 

@@ -7,6 +7,7 @@ namespace Catacombs.Repositories
     {
         Movies GetMovieById(int id, int userId);
         void Add(Movies movie, int userId);
+        Movies SetStatus(Movies movie, int userId);
         List<Movies> GetAllMovies(int userId);
         List<Movies> GetAllSeenMovies(int userId);
         bool Delete(int id, int userId);

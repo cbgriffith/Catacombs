@@ -97,6 +97,27 @@ namespace Catacombs.Controllers
             });
         }
 
+        [HttpPut("status")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public IActionResult SetStatus(SetMovieStatusRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.Title))
+            {
+                ModelState.AddModelError(
+                    nameof(request.Title),
+                    "Title must contain at least one character.");
+                return ValidationProblem(ModelState);
+            }
+
+            return ForCurrentUser(userId =>
+            {
+                var movie = request.ToMovie();
+                return Ok(_moviesRepository.SetStatus(movie, userId));
+            });
+        }
+
         [HttpDelete("{id:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]

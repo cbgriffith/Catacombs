@@ -350,6 +350,97 @@ public sealed class SecurityIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task MovieStatusSupportsTheCompleteViewingWorkflow()
+    {
+        await RegisterAndLoginAsync(_client, "movie-status");
+        const int tmdbMovieId = 43001;
+
+        var likedResponse = await SendWithAntiforgeryAsync(
+            _client,
+            HttpMethod.Put,
+            "/api/movies/status",
+            NewMovieStatusRequest(
+                tmdbMovieId,
+                watched: true,
+                rating: 1));
+
+        Assert.Equal(HttpStatusCode.OK, likedResponse.StatusCode);
+
+        int savedMovieId;
+        using (var document = await ReadJsonAsync(likedResponse))
+        {
+            var movie = document.RootElement;
+            savedMovieId = movie.GetProperty("id").GetInt32();
+            Assert.True(movie.GetProperty("watched").GetBoolean());
+            Assert.Equal(1, movie.GetProperty("rating").GetInt32());
+        }
+
+        var dislikedResponse = await SendWithAntiforgeryAsync(
+            _client,
+            HttpMethod.Put,
+            "/api/movies/status",
+            NewMovieStatusRequest(
+                tmdbMovieId,
+                watched: true,
+                rating: -1));
+
+        Assert.Equal(HttpStatusCode.OK, dislikedResponse.StatusCode);
+
+        using (var document = await ReadJsonAsync(dislikedResponse))
+        {
+            var movie = document.RootElement;
+            Assert.Equal(
+                savedMovieId,
+                movie.GetProperty("id").GetInt32());
+            Assert.Equal(-1, movie.GetProperty("rating").GetInt32());
+        }
+
+        var unratedResponse = await SendWithAntiforgeryAsync(
+            _client,
+            HttpMethod.Put,
+            "/api/movies/status",
+            NewMovieStatusRequest(
+                tmdbMovieId,
+                watched: true,
+                rating: 0));
+
+        Assert.Equal(HttpStatusCode.OK, unratedResponse.StatusCode);
+
+        var watchlistResponse = await SendWithAntiforgeryAsync(
+            _client,
+            HttpMethod.Put,
+            "/api/movies/status",
+            NewMovieStatusRequest(
+                tmdbMovieId,
+                watched: false,
+                rating: 0));
+
+        Assert.Equal(HttpStatusCode.OK, watchlistResponse.StatusCode);
+
+        using (var document = await ReadJsonAsync(watchlistResponse))
+        {
+            var movie = document.RootElement;
+            Assert.False(movie.GetProperty("watched").GetBoolean());
+            Assert.Equal(0, movie.GetProperty("rating").GetInt32());
+        }
+
+        var invalidResponse = await SendWithAntiforgeryAsync(
+            _client,
+            HttpMethod.Put,
+            "/api/movies/status",
+            NewMovieStatusRequest(
+                tmdbMovieId,
+                watched: false,
+                rating: 1));
+
+        Assert.Equal(HttpStatusCode.BadRequest, invalidResponse.StatusCode);
+
+        var watchlist = await _client.GetAsync("/api/movies");
+        using var watchlistDocument = await ReadJsonAsync(watchlist);
+        Assert.Single(watchlistDocument.RootElement.EnumerateArray());
+    }
+
+    [Fact]
     public async Task LoginIsLimitedAfterFiveFailedAttempts()
     {
         var email = NewEmail("rate-limit");
@@ -553,6 +644,25 @@ public sealed class SecurityIntegrationTests : IAsyncLifetime
             userId,
             rating,
             watched
+        };
+    }
+
+    private static object NewMovieStatusRequest(
+        int movieId,
+        bool watched,
+        int rating)
+    {
+        return new
+        {
+            title = $"Integration Test Movie {movieId}",
+            poster_path = "/integration-test.jpg",
+            overview = "Created by the automated security tests.",
+            popularity = 12.5,
+            vote_average = 7.4,
+            release_date = "2026-01-02",
+            movieId,
+            watched,
+            rating
         };
     }
 

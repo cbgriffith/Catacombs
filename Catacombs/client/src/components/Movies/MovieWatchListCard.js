@@ -11,11 +11,11 @@ import {
 import { MovieActionButton } from "./MovieActionButton";
 import { MovieCardContent } from "./MovieCardContent";
 import {
-    confirmMarkAsWatched,
+    chooseInitialMovieRating,
     confirmRemoveMovie,
-    showMarkedAsWatched,
     showMovieActionError,
-    showRemovedMovie
+    showRemovedMovie,
+    showViewingStatusSaved
 } from "./movieAlerts";
 import { SocialLinks } from "./SocialLinks";
 import { TrailerButton } from "./TrailerButton";
@@ -23,7 +23,7 @@ import { useMovieMetadata } from "./useMovieMetadata";
 
 
 export const MovieWatchListCard = ({ movie, reloadProp }) => {
-    const { deleteMovie, seenIt } = useContext(MovieContext)
+    const { deleteMovie, setMovieStatus } = useContext(MovieContext)
     const { socials, trailer } = useMovieMetadata(movie.movieId);
     const navigate = useNavigate();
 
@@ -46,13 +46,16 @@ export const MovieWatchListCard = ({ movie, reloadProp }) => {
     }
 
     const handleSeenIt = async () => {
-        if (!await confirmMarkAsWatched(movie.title)) {
+        const rating = await chooseInitialMovieRating(movie.title)
+
+        if (rating === null) {
             return
         }
 
         try {
-            await seenIt(movie.id)
-            await showMarkedAsWatched(movie.title)
+            await setMovieStatus(movie, true, rating)
+            await showViewingStatusSaved(movie.title, rating)
+            reloadProp(currentValue => !currentValue)
         } catch (error) {
             await showMovieActionError(
                 "Unable to mark movie as watched",

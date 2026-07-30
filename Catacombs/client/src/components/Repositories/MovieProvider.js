@@ -153,6 +153,26 @@ export const MovieProvider = (props) => {
         })
     }
 
+    const setMovieStatus = (movie, watched, rating) => {
+        return secureApiFetch("/api/Movies/status", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                title: movie.title,
+                poster_path: movie.poster_path,
+                overview: movie.overview,
+                popularity: movie.popularity,
+                vote_average: movie.vote_average,
+                release_date: movie.release_date,
+                movieId: movie.movieId ?? movie.id,
+                watched,
+                rating
+            }),
+        }).then((response) => response.json())
+    }
+
     const getAllMovies = () => {
         return apiFetch("/api/Movies")
             .then((response) => response.json())
@@ -211,6 +231,7 @@ export const MovieProvider = (props) => {
             popularMovies,
             hiddenGems,
             addMovie,
+            setMovieStatus,
             getAllMovies,
             searchMovies,
             comingSoon,

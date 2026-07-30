@@ -43,16 +43,31 @@ export const showRemovedMovie = (title) => (
     })
 )
 
-export const confirmMarkAsWatched = async (title) => {
+export const chooseInitialMovieRating = async (title) => {
     const result = await Swal.fire({
-        titleText: `Mark ${title} as watched?`,
+        titleText: `What did you think of ${title}?`,
+        text: "This will add it to Movies You've Seen.",
         icon: "question",
+        showDenyButton: true,
         showCancelButton: true,
-        confirmButtonText: "Mark as watched",
-        cancelButtonText: "Not yet"
+        confirmButtonText: "I liked it",
+        denyButtonText: "Not for me",
+        cancelButtonText: "Rate later"
     })
 
-    return result.isConfirmed
+    if (result.isConfirmed) {
+        return 1
+    }
+
+    if (result.isDenied) {
+        return -1
+    }
+
+    if (result.dismiss === Swal.DismissReason.cancel) {
+        return 0
+    }
+
+    return null
 }
 
 export const showMarkedAsWatched = (title) => (
@@ -93,6 +108,18 @@ export const showDislikedMovie = (title) => (
         confirmButtonText: "Done"
     })
 )
+
+export const showViewingStatusSaved = (title, rating) => {
+    if (rating === 1) {
+        return showLikedMovie(title)
+    }
+
+    if (rating === -1) {
+        return showDislikedMovie(title)
+    }
+
+    return showMarkedAsWatched(title)
+}
 
 export const showMovieActionError = (title, error) => (
     Swal.fire({

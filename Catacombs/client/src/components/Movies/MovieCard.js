@@ -3,20 +3,26 @@ import { MovieContext } from "../Repositories/MovieProvider";
 import { Card, CardFooter } from "reactstrap";
 import { useNavigate } from "react-router-dom";
 import "./Movie.css"
-import { faBookmark, faClapperboard } from "@fortawesome/free-solid-svg-icons";
+import {
+    faBookmark,
+    faClapperboard,
+    faEye
+} from "@fortawesome/free-solid-svg-icons";
 import { MovieActionButton } from "./MovieActionButton";
 import { MovieCardContent } from "./MovieCardContent";
 import {
+    chooseInitialMovieRating,
     confirmAddToWatchlist,
     showAddedToWatchlist,
-    showMovieActionError
+    showMovieActionError,
+    showViewingStatusSaved
 } from "./movieAlerts";
 import { SocialLinks } from "./SocialLinks";
 import { TrailerButton } from "./TrailerButton";
 import { useMovieMetadata } from "./useMovieMetadata";
 
 export const MovieCard = ({ movie }) => {
-    const { addMovie } = useContext(MovieContext)
+    const { addMovie, setMovieStatus } = useContext(MovieContext)
     const { socials, trailer } = useMovieMetadata(movie.id);
     const navigate = useNavigate();
 
@@ -48,6 +54,25 @@ export const MovieCard = ({ movie }) => {
         navigate(`/movies/similar/${movie.id}`)
     }
 
+    const handleMarkWatched = async (e) => {
+        e.preventDefault()
+        const rating = await chooseInitialMovieRating(movie.title)
+
+        if (rating === null) {
+            return
+        }
+
+        try {
+            await setMovieStatus(movie, true, rating)
+            await showViewingStatusSaved(movie.title, rating)
+        } catch (error) {
+            await showMovieActionError(
+                "Unable to save movie",
+                error
+            )
+        }
+    }
+
     return (
         <div className="movie-grid-item">
                 <Card color="dark" inverse className="movie-card">
@@ -67,6 +92,11 @@ export const MovieCard = ({ movie }) => {
                                 icon={faBookmark}
                                 label={`Add ${movie.title} to your watchlist`}
                                 onClick={handleSaveMovie}
+                            />
+                            <MovieActionButton
+                                icon={faEye}
+                                label={`Mark ${movie.title} as watched`}
+                                onClick={handleMarkWatched}
                             />
                             <MovieActionButton
                                 icon={faClapperboard}

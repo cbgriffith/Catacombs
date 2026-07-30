@@ -218,9 +218,13 @@ export const MovieProvider = (props) => {
         return rememberSavedMovie(savedMovie)
     }
 
-    const getAllMovies = () => {
+    const getWatchlist = () => {
         return apiFetch("/api/Movies")
             .then((response) => response.json())
+    }
+
+    const getAllMovies = () => {
+        return getWatchlist()
             .then(setMovies)
     }
 
@@ -271,6 +275,7 @@ export const MovieProvider = (props) => {
             hiddenGems,
             addMovie,
             setMovieStatus,
+            getWatchlist,
             getAllMovies,
             searchMovies,
             comingSoon,

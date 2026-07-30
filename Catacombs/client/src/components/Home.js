@@ -7,20 +7,32 @@ import {
     faGem,
     faHeart,
     faMagnifyingGlass,
+    faShuffle,
     faStar,
     faThumbsDown
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import { Container } from "reactstrap";
+import { getMoviePosterUrl } from "./Movies/MovieCardContent";
 import { MovieContext } from "./Repositories/MovieProvider";
 import { UserContext } from "./Repositories/UserProvider";
 import "./Home.css";
 
+const getReleaseYear = (releaseDate) => {
+    const year = Number(releaseDate?.split("-")[0]);
+    return Number.isInteger(year) && year > 1800
+        ? year
+        : "Release date unavailable";
+};
+
 export const Home = () => {
     const { userProfile } = useContext(UserContext);
-    const { getMovieSummary } = useContext(MovieContext);
+    const { getMovieSummary, getWatchlist } = useContext(MovieContext);
     const [movieSummary, setMovieSummary] = useState(null);
     const [summaryError, setSummaryError] = useState("");
+    const [watchlist, setWatchlist] = useState(null);
+    const [watchlistError, setWatchlistError] = useState("");
+    const [selectedMovie, setSelectedMovie] = useState(null);
 
     useEffect(() => {
         let isCancelled = false;
@@ -37,10 +49,34 @@ export const Home = () => {
                 }
             });
 
+        getWatchlist()
+            .then((movies) => {
+                if (!isCancelled) {
+                    setWatchlist(movies);
+                }
+            })
+            .catch((error) => {
+                if (!isCancelled) {
+                    setWatchlistError(error.message);
+                }
+            });
+
         return () => {
             isCancelled = true;
         };
-    }, [getMovieSummary]);
+    }, [getMovieSummary, getWatchlist]);
+
+    const chooseWatchlistMovie = () => {
+        if (!watchlist?.length) {
+            return;
+        }
+
+        const choices = watchlist.length > 1 && selectedMovie
+            ? watchlist.filter((movie) => movie.id !== selectedMovie.id)
+            : watchlist;
+        const selectedIndex = Math.floor(Math.random() * choices.length);
+        setSelectedMovie(choices[selectedIndex]);
+    };
 
     const collectionStats = [
         {
@@ -181,6 +217,130 @@ export const Home = () => {
                                     </span>
                                 </Link>
                             ))}
+                        </div>
+                    )}
+                </section>
+
+                <section
+                    className="home-watchlist"
+                    aria-labelledby="home-watchlist-heading"
+                    aria-busy={!watchlist && !watchlistError}
+                >
+                    <div className="home-watchlist-heading">
+                        <div className="home-section-heading">
+                            <p className="home-eyebrow">Waiting in the dark</p>
+                            <h2 id="home-watchlist-heading">
+                                Your watchlist
+                            </h2>
+                        </div>
+                        {watchlist?.length > 0 && (
+                            <Link
+                                className="home-watchlist-link"
+                                to="/movies/watchlist"
+                            >
+                                View full watchlist
+                            </Link>
+                        )}
+                    </div>
+
+                    {watchlistError ? (
+                        <p className="home-summary-error" role="alert">
+                            Your watchlist preview could not be loaded.
+                            Please refresh the page and try again.
+                        </p>
+                    ) : watchlist === null ? (
+                        <p className="home-watchlist-loading" role="status">
+                            Opening your watchlist...
+                        </p>
+                    ) : watchlist.length === 0 ? (
+                        <div className="home-watchlist-empty">
+                            <p>
+                                Your watchlist is empty. Add a few movies
+                                before asking the Catacombs to choose.
+                            </p>
+                            <Link to="/movies/popular">
+                                Find something to watch
+                            </Link>
+                        </div>
+                    ) : (
+                        <div className="home-watchlist-layout">
+                            <div
+                                className="home-watchlist-preview"
+                                aria-label="Watchlist preview"
+                            >
+                                {watchlist.slice(0, 3).map((movie) => (
+                                    <article
+                                        className="home-watchlist-movie"
+                                        key={movie.id}
+                                    >
+                                        <img
+                                            src={getMoviePosterUrl(
+                                                movie.poster_path
+                                            )}
+                                            alt={`${movie.title} poster`}
+                                            loading="lazy"
+                                        />
+                                        <div>
+                                            <h3>{movie.title}</h3>
+                                            <p>
+                                                {getReleaseYear(
+                                                    movie.release_date
+                                                )}
+                                            </p>
+                                        </div>
+                                    </article>
+                                ))}
+                            </div>
+
+                            <aside className="home-picker">
+                                <p className="home-eyebrow">
+                                    Tonight's descent
+                                </p>
+                                {selectedMovie ? (
+                                    <div
+                                        className="home-picker-result"
+                                        aria-live="polite"
+                                    >
+                                        <img
+                                            src={getMoviePosterUrl(
+                                                selectedMovie.poster_path
+                                            )}
+                                            alt={
+                                                `${selectedMovie.title} poster`
+                                            }
+                                        />
+                                        <div>
+                                            <span>The Catacombs chose</span>
+                                            <h3>{selectedMovie.title}</h3>
+                                            <p>
+                                                {selectedMovie.overview ||
+                                                    "No overview is available."}
+                                            </p>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <h3>Can't decide what to watch?</h3>
+                                        <p className="home-picker-intro">
+                                            Let the Catacombs choose one
+                                            movie from your watchlist.
+                                        </p>
+                                    </>
+                                )}
+                                <button
+                                    type="button"
+                                    className="home-picker-button"
+                                    onClick={chooseWatchlistMovie}
+                                >
+                                    <FontAwesomeIcon
+                                        icon={faShuffle}
+                                        aria-hidden="true"
+                                    />
+                                    {selectedMovie
+                                        ? "Choose another"
+                                        : "Choose something for me"}
+                                </button>
+                            </aside>
                         </div>
                     )}
                 </section>

@@ -25,6 +25,15 @@
     line-height: 1.55;
 }
 
+.movie-list-heading .movie-list-eyebrow {
+    margin: 0 0 0.55rem;
+    color: #ef174c;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
 .similar-movies-header {
     padding-top: 1rem;
 }

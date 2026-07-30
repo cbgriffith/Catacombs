@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react"
 import { MovieContext } from "../Repositories/MovieProvider"
 import { MovieWatchListCard } from "./MovieWatchListCard"
+import { MovieCollectionHeading } from "./MovieCollectionHeading"
 import { Container } from "reactstrap";
 import "./Movie.css"
 
@@ -19,7 +20,11 @@ export const MovieWatchList = () => {
     <>
       <div id="main">
         <Container>
-          <h1 style={{ textAlign: "center" }}>Watchlist</h1>
+          <MovieCollectionHeading
+            eyebrow="Up Next"
+            title="Your Watchlist"
+            description="Movies waiting in the dark for their turn."
+          />
           <div id="movielist">
             {movies.map((movie) => (
               <MovieWatchListCard key={movie.id} movie={movie} reloadProp={setReload} />

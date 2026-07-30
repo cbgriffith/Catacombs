@@ -17,6 +17,7 @@ const Swal = SweetAlert.mixin({
       "catacombs-alert-button catacombs-alert-deny",
     cancelButton:
       "catacombs-alert-button catacombs-alert-cancel",
+    closeButton: "catacombs-alert-close",
   },
 });
 

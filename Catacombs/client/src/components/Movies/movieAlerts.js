@@ -59,6 +59,8 @@ export const chooseInitialMovieRating = async (title) => {
         titleText: `What did you think of ${title}?`,
         text: "This will add it to Movies You've Seen.",
         icon: "question",
+        showCloseButton: true,
+        closeButtonAriaLabel: "Cancel without saving",
         showDenyButton: true,
         showCancelButton: true,
         confirmButtonText: "I liked it",

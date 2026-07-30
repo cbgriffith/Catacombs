@@ -18,7 +18,7 @@ import {
   DropdownItem
 } from 'reactstrap';
 import { UserContext } from './Repositories/UserProvider';
-import icon from './Movies/images/icon.png'
+import catacombsMark from './Movies/images/catacombs-mark.png'
 import Swal from "../sweetAlert";
 import "./Header.css"
 
@@ -87,7 +87,7 @@ export default function Header() {
         >
           <img
             className="catacombs-brand-icon"
-            src={icon}
+            src={catacombsMark}
             alt=""
             width="40"
             height="40"

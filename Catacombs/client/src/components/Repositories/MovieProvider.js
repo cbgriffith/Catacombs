@@ -252,6 +252,11 @@ export const MovieProvider = (props) => {
             .then(setMovies)
     }
 
+    const getMovieSummary = () => {
+        return apiFetch("/api/Movies/summary")
+            .then((response) => response.json())
+    }
+
     return (
         <MovieContext.Provider value={{
             movies,
@@ -275,6 +280,7 @@ export const MovieProvider = (props) => {
             deleteMovie,
             getAllLikedMovies,
             getAllDislikedMovies,
+            getMovieSummary,
             getMovieMetadata
         }}>
             {props.children}

@@ -181,6 +181,86 @@
     text-transform: uppercase;
 }
 
+.home-summary {
+    padding-top: clamp(2.75rem, 6vw, 4.5rem);
+}
+
+.home-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.home-summary-card {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.2rem 0.85rem;
+    align-items: center;
+    padding: 1.15rem;
+    color: #f8f9fa;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(38, 42, 46, 0.96),
+            rgba(27, 30, 33, 0.96)
+        );
+    border: 1px solid rgba(255, 255, 255, 0.11);
+    border-radius: 0.85rem;
+    box-shadow: 0 0.6rem 1.35rem rgba(0, 0, 0, 0.16);
+    text-decoration: none;
+    transition:
+        border-color 150ms ease,
+        box-shadow 150ms ease,
+        transform 150ms ease;
+}
+
+.home-summary-card:hover,
+.home-summary-card:focus-visible {
+    color: #ffffff;
+    border-color: rgba(230, 30, 77, 0.64);
+    box-shadow: 0 0.85rem 1.8rem rgba(0, 0, 0, 0.24);
+    transform: translateY(-2px);
+}
+
+.home-summary-icon {
+    width: 2.85rem;
+    height: 2.85rem;
+    grid-row: span 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #ff718f;
+    background-color: rgba(230, 30, 77, 0.12);
+    border: 1px solid rgba(230, 30, 77, 0.25);
+    border-radius: 0.7rem;
+}
+
+.home-summary-value {
+    overflow: hidden;
+    font-size: clamp(1.65rem, 4vw, 2.2rem);
+    font-weight: 800;
+    line-height: 1;
+    text-overflow: ellipsis;
+}
+
+.home-summary-label {
+    overflow: hidden;
+    color: #afb5ba;
+    font-size: 0.82rem;
+    line-height: 1.25;
+    text-overflow: ellipsis;
+}
+
+.home-summary-error {
+    margin: 0;
+    padding: 1rem 1.15rem;
+    color: #ffd6df;
+    background-color: rgba(111, 42, 59, 0.45);
+    border: 1px solid rgba(198, 91, 118, 0.48);
+    border-radius: 0.85rem;
+}
+
 .home-destinations {
     padding-top: clamp(2.75rem, 6vw, 4.5rem);
 }
@@ -284,6 +364,10 @@
     .home-arch {
         width: min(100%, 12rem);
     }
+
+    .home-summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
 @media (max-width: 767.98px) {
@@ -308,5 +392,9 @@
     .home-primary-action,
     .home-secondary-action {
         width: 100%;
+    }
+
+    .home-summary-grid {
+        grid-template-columns: 1fr;
     }
 }

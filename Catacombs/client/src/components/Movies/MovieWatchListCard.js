@@ -2,7 +2,6 @@ import React, { useContext } from "react"
 import { MovieContext } from "../Repositories/MovieProvider"
 import { Card, CardFooter } from "reactstrap";
 import { useNavigate } from "react-router-dom";
-import Swal from "../../sweetAlert";
 import "./Movie.css"
 import {
     faClapperboard,
@@ -11,6 +10,13 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { MovieActionButton } from "./MovieActionButton";
 import { MovieCardContent } from "./MovieCardContent";
+import {
+    confirmMarkAsWatched,
+    confirmRemoveMovie,
+    showMarkedAsWatched,
+    showMovieActionError,
+    showRemovedMovie
+} from "./movieAlerts";
 import { SocialLinks } from "./SocialLinks";
 import { TrailerButton } from "./TrailerButton";
 import { useMovieMetadata } from "./useMovieMetadata";
@@ -25,57 +31,39 @@ export const MovieWatchListCard = ({ movie, reloadProp }) => {
     //     deleteMovie(movie.id).then(reloadProp)
     // }
 
-    const handleDeleteMovie = () => {
-        Swal.fire({
-            title: `Delete ${movie.title}?`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Yes',
-            cancelButtonText: 'No'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                deleteMovie(movie.id).then(reloadProp)
-                Swal.fire(
-                    'Deleted!',
-                    `${movie.title} has been deleted.`,
-                    'success'
-                )
-            }
-        })
+    const handleDeleteMovie = async () => {
+        if (!await confirmRemoveMovie(movie.title, "your watchlist")) {
+            return
+        }
+
+        try {
+            await deleteMovie(movie.id)
+            reloadProp(currentValue => !currentValue)
+            await showRemovedMovie(movie.title)
+        } catch (error) {
+            await showMovieActionError("Unable to remove movie", error)
+        }
     }
 
-    const handleSeenIt = () => {
-        Swal.fire({
-            title: `You've seen ${movie.title}?`,
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Yes',
-            cancelButtonText: 'No'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                seenIt(movie.id)
-                Swal.fire(
-                    'Moved!',
-                    `${movie.title} has been moved to the Seen It list.`,
-                    'success'
-                )
-            }
-        })
+    const handleSeenIt = async () => {
+        if (!await confirmMarkAsWatched(movie.title)) {
+            return
+        }
+
+        try {
+            await seenIt(movie.id)
+            await showMarkedAsWatched(movie.title)
+        } catch (error) {
+            await showMovieActionError(
+                "Unable to mark movie as watched",
+                error
+            )
+        }
     }
 
 
     const handleSimilarMovies = () => {
-        Swal.fire({
-            title: `View a list of similar movies to ${movie.title}?`,
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Yes',
-            cancelButtonText: 'No'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                navigate(`/movies/similar/${movie.movieId}`)
-            }
-        })
+        navigate(`/movies/similar/${movie.movieId}`)
     }
 
 
@@ -106,7 +94,7 @@ export const MovieWatchListCard = ({ movie, reloadProp }) => {
                             />
                             <MovieActionButton
                                 icon={faTrashCan}
-                                label={`Remove ${movie.title} from your Watch List`}
+                                label={`Remove ${movie.title} from your watchlist`}
                                 onClick={handleDeleteMovie}
                                 variant="danger"
                             />

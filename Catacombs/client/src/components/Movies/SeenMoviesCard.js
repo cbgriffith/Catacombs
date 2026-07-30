@@ -2,7 +2,6 @@ import React, { useContext } from "react"
 import { MovieContext } from "../Repositories/MovieProvider";
 import { Card, CardFooter } from "reactstrap";
 import { useNavigate } from "react-router-dom";
-import Swal from "../../sweetAlert";
 import "./Movie.css"
 import {
     faClapperboard,
@@ -11,6 +10,14 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { MovieActionButton } from "./MovieActionButton";
 import { MovieCardContent } from "./MovieCardContent";
+import {
+    askMovieRating,
+    confirmRemoveMovie,
+    showDislikedMovie,
+    showLikedMovie,
+    showMovieActionError,
+    showRemovedMovie
+} from "./movieAlerts";
 import { SocialLinks } from "./SocialLinks";
 import { TrailerButton } from "./TrailerButton";
 import { useMovieMetadata } from "./useMovieMetadata";
@@ -20,57 +27,38 @@ export const SeenMoviesCard = ({ movie, reloadProp }) => {
     const { socials, trailer } = useMovieMetadata(movie.movieId);
     const navigate = useNavigate();
 
-    const handleDeleteMovie = () => {
-        Swal.fire({
-            title: `Delete ${movie.title}?`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Yes',
-            cancelButtonText: 'No'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                deleteMovie(movie.id).then(reloadProp)
-                Swal.fire(
-                    'Deleted!',
-                    `${movie.title} has been deleted.`,
-                    'success'
-                )
-            }
-        })
+    const handleDeleteMovie = async () => {
+        if (!await confirmRemoveMovie(movie.title, "your movie history")) {
+            return
+        }
+
+        try {
+            await deleteMovie(movie.id)
+            reloadProp(currentValue => !currentValue)
+            await showRemovedMovie(movie.title)
+        } catch (error) {
+            await showMovieActionError("Unable to remove movie", error)
+        }
     }
 
-    const handleRating = () => {
-        Swal.fire({
-            title: `Did you like ${movie.title}?`,
-            icon: 'question',
-            showDenyButton: true,
-            showCancelButton: true,
-            confirmButtonText: `Yes`,
-            denyButtonText: `No`,
-        }).then((result) => {
-            /* Read more about isConfirmed, isDenied below */
+    const handleRating = async () => {
+        const result = await askMovieRating(movie.title)
+
+        try {
             if (result.isConfirmed) {
-                likedIt(movie.id)
-                Swal.fire('Movie liked!', '', 'success')
+                await likedIt(movie.id)
+                await showLikedMovie(movie.title)
             } else if (result.isDenied) {
-                dislikedIt(movie.id)
-                Swal.fire('Movie disliked', '', 'success')
+                await dislikedIt(movie.id)
+                await showDislikedMovie(movie.title)
             }
-        })
+        } catch (error) {
+            await showMovieActionError("Unable to rate movie", error)
+        }
     }
 
     const handleSimilarMovies = () => {
-        Swal.fire({
-            title: `View a list of similar movies to ${movie.title}?`,
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Yes',
-            cancelButtonText: 'No'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                navigate(`/movies/similar/${movie.movieId}`)
-            }
-        })
+        navigate(`/movies/similar/${movie.movieId}`)
     }
 
     return (
@@ -100,7 +88,7 @@ export const SeenMoviesCard = ({ movie, reloadProp }) => {
                             />
                             <MovieActionButton
                                 icon={faTrashCan}
-                                label={`Remove ${movie.title} from your Seen list`}
+                                label={`Remove ${movie.title} from your movie history`}
                                 onClick={handleDeleteMovie}
                                 variant="danger"
                             />

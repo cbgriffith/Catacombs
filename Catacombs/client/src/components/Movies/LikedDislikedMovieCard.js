@@ -1,7 +1,6 @@
 import React from "react"
 import { Card, CardFooter } from "reactstrap";
 import { useNavigate } from "react-router-dom";
-import Swal from "../../sweetAlert";
 import "./Movie.css"
 import { faClapperboard } from "@fortawesome/free-solid-svg-icons";
 import { MovieActionButton } from "./MovieActionButton";
@@ -15,17 +14,7 @@ export const LikedDislikedMovieCard = ({ movie }) => {
     const navigate = useNavigate();
 
     const handleSimilarMovies = () => {
-        Swal.fire({
-            title: `View a list of similar movies to ${movie.title}?`,
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Yes',
-            cancelButtonText: 'No'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                navigate(`/movies/similar/${movie.movieId}`)
-            }
-        })
+        navigate(`/movies/similar/${movie.movieId}`)
     }
 
     return (

@@ -3,9 +3,13 @@ import { MovieContext } from "../Repositories/MovieProvider";
 import { Card, CardFooter } from "reactstrap";
 import "./Movie.css"
 import { faBookmark } from "@fortawesome/free-solid-svg-icons";
-import Swal from "../../sweetAlert";
 import { MovieActionButton } from "./MovieActionButton";
 import { MovieCardContent } from "./MovieCardContent";
+import {
+    confirmAddToWatchlist,
+    showAddedToWatchlist,
+    showMovieActionError
+} from "./movieAlerts";
 import { SocialLinks } from "./SocialLinks";
 import { TrailerButton } from "./TrailerButton";
 import { useMovieMetadata } from "./useMovieMetadata";
@@ -14,7 +18,7 @@ export const SimilarMovieCard = ({ movie }) => {
     const { addMovie } = useContext(MovieContext)
     const { socials, trailer } = useMovieMetadata(movie.id);
 
-    const handleSaveMovie = (e) => {
+    const handleSaveMovie = async (e) => {
         e.preventDefault();
         const newMovie = {
             title: movie.title,
@@ -25,22 +29,17 @@ export const SimilarMovieCard = ({ movie }) => {
             release_date: movie.release_date,
             movieId: movie.id
         }
-        Swal.fire({
-            title: `Add <strong>${movie.title}</strong> to your Watch List?`,
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Yes',
-            cancelButtonText: 'No'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                addMovie(newMovie)
-                Swal.fire(
-                    'Added!',
-                    `${movie.title} has been added to your Watch List.`,
-                    'success'
-                )
-            }
-        })
+
+        if (!await confirmAddToWatchlist(movie.title)) {
+            return
+        }
+
+        try {
+            await addMovie(newMovie)
+            await showAddedToWatchlist(movie.title)
+        } catch (error) {
+            await showMovieActionError("Unable to add movie", error)
+        }
     }
 
     return (
@@ -60,7 +59,7 @@ export const SimilarMovieCard = ({ movie }) => {
                             />
                             <MovieActionButton
                                 icon={faBookmark}
-                                label={`Add ${movie.title} to your Watch List`}
+                                label={`Add ${movie.title} to your watchlist`}
                                 onClick={handleSaveMovie}
                             />
                         </div>

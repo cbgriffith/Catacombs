@@ -79,17 +79,32 @@ export const showMarkedAsWatched = (title) => (
     })
 )
 
-export const askMovieRating = (title) => (
-    Swal.fire({
-        titleText: `What did you think of ${title}?`,
+export const chooseUpdatedMovieRating = async (title) => {
+    const result = await Swal.fire({
+        titleText: `Update your rating for ${title}`,
+        text: "Choose a new rating or clear the current one.",
         icon: "question",
         showDenyButton: true,
         showCancelButton: true,
         confirmButtonText: "I liked it",
         denyButtonText: "Not for me",
-        cancelButtonText: "Decide later"
+        cancelButtonText: "Clear rating"
     })
-)
+
+    if (result.isConfirmed) {
+        return 1
+    }
+
+    if (result.isDenied) {
+        return -1
+    }
+
+    if (result.dismiss === Swal.DismissReason.cancel) {
+        return 0
+    }
+
+    return null
+}
 
 export const showLikedMovie = (title) => (
     Swal.fire({
@@ -120,6 +135,41 @@ export const showViewingStatusSaved = (title, rating) => {
 
     return showMarkedAsWatched(title)
 }
+
+export const showUpdatedMovieRating = (title, rating) => {
+    if (rating !== 0) {
+        return showViewingStatusSaved(title, rating)
+    }
+
+    return Swal.fire({
+        title: "Rating cleared",
+        text: `${title} is still in Movies You've Seen.`,
+        icon: "success",
+        confirmButtonText: "Done"
+    })
+}
+
+export const confirmMoveToWatchlist = async (title) => {
+    const result = await Swal.fire({
+        titleText: `Move ${title} back to your watchlist?`,
+        text: "This clears its rating and removes it from Movies You've Seen.",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Move to watchlist",
+        cancelButtonText: "Keep it here"
+    })
+
+    return result.isConfirmed
+}
+
+export const showMovedToWatchlist = (title) => (
+    Swal.fire({
+        title: "Moved to your watchlist",
+        text: `${title} is waiting in the dark again.`,
+        icon: "success",
+        confirmButtonText: "Done"
+    })
+)
 
 export const showMovieActionError = (title, error) => (
     Swal.fire({

@@ -4,26 +4,28 @@ import { Card, CardFooter } from "reactstrap";
 import { useNavigate } from "react-router-dom";
 import "./Movie.css"
 import {
+    faArrowRotateLeft,
     faClapperboard,
-    faThumbsUp,
+    faPen,
     faTrashCan
 } from "@fortawesome/free-solid-svg-icons";
 import { MovieActionButton } from "./MovieActionButton";
 import { MovieCardContent } from "./MovieCardContent";
 import {
-    askMovieRating,
+    chooseUpdatedMovieRating,
+    confirmMoveToWatchlist,
     confirmRemoveMovie,
-    showDislikedMovie,
-    showLikedMovie,
+    showMovedToWatchlist,
     showMovieActionError,
-    showRemovedMovie
+    showRemovedMovie,
+    showUpdatedMovieRating
 } from "./movieAlerts";
 import { SocialLinks } from "./SocialLinks";
 import { TrailerButton } from "./TrailerButton";
 import { useMovieMetadata } from "./useMovieMetadata";
 
 export const SeenMoviesCard = ({ movie, reloadProp }) => {
-    const { deleteMovie, likedIt, dislikedIt } = useContext(MovieContext)
+    const { deleteMovie, setMovieStatus } = useContext(MovieContext)
     const { socials, trailer } = useMovieMetadata(movie.movieId);
     const navigate = useNavigate();
 
@@ -42,18 +44,35 @@ export const SeenMoviesCard = ({ movie, reloadProp }) => {
     }
 
     const handleRating = async () => {
-        const result = await askMovieRating(movie.title)
+        const rating = await chooseUpdatedMovieRating(movie.title)
+
+        if (rating === null) {
+            return
+        }
 
         try {
-            if (result.isConfirmed) {
-                await likedIt(movie.id)
-                await showLikedMovie(movie.title)
-            } else if (result.isDenied) {
-                await dislikedIt(movie.id)
-                await showDislikedMovie(movie.title)
-            }
+            await setMovieStatus(movie, true, rating)
+            await showUpdatedMovieRating(movie.title, rating)
+            reloadProp(currentValue => !currentValue)
         } catch (error) {
             await showMovieActionError("Unable to rate movie", error)
+        }
+    }
+
+    const handleMoveToWatchlist = async () => {
+        if (!await confirmMoveToWatchlist(movie.title)) {
+            return
+        }
+
+        try {
+            await setMovieStatus(movie, false, 0)
+            await showMovedToWatchlist(movie.title)
+            reloadProp(currentValue => !currentValue)
+        } catch (error) {
+            await showMovieActionError(
+                "Unable to move movie",
+                error
+            )
         }
     }
 
@@ -82,9 +101,14 @@ export const SeenMoviesCard = ({ movie, reloadProp }) => {
                                 onClick={handleSimilarMovies}
                             />
                             <MovieActionButton
-                                icon={faThumbsUp}
-                                label={`Rate ${movie.title}`}
+                                icon={faPen}
+                                label={`Change the rating for ${movie.title}`}
                                 onClick={handleRating}
+                            />
+                            <MovieActionButton
+                                icon={faArrowRotateLeft}
+                                label={`Move ${movie.title} back to your watchlist`}
+                                onClick={handleMoveToWatchlist}
                             />
                             <MovieActionButton
                                 icon={faTrashCan}

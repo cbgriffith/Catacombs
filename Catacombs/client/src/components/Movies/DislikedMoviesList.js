@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { MovieContext } from "../Repositories/MovieProvider"
 import { LikedDislikedMovieCard } from "./LikedDislikedMovieCard"
 import { MovieCollectionHeading } from "./MovieCollectionHeading"
@@ -7,13 +7,14 @@ import "./Movie.css"
 
 export const DislikedMoviesList = () => {
     const { movies, getAllDislikedMovies } = useContext(MovieContext)
+    const [reload, setReload] = useState(false)
 
 
     //useEffect - reach out to the world for something
     useEffect(() => {
         getAllDislikedMovies()
         // eslint-disable-next-line
-    }, [])
+    }, [reload])
 
     return (
         <>
@@ -25,7 +26,11 @@ export const DislikedMoviesList = () => {
                 />
                 <div id="movielist">
                     {movies.map((movie) => (
-                        <LikedDislikedMovieCard key={movie.id} movie={movie} />
+                        <LikedDislikedMovieCard
+                            key={movie.id}
+                            movie={movie}
+                            reloadProp={setReload}
+                        />
                     ))}
                 </div>
             </Container>

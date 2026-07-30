@@ -203,24 +203,6 @@ export const MovieProvider = (props) => {
             .then(setMovies)
     }
 
-    const seenIt = (id) => {
-        return secureApiFetch(`/api/Movies/seenit/${id}`, {
-            method: "PATCH"
-        }).then(getAllMovies)
-    }
-
-    const likedIt = (id) => {
-        return secureApiFetch(`/api/Movies/likedit/${id}`, {
-            method: "PATCH"
-        }).then(getAllSeenMovies)
-    }
-
-    const dislikedIt = (id) => {
-        return secureApiFetch(`/api/Movies/dislikedit/${id}`, {
-            method: "PATCH"
-        }).then(getAllSeenMovies)
-    }
-
     return (
         <MovieContext.Provider value={{
             movies,
@@ -241,9 +223,6 @@ export const MovieProvider = (props) => {
             deleteMovie,
             getAllLikedMovies,
             getAllDislikedMovies,
-            seenIt,
-            likedIt,
-            dislikedIt,
             getMovieMetadata
         }}>
             {props.children}

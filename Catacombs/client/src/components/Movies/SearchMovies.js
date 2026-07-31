@@ -1,35 +1,152 @@
-import React, { useContext, useState } from "react";
+import React, {
+    useContext,
+    useEffect,
+    useRef,
+    useState
+} from "react";
+import { useSearchParams } from "react-router-dom";
 import { MovieContext } from "../Repositories/MovieProvider"
 import { MovieCard } from "./MovieCard";
+import { MoviePagination } from "./MoviePagination";
 import { Alert, Container, Button, Spinner } from "reactstrap";
 import "./Movie.css"
 
 export const SearchMovies = () => {
-    const [searchTerm, setSearchTerm] = useState("")
-    const [hasSearched, setHasSearched] = useState(false)
+    const [searchParams, setSearchParams] = useSearchParams()
+    const submittedSearchTerm =
+        (searchParams.get("query") || "").trim()
+    const parsedPage = Number(searchParams.get("page") || "1")
+    const requestedPage =
+        Number.isInteger(parsedPage) &&
+        parsedPage >= 1 &&
+        parsedPage <= 500
+            ? parsedPage
+            : 1
+    const searchKey = submittedSearchTerm
+        ? `${submittedSearchTerm}:${requestedPage}`
+        : ""
+    const [searchTerm, setSearchTerm] = useState(submittedSearchTerm)
+    const [completedSearchKey, setCompletedSearchKey] = useState("")
+    const resultsHeadingRef = useRef(null)
+    const previousPageRef = useRef(requestedPage)
     const {
         movies,
+        moviePage,
         searchMovies,
+        clearMovieResults,
         isLoadingMovies,
         movieLoadError
     } = useContext(MovieContext);
 
-    const handleSearch = async (event) => {
+    useEffect(() => {
+        let isActive = true
+
+        setSearchTerm(submittedSearchTerm)
+        setCompletedSearchKey("")
+
+        if (!submittedSearchTerm) {
+            clearMovieResults()
+            return () => {
+                isActive = false
+            }
+        }
+
+        searchMovies(submittedSearchTerm, requestedPage)
+            .finally(() => {
+                if (isActive) {
+                    setCompletedSearchKey(searchKey)
+                }
+            })
+
+        return () => {
+            isActive = false
+        }
+        // searchMovies is supplied by MovieProvider and intentionally omitted.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [
+        clearMovieResults,
+        requestedPage,
+        searchKey,
+        submittedSearchTerm
+    ])
+
+    const handleSearch = (event) => {
         event?.preventDefault()
         const query = searchTerm.trim()
         if (!query) {
             return
         }
 
-        setHasSearched(true)
-        await searchMovies(query)
+        setSearchParams({ query })
     }
 
+    const clearSearch = () => {
+        setSearchTerm("")
+        setSearchParams({})
+    }
+
+    const hasSearched = Boolean(submittedSearchTerm)
+    const isCurrentSearchComplete =
+        completedSearchKey === searchKey
     const noResults =
         hasSearched &&
+        isCurrentSearchComplete &&
         !isLoadingMovies &&
         !movieLoadError &&
         movies.length === 0;
+    const hasResults =
+        hasSearched &&
+        isCurrentSearchComplete &&
+        !isLoadingMovies &&
+        !movieLoadError &&
+        movies.length > 0;
+    const totalPages = moviePage.totalPages
+    const currentPage = Math.min(
+        moviePage.page || requestedPage,
+        Math.max(totalPages, 1),
+        500
+    )
+    const resultCount = moviePage.totalResults || movies.length
+    const pagePath = (page) => {
+        const parameters = new URLSearchParams({
+            query: submittedSearchTerm
+        })
+
+        if (page > 1) {
+            parameters.set("page", String(page))
+        }
+
+        return `/movies/search?${parameters.toString()}`
+    }
+    const pagination = hasResults ? (
+        <MoviePagination
+            getPagePath={pagePath}
+            currentPage={currentPage}
+            totalPages={totalPages}
+        />
+    ) : null
+
+    useEffect(() => {
+        if (!hasResults) {
+            return
+        }
+
+        const pageChanged = previousPageRef.current !== requestedPage
+        previousPageRef.current = requestedPage
+
+        if (!pageChanged) {
+            return
+        }
+
+        const reduceMotion = window.matchMedia?.(
+            "(prefers-reduced-motion: reduce)"
+        ).matches
+
+        resultsHeadingRef.current?.scrollIntoView({
+            behavior: reduceMotion ? "auto" : "smooth",
+            block: "start"
+        })
+    }, [hasResults, requestedPage])
 
     return (
         <>
@@ -85,14 +202,54 @@ export const SearchMovies = () => {
                     </section>
                 </Container>
                 <Container>
-                    <h1 style={{ textAlign: "center" }}>Search Results</h1>
                     {movieLoadError && (
                         <Alert color="danger" role="alert">
                             {movieLoadError}
                         </Alert>
                     )}
-                    {noResults && <h4>Nothing Found</h4>}
-                    {isLoadingMovies ? (
+                    {!hasSearched && (
+                        <section
+                            className="movie-search-idle-state"
+                            aria-labelledby="movie-search-idle-heading"
+                        >
+                            <p className="movie-search-state-eyebrow">
+                                The archive awaits
+                            </p>
+                            <h2 id="movie-search-idle-heading">
+                                Unearth a movie
+                            </h2>
+                            <p>
+                                Enter a title above to search the horror
+                                archives.
+                            </p>
+                        </section>
+                    )}
+                    {noResults && (
+                        <section
+                            className="movie-empty-state"
+                            aria-labelledby="movie-search-empty-heading"
+                        >
+                            <p className="movie-empty-state-eyebrow">
+                                The trail goes cold
+                            </p>
+                            <h2 id="movie-search-empty-heading">
+                                No movies found
+                            </h2>
+                            <p>
+                                We couldn&apos;t find a movie matching
+                                &ldquo;{submittedSearchTerm}&rdquo;. Check the
+                                spelling or try another title.
+                            </p>
+                            <Button
+                                type="button"
+                                className="movie-search-clear-button"
+                                onClick={clearSearch}
+                            >
+                                Clear search
+                            </Button>
+                        </section>
+                    )}
+                    {isLoadingMovies && (
                         <div
                             className="movie-loading"
                             role="status"
@@ -101,15 +258,45 @@ export const SearchMovies = () => {
                             <Spinner size="sm" aria-hidden="true" />
                             <span>Searching movies...</span>
                         </div>
-                    ) : (
-                        <div className="discovery-movie-grid">
-                            {movies.map(movie => (
-                                <MovieCard
-                                    key={movie.id}
-                                    movie={movie}
-                                />
-                            ))}
-                        </div>
+                    )}
+                    {hasResults && (
+                        <>
+                            <header
+                                className="movie-search-results-heading"
+                                ref={resultsHeadingRef}
+                            >
+                                <p className="movie-search-state-eyebrow">
+                                    Titles unearthed
+                                </p>
+                                <h2>
+                                    Results for &ldquo;
+                                    {submittedSearchTerm}
+                                    &rdquo;
+                                </h2>
+                                <p className="movie-search-result-count">
+                                    {resultCount.toLocaleString()}{" "}
+                                    {resultCount === 1 ? "title" : "titles"}{" "}
+                                    found
+                                </p>
+                                <Button
+                                    type="button"
+                                    className="movie-search-clear-button"
+                                    onClick={clearSearch}
+                                >
+                                    Clear search
+                                </Button>
+                            </header>
+                            {pagination}
+                            <div className="discovery-movie-grid">
+                                {movies.map(movie => (
+                                    <MovieCard
+                                        key={movie.id}
+                                        movie={movie}
+                                    />
+                                ))}
+                            </div>
+                            {pagination}
+                        </>
                     )}
                 </Container>
             </div>

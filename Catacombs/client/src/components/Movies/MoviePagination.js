@@ -24,6 +24,7 @@ const visiblePageNumbers = (currentPage, totalPages) => {
 
 export const MoviePagination = ({
     basePath,
+    getPagePath,
     currentPage,
     totalPages
 }) => {
@@ -33,9 +34,9 @@ export const MoviePagination = ({
         return null;
     }
 
-    const pagePath = (page) => (
+    const pagePath = getPagePath || ((page) => (
         page === 1 ? basePath : `${basePath}/${page}`
-    );
+    ));
     const pageNumbers = visiblePageNumbers(currentPage, lastPage);
     const showFirstPage = pageNumbers[0] > 1;
     const showLastPage =

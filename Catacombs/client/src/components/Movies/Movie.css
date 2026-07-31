@@ -417,6 +417,72 @@
     transform: none;
 }
 
+.movie-search-idle-state {
+    max-width: 38rem;
+    margin: 0 auto 3rem;
+    padding: clamp(1.5rem, 5vw, 2.25rem);
+    text-align: center;
+    background:
+        radial-gradient(
+            circle at top,
+            rgba(230, 30, 77, 0.09),
+            transparent 65%
+        ),
+        rgba(24, 27, 30, 0.72);
+    border: 1px dashed rgba(255, 113, 143, 0.3);
+    border-radius: 1rem;
+}
+
+.movie-search-state-eyebrow {
+    margin: 0 0 0.45rem;
+    color: #ff718f;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.movie-search-idle-state h2,
+.movie-search-results-heading h2 {
+    margin: 0;
+}
+
+.movie-search-idle-state > p:last-child {
+    margin: 0.75rem 0 0;
+    color: #b8bdc2;
+}
+
+.movie-search-results-heading {
+    margin: 0 auto;
+    scroll-margin-top: 6rem;
+    text-align: center;
+}
+
+.movie-search-result-count {
+    margin: 0.55rem 0 0;
+    color: #aeb4b9;
+    font-size: 0.85rem;
+}
+
+.movie-search-clear-button.btn {
+    margin-top: 0.9rem;
+    padding: 0.42rem 0.7rem;
+    color: #c9cdd1;
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 0.55rem;
+    font-size: 0.78rem;
+    font-weight: 750;
+}
+
+.movie-search-clear-button.btn:hover,
+.movie-search-clear-button.btn:focus-visible {
+    color: #ffffff;
+    background-color: rgba(230, 30, 77, 0.15);
+    border-color: rgba(255, 113, 143, 0.55);
+    box-shadow: none;
+}
+
 @media (max-width: 575.98px) {
     .movie-search-form {
         flex-direction: column;

@@ -248,6 +248,113 @@
     line-height: 1.7;
 }
 
+.where-to-watch {
+    max-width: 48rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.11);
+}
+
+.where-to-watch-heading {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+
+.where-to-watch-heading h2 {
+    margin: 0;
+    font-size: 1.35rem;
+}
+
+.where-to-watch-heading .movie-details-eyebrow {
+    margin-bottom: 0.35rem;
+}
+
+.where-to-watch-heading > a {
+    flex-shrink: 0;
+    color: #ff8ca4;
+    font-size: 0.84rem;
+    font-weight: 750;
+    text-decoration: none;
+}
+
+.where-to-watch-heading > a:hover,
+.where-to-watch-heading > a:focus-visible,
+.where-to-watch-credit a:hover,
+.where-to-watch-credit a:focus-visible {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+.where-to-watch-groups {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.15rem;
+}
+
+.where-to-watch-group {
+    display: grid;
+    grid-template-columns: 4.5rem minmax(0, 1fr);
+    gap: 0.9rem;
+    align-items: start;
+}
+
+.where-to-watch-group h3 {
+    margin: 0.65rem 0 0;
+    color: #c9cdd1;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.where-to-watch-providers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+}
+
+.where-to-watch-provider {
+    width: 5.25rem;
+    display: flex;
+    gap: 0.45rem;
+    align-items: center;
+    flex-direction: column;
+    color: #d3d6d9;
+    font-size: 0.72rem;
+    line-height: 1.25;
+    text-align: center;
+}
+
+.where-to-watch-provider img {
+    width: 3.5rem;
+    height: 3.5rem;
+    object-fit: cover;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 0.75rem;
+    box-shadow: 0 0.45rem 0.9rem rgba(0, 0, 0, 0.24);
+}
+
+.where-to-watch-empty {
+    margin: 1rem 0 0;
+    padding: 0.9rem 1rem;
+    color: #b8bdc2;
+    background-color: rgba(255, 255, 255, 0.045);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 0.7rem;
+}
+
+.where-to-watch-credit {
+    margin: 1rem 0 0;
+    color: #8f969c;
+    font-size: 0.72rem;
+}
+
+.where-to-watch-credit a {
+    color: #b8bdc2;
+}
+
 .movie-details-loading {
     min-height: 24rem;
     display: flex;
@@ -322,5 +429,19 @@
     .movie-details-actions .movie-icon-button--labeled.btn,
     .movie-details-similar-action {
         width: 100%;
+    }
+
+    .where-to-watch-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .where-to-watch-group {
+        grid-template-columns: 1fr;
+        gap: 0.45rem;
+    }
+
+    .where-to-watch-group h3 {
+        margin-top: 0;
     }
 }

@@ -14,6 +14,7 @@ import { MovieCollectionActions } from "./MovieCollectionActions";
 import { SocialLinks } from "./SocialLinks";
 import { TrailerButton } from "./TrailerButton";
 import { selectTrailer } from "./useMovieMetadata";
+import { WhereToWatch } from "./WhereToWatch";
 import "./Movie.css";
 import "./MovieDetails.css";
 
@@ -275,6 +276,13 @@ export const MovieDetails = () => {
                                             "No overview is available for this movie."}
                                     </p>
                                 </section>
+
+                                <WhereToWatch
+                                    movieTitle={movie.title}
+                                    watchProviders={
+                                        movie["watch/providers"]
+                                    }
+                                />
                             </div>
                         </div>
                     </article>

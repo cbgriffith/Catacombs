@@ -186,7 +186,8 @@ namespace Catacombs.Services.Tmdb
                 $"movie/{FormatNumber(movieId)}",
                 new Dictionary<string, string>
                 {
-                    ["append_to_response"] = "external_ids,videos",
+                    ["append_to_response"] =
+                        "external_ids,videos,watch/providers",
                     ["language"] = "en-US"
                 },
                 cancellationToken);

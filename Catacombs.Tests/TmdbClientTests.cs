@@ -234,7 +234,7 @@ public sealed class TmdbClientTests
     }
 
     [Fact]
-    public async Task MetadataCombinesSocialIdsAndVideosInOneRequest()
+    public async Task MetadataCombinesDetailsExtrasInOneRequest()
     {
         var handler = new RecordingHandler();
         var client = CreateClient(handler, TestToken);
@@ -244,7 +244,8 @@ public sealed class TmdbClientTests
             CancellationToken.None);
 
         Assert.Equal(
-            "/3/movie/348?append_to_response=external_ids,videos" +
+            "/3/movie/348?append_to_response=" +
+            "external_ids,videos,watch%2Fproviders" +
             "&language=en-US",
             handler.RequestUri?.PathAndQuery);
         Assert.Equal(1, handler.RequestCount);

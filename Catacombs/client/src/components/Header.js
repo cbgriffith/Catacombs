@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext } from "react";
 import {
   NavLink as RRNavLink,
   useLocation,
@@ -16,11 +16,53 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem
-} from 'reactstrap';
-import { UserContext } from './Repositories/UserProvider';
-import catacombsMark from './Movies/images/catacombs-mark.png'
+} from "reactstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faBookmark,
+  faCalendar,
+  faCompass,
+  faEye,
+  faFire,
+  faFolderOpen,
+  faGem,
+  faHeart,
+  faKey,
+  faMagnifyingGlass,
+  faRightFromBracket,
+  faThumbsDown,
+  faTicket,
+  faTrophy,
+  faUser
+} from "@fortawesome/free-solid-svg-icons";
+import { UserContext } from "./Repositories/UserProvider";
+import catacombsMark from "./Movies/images/catacombs-mark.png";
 import Swal from "../sweetAlert";
-import "./Header.css"
+import "./Header.css";
+
+const HeaderMenuItem = ({
+  to,
+  icon,
+  label,
+  description,
+  onClick
+}) => (
+  <DropdownItem
+    tag={RRNavLink}
+    to={to}
+    onClick={onClick}
+  >
+    <span className="header-menu-icon" aria-hidden="true">
+      <FontAwesomeIcon icon={icon} />
+    </span>
+    <span className="header-menu-copy">
+      <span className="header-menu-label">{label}</span>
+      <span className="header-menu-description">
+        {description}
+      </span>
+    </span>
+  </DropdownItem>
+);
 
 export default function Header() {
   const { isLoggedIn, logout, userProfile } = useContext(UserContext);
@@ -30,13 +72,12 @@ export default function Header() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const toggle = () => setIsOpen(!isOpen);
   const closeMenu = () => setIsOpen(false);
-  const browseMoviesIsActive = [
+  const discoverIsActive = [
     "/movies/rating",
     "/movies/popular",
     "/movies/hidden-gems",
     "/movies/nowplaying",
     "/movies/comingsoon",
-    "/movies/search",
     "/movies/similar",
     "/movies/details"
   ].some(path => location.pathname.startsWith(path));
@@ -102,109 +143,142 @@ export default function Header() {
             </span>
           </span>
         </NavbarBrand>
+
         <NavbarToggler
           onClick={toggle}
           aria-label="Toggle navigation"
         />
+
         <Collapse isOpen={isOpen} navbar>
           <Nav className="catacombs-main-nav me-auto" navbar>
             {isLoggedIn && (
               <>
-                <UncontrolledDropdown nav inNavbar>
+                <UncontrolledDropdown
+                  nav
+                  inNavbar
+                  className="header-navigation-dropdown"
+                >
                   <DropdownToggle
                     nav
                     caret
-                    className={
-                      browseMoviesIsActive ? "active" : ""
-                    }
+                    className={discoverIsActive ? "active" : ""}
                   >
-                    Movies
+                    <span className="header-nav-label">
+                      <FontAwesomeIcon
+                        icon={faCompass}
+                        aria-hidden="true"
+                      />
+                      Discover
+                    </span>
                   </DropdownToggle>
-                  <DropdownMenu dark>
-                    <DropdownItem
-                      tag={RRNavLink}
+                  <DropdownMenu
+                    dark
+                    className="header-navigation-menu"
+                  >
+                    <HeaderMenuItem
                       to="/movies/rating"
+                      icon={faTrophy}
+                      label="Top Rated"
+                      description="The archive's highest scores"
                       onClick={closeMenu}
-                    >
-                      Top Rated
-                    </DropdownItem>
-                    <DropdownItem
-                      tag={RRNavLink}
+                    />
+                    <HeaderMenuItem
                       to="/movies/popular"
+                      icon={faFire}
+                      label="Most Popular"
+                      description="What horror fans are watching"
                       onClick={closeMenu}
-                    >
-                      Most Popular
-                    </DropdownItem>
-                    <DropdownItem
-                      tag={RRNavLink}
+                    />
+                    <HeaderMenuItem
                       to="/movies/hidden-gems"
+                      icon={faGem}
+                      label="Hidden Gems"
+                      description="Great scares off the beaten path"
                       onClick={closeMenu}
-                    >
-                      Hidden Gems
-                    </DropdownItem>
-                    <DropdownItem
-                      tag={RRNavLink}
+                    />
+                    <HeaderMenuItem
                       to="/movies/nowplaying"
+                      icon={faTicket}
+                      label="Now Playing"
+                      description="Horror currently in theaters"
                       onClick={closeMenu}
-                    >
-                      Now Playing
-                    </DropdownItem>
-                    <DropdownItem
-                      tag={RRNavLink}
+                    />
+                    <HeaderMenuItem
                       to="/movies/comingsoon"
+                      icon={faCalendar}
+                      label="Coming Soon"
+                      description="Upcoming theatrical releases"
                       onClick={closeMenu}
-                    >
-                      Coming Soon
-                    </DropdownItem>
-                    <DropdownItem
-                      tag={RRNavLink}
-                      to="/movies/search"
-                      onClick={closeMenu}
-                    >
-                      Search
-                    </DropdownItem>
+                    />
                   </DropdownMenu>
                 </UncontrolledDropdown>
 
-                <UncontrolledDropdown nav inNavbar>
+                <NavItem>
+                  <NavLink
+                    tag={RRNavLink}
+                    to="/movies/search"
+                    onClick={closeMenu}
+                  >
+                    <span className="header-nav-label">
+                      <FontAwesomeIcon
+                        icon={faMagnifyingGlass}
+                        aria-hidden="true"
+                      />
+                      Search
+                    </span>
+                  </NavLink>
+                </NavItem>
+
+                <UncontrolledDropdown
+                  nav
+                  inNavbar
+                  className="header-navigation-dropdown"
+                >
                   <DropdownToggle
                     nav
                     caret
-                    className={
-                      myMoviesIsActive ? "active" : ""
-                    }
+                    className={myMoviesIsActive ? "active" : ""}
                   >
-                    My Movies
+                    <span className="header-nav-label">
+                      <FontAwesomeIcon
+                        icon={faFolderOpen}
+                        aria-hidden="true"
+                      />
+                      My Archive
+                    </span>
                   </DropdownToggle>
-                  <DropdownMenu dark>
-                    <DropdownItem
-                      tag={RRNavLink}
+                  <DropdownMenu
+                    dark
+                    className="header-navigation-menu"
+                  >
+                    <HeaderMenuItem
                       to="/movies/watchlist"
+                      icon={faBookmark}
+                      label="Watchlist"
+                      description="Movies waiting in the dark"
                       onClick={closeMenu}
-                    >
-                      Watch List
-                    </DropdownItem>
-                    <DropdownItem
-                      tag={RRNavLink}
+                    />
+                    <HeaderMenuItem
                       to="/movies/seen"
+                      icon={faEye}
+                      label="Viewing Log"
+                      description="Everything you've survived"
                       onClick={closeMenu}
-                    >
-                      Movies I've Seen
-                    </DropdownItem>
-                    <DropdownItem
-                      tag={RRNavLink}
+                    />
+                    <HeaderMenuItem
                       to="/movies/liked"
+                      icon={faHeart}
+                      label="Loved"
+                      description="Favorites worth revisiting"
                       onClick={closeMenu}
-                    >
-                      Liked Movies
-                    </DropdownItem>
-                    <DropdownItem
-                      tag={RRNavLink}
+                    />
+                    <HeaderMenuItem
                       to="/movies/disliked"
+                      icon={faThumbsDown}
+                      label="Not for Me"
+                      description="The reject pile"
                       onClick={closeMenu}
-                    >
-                      Disliked Movies
-                    </DropdownItem>
+                    />
                   </DropdownMenu>
                 </UncontrolledDropdown>
               </>
@@ -227,7 +301,13 @@ export default function Header() {
                       : "header-account-toggle"
                   }
                 >
-                  {userProfile.username}
+                  <span className="header-account-label">
+                    <FontAwesomeIcon
+                      icon={faUser}
+                      aria-hidden="true"
+                    />
+                    {userProfile.username}
+                  </span>
                 </DropdownToggle>
                 <DropdownMenu
                   dark
@@ -237,19 +317,30 @@ export default function Header() {
                   <DropdownItem
                     tag={RRNavLink}
                     to="/account/password"
+                    className="header-account-action"
                     onClick={closeMenu}
                   >
-                    Change password
+                    <FontAwesomeIcon
+                      icon={faKey}
+                      aria-hidden="true"
+                    />
+                    <span>Change password</span>
                   </DropdownItem>
                   <DropdownItem divider />
                   <DropdownItem
-                    className="header-logout-item"
+                    className="header-logout-item header-account-action"
                     disabled={isLoggingOut}
                     onClick={logoutClick}
                   >
-                    {isLoggingOut
-                      ? "Logging out..."
-                      : "Log out"}
+                    <FontAwesomeIcon
+                      icon={faRightFromBracket}
+                      aria-hidden="true"
+                    />
+                    <span>
+                      {isLoggingOut
+                        ? "Logging out..."
+                        : "Log out"}
+                    </span>
                   </DropdownItem>
                 </DropdownMenu>
               </UncontrolledDropdown>

@@ -25,10 +25,18 @@ const getRating = (rating) => {
         : null;
 };
 
-export const DiscoveryMovieTile = ({ movie }) => {
+export const DiscoveryMovieTile = ({
+    movie,
+    badge,
+    actions,
+    actionsLabel
+}) => {
     const movieId = movie.movieId ?? movie.id;
     const detailsPath = `/movies/details/${movieId}`;
     const rating = getRating(movie.vote_average);
+    const collectionActions = actions === undefined
+        ? <MovieCollectionActions movie={movie} />
+        : actions;
 
     return (
         <article className="discovery-movie-tile">
@@ -52,7 +60,7 @@ export const DiscoveryMovieTile = ({ movie }) => {
                     </span>
                 </Link>
 
-                {rating && (
+                {badge || (rating && (
                     <span
                         className="discovery-movie-rating"
                         aria-label={`${rating} out of 10 on TMDB`}
@@ -63,7 +71,7 @@ export const DiscoveryMovieTile = ({ movie }) => {
                         />
                         {rating}
                     </span>
-                )}
+                ))}
             </div>
 
             <div className="discovery-movie-caption">
@@ -76,13 +84,18 @@ export const DiscoveryMovieTile = ({ movie }) => {
                     </h2>
                 </div>
 
-                <div
-                    className="discovery-movie-actions"
-                    role="group"
-                    aria-label={`Collection actions for ${movie.title}`}
-                >
-                    <MovieCollectionActions movie={movie} />
-                </div>
+                {collectionActions && (
+                    <div
+                        className="discovery-movie-actions"
+                        role="group"
+                        aria-label={
+                            actionsLabel ||
+                            `Collection actions for ${movie.title}`
+                        }
+                    >
+                        {collectionActions}
+                    </div>
+                )}
             </div>
         </article>
     );

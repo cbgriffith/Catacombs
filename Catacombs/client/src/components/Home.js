@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+    faArrowRight,
     faBookmark,
     faEye,
     faFire,
@@ -24,6 +25,10 @@ const getReleaseYear = (releaseDate) => {
         ? year
         : "Release date unavailable";
 };
+
+const getMovieDetailsPath = (movie) => (
+    `/movies/details/${movie.movieId ?? movie.id}`
+);
 
 export const Home = () => {
     const { userProfile } = useContext(UserContext);
@@ -269,9 +274,13 @@ export const Home = () => {
                                 aria-label="Watchlist preview"
                             >
                                 {watchlist.slice(0, 3).map((movie) => (
-                                    <article
+                                    <Link
                                         className="home-watchlist-movie"
+                                        to={getMovieDetailsPath(movie)}
                                         key={movie.id}
+                                        aria-label={
+                                            `View details for ${movie.title}`
+                                        }
                                     >
                                         <img
                                             src={getMoviePosterUrl(
@@ -288,7 +297,7 @@ export const Home = () => {
                                                 )}
                                             </p>
                                         </div>
-                                    </article>
+                                    </Link>
                                 ))}
                             </div>
 
@@ -297,9 +306,16 @@ export const Home = () => {
                                     Tonight's descent
                                 </p>
                                 {selectedMovie ? (
-                                    <div
+                                    <Link
                                         className="home-picker-result"
+                                        to={getMovieDetailsPath(
+                                            selectedMovie
+                                        )}
                                         aria-live="polite"
+                                        aria-label={
+                                            `View details for ` +
+                                            selectedMovie.title
+                                        }
                                     >
                                         <img
                                             src={getMoviePosterUrl(
@@ -310,14 +326,27 @@ export const Home = () => {
                                             }
                                         />
                                         <div>
-                                            <span>The Catacombs chose</span>
+                                            <span className="home-picker-kicker">
+                                                The Catacombs chose
+                                            </span>
                                             <h3>{selectedMovie.title}</h3>
                                             <p>
                                                 {selectedMovie.overview ||
                                                     "No overview is available."}
                                             </p>
+                                            <span
+                                                className={
+                                                    "home-picker-details-cue"
+                                                }
+                                            >
+                                                View movie details
+                                                <FontAwesomeIcon
+                                                    icon={faArrowRight}
+                                                    aria-hidden="true"
+                                                />
+                                            </span>
                                         </div>
-                                    </div>
+                                    </Link>
                                 ) : (
                                     <>
                                         <h3>Can't decide what to watch?</h3>

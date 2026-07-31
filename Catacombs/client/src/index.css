@@ -1,12 +1,29 @@
+html {
+  min-height: 100%;
+  background-color: #15181b;
+}
+
 body {
+  min-height: 100vh;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #3b434a;
-  color:white;
+  background:
+    linear-gradient(
+      180deg,
+      #24292e 0%,
+      #1d2125 48%,
+      #171a1d 100%
+    );
+  background-attachment: fixed;
+  color: #f4f5f6;
+}
+
+#root {
+  min-height: 100vh;
 }
 
 code {

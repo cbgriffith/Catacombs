@@ -180,6 +180,12 @@ export const MovieProvider = (props) => {
         }))
     }
 
+    const getMovieDetails = (movieId) => {
+        return tmdbApiFetch(
+            `/api/tmdb/movies/${movieId}/metadata`
+        )
+    }
+
     const addMovie = async (movie) => {
         const response = await secureApiFetch("/api/Movies", {
             method: "POST",
@@ -285,6 +291,7 @@ export const MovieProvider = (props) => {
             deleteMovie,
             getAllLikedMovies,
             getAllDislikedMovies,
+            getMovieDetails,
             getMovieSummary,
             getMovieMetadata
         }}>

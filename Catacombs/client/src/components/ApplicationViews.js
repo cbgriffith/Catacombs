@@ -16,6 +16,7 @@ import { SeenMoviesList } from "./Movies/SeenMoviesList";
 import { LikedMoviesList } from "./Movies/LikedMoviesList";
 import { DislikedMoviesList } from "./Movies/DislikedMoviesList";
 import { SimilarMovieList } from "./Movies/SimilarMoviesList";
+import { MovieDetails } from "./Movies/MovieDetails";
 import { Home } from "./Home";
 import "./auth/Auth.css";
 
@@ -60,6 +61,7 @@ export default function ApplicationViews() {
             <Route path="/movies/comingsoon" element={<ComingSoonList />} />
             <Route path="/movies/nowplaying" element={<NowPlayingList />} />
             <Route path="/movies/similar/:id" element={<SimilarMovieList />} />
+            <Route path="/movies/details/:id" element={<MovieDetails />} />
 
 
             {/* My API Routes */}

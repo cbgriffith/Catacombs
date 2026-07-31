@@ -98,7 +98,7 @@ export const SimilarMovieList = () => {
                             </Button>
                         </section>
                     ) : (
-                        <div id="movielist">
+                        <div className="discovery-movie-grid">
                             {movies?.map(movie => (
                                 <SimilarMovieCard
                                     key={movie.id}

@@ -1,0 +1,223 @@
+.discovery-movie-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(1.35rem, 2.5vw, 2rem) clamp(1rem, 2vw, 1.45rem);
+    margin: 1.5rem 0 2.5rem;
+}
+
+.discovery-movie-tile {
+    position: relative;
+    z-index: 0;
+    min-width: 0;
+}
+
+.discovery-movie-tile:hover,
+.discovery-movie-tile:focus-within {
+    z-index: 30;
+}
+
+.discovery-movie-poster-frame {
+    position: relative;
+    aspect-ratio: 2 / 3;
+    background-color: #141719;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 0.95rem;
+    box-shadow:
+        0 1rem 2rem rgba(0, 0, 0, 0.3),
+        0 0 0 rgba(230, 30, 77, 0);
+    transition:
+        border-color 180ms ease,
+        box-shadow 180ms ease,
+        transform 180ms ease;
+}
+
+.discovery-movie-poster-link {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: hidden;
+    border-radius: inherit;
+}
+
+.discovery-movie-poster-link::after {
+    position: absolute;
+    inset: 42% 0 0;
+    content: "";
+    background:
+        linear-gradient(
+            180deg,
+            transparent,
+            rgba(10, 11, 12, 0.3) 38%,
+            rgba(10, 11, 12, 0.94)
+        );
+    pointer-events: none;
+}
+
+.discovery-movie-poster-link img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    transition:
+        filter 180ms ease,
+        transform 240ms ease;
+}
+
+.discovery-movie-details-cue {
+    position: absolute;
+    right: 0.9rem;
+    bottom: 0.85rem;
+    left: 0.9rem;
+    z-index: 1;
+    display: flex;
+    gap: 0.45rem;
+    align-items: center;
+    justify-content: space-between;
+    color: #f7f7f8;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transform: translateY(0.15rem);
+    transition:
+        color 180ms ease,
+        transform 180ms ease;
+}
+
+.discovery-movie-rating {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 2;
+    display: inline-flex;
+    gap: 0.35rem;
+    align-items: center;
+    padding: 0.4rem 0.55rem;
+    color: #f5c518;
+    background-color: rgba(12, 14, 15, 0.9);
+    border: 1px solid rgba(245, 197, 24, 0.28);
+    border-radius: 999px;
+    box-shadow: 0 0.4rem 0.9rem rgba(0, 0, 0, 0.3);
+    font-size: 0.75rem;
+    font-weight: 800;
+    pointer-events: none;
+}
+
+.discovery-movie-poster-frame:hover,
+.discovery-movie-poster-frame:focus-within {
+    border-color: rgba(255, 85, 121, 0.9);
+    box-shadow:
+        0 1.15rem 2.3rem rgba(0, 0, 0, 0.4),
+        0 0 1.35rem rgba(230, 30, 77, 0.25);
+    transform: translateY(-0.25rem);
+}
+
+.discovery-movie-poster-link:hover img,
+.discovery-movie-poster-link:focus-visible img {
+    filter: saturate(1.08) contrast(1.04);
+    transform: scale(1.025);
+}
+
+.discovery-movie-poster-link:hover .discovery-movie-details-cue,
+.discovery-movie-poster-link:focus-visible .discovery-movie-details-cue {
+    color: #ff8ca4;
+    transform: translateY(0);
+}
+
+.discovery-movie-poster-link:focus-visible {
+    outline: 0.2rem solid rgba(255, 85, 121, 0.75);
+    outline-offset: 0.2rem;
+}
+
+.discovery-movie-caption {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    gap: 0.65rem;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 0.85rem 0.15rem 0;
+}
+
+.discovery-movie-title-block {
+    min-width: 0;
+    flex: 1;
+}
+
+.discovery-movie-year {
+    display: block;
+    margin-bottom: 0.22rem;
+    color: #8f969c;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.discovery-movie-title-block h2 {
+    min-height: 2.5em;
+    display: -webkit-box;
+    margin: 0;
+    overflow: hidden;
+    font-size: 1rem;
+    line-height: 1.25;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.discovery-movie-title-block a {
+    color: #f0f1f2;
+    text-decoration: none;
+    transition: color 150ms ease;
+}
+
+.discovery-movie-title-block a:hover,
+.discovery-movie-title-block a:focus-visible {
+    color: #ff8ca4;
+}
+
+.discovery-movie-actions {
+    position: relative;
+    z-index: 4;
+    display: flex;
+    gap: 0.4rem;
+    flex-shrink: 0;
+}
+
+.discovery-movie-actions .movie-icon-button,
+.discovery-movie-actions .movie-icon-button.btn {
+    width: 2.35rem;
+    height: 2.35rem;
+    border-radius: 0.6rem;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 1199.98px) {
+    .discovery-movie-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 767.98px) {
+    .discovery-movie-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 459.98px) {
+    .discovery-movie-grid {
+        max-width: 19rem;
+        grid-template-columns: 1fr;
+        margin-right: auto;
+        margin-left: auto;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .discovery-movie-poster-frame,
+    .discovery-movie-poster-link img,
+    .discovery-movie-details-cue {
+        transition: none;
+    }
+}

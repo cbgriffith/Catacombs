@@ -1,41 +1,26 @@
-import React, { useContext, useEffect, useState } from "react"
-import { MovieContext } from "../Repositories/MovieProvider"
-import { LikedDislikedMovieCard } from "./LikedDislikedMovieCard"
-import { MovieCollectionHeading } from "./MovieCollectionHeading"
-import { Container } from "reactstrap";
-import "./Movie.css"
+import React, { useContext } from "react";
+import { MovieContext } from "../Repositories/MovieProvider";
+import { LikedDislikedMovieCard } from "./LikedDislikedMovieCard";
+import { MovieCollectionPage } from "./MovieCollectionPage";
 
 export const LikedMoviesList = () => {
-    const { movies, getAllLikedMovies } = useContext(MovieContext)
-    const [reload, setReload] = useState(false)
-
-
-    //useEffect - reach out to the world for something
-    useEffect(() => {
-        getAllLikedMovies()
-        // eslint-disable-next-line
-    }, [reload])
+    const { getAllLikedMovies } = useContext(MovieContext);
 
     return (
-        <>
-            <Container>
-                <MovieCollectionHeading
-                    eyebrow="The Favorites"
-                    title="Movies You Loved"
-                    description={
-                        "The scares and stories worth revisiting."
-                    }
-                />
-                <div className="discovery-movie-grid">
-                    {movies.map((movie) => (
-                        <LikedDislikedMovieCard
-                            key={movie.id}
-                            movie={movie}
-                            reloadProp={setReload}
-                        />
-                    ))}
-                </div>
-            </Container>
-        </>
-    )
-}
+        <MovieCollectionPage
+            loadMovies={getAllLikedMovies}
+            CardComponent={LikedDislikedMovieCard}
+            eyebrow="The Favorites"
+            title="Movies You Loved"
+            description="The scares and stories worth revisiting."
+            loadingText="Unearthing your favorites..."
+            emptyEyebrow="No favorites unearthed yet"
+            emptyTitle="Your favorites are waiting to be found"
+            emptyDescription={
+                "Rate a movie you enjoyed and it will appear here."
+            }
+            emptyActionText="Explore top-rated horror"
+            emptyActionPath="/movies/rating"
+        />
+    );
+};

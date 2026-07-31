@@ -1,37 +1,26 @@
-import React, { useContext, useEffect, useState } from "react"
-import { MovieContext } from "../Repositories/MovieProvider"
-import { SeenMoviesCard } from "./SeenMoviesCard"
-import { MovieCollectionHeading } from "./MovieCollectionHeading"
-import { Container } from "reactstrap";
-import "./Movie.css"
+import React, { useContext } from "react";
+import { MovieContext } from "../Repositories/MovieProvider";
+import { MovieCollectionPage } from "./MovieCollectionPage";
+import { SeenMoviesCard } from "./SeenMoviesCard";
 
 export const SeenMoviesList = () => {
-    const { movies, getAllSeenMovies } = useContext(MovieContext)
-    const [reload, setReload] = useState();
-
-
-    //useEffect - reach out to the world for something
-    useEffect(() => {
-        getAllSeenMovies()
-        // eslint-disable-next-line
-    }, [reload])
+    const { getAllSeenMovies } = useContext(MovieContext);
 
     return (
-        <>
-            <Container>
-                <MovieCollectionHeading
-                    eyebrow="The Viewing Log"
-                    title="Movies You've Seen"
-                    description={
-                        "Every horror movie you've survived so far."
-                    }
-                />
-                <div className="discovery-movie-grid">
-                    {movies.map((movie) => (
-                        <SeenMoviesCard key={movie.id} movie={movie} reloadProp={setReload} />
-                    ))}
-                </div>
-            </Container>
-        </>
-    )
-}
+        <MovieCollectionPage
+            loadMovies={getAllSeenMovies}
+            CardComponent={SeenMoviesCard}
+            eyebrow="The Viewing Log"
+            title="Movies You've Seen"
+            description="Every horror movie you've survived so far."
+            loadingText="Opening your viewing log..."
+            emptyEyebrow="No survivors recorded yet"
+            emptyTitle="Your viewing log is empty"
+            emptyDescription={
+                "Mark a movie as watched to begin recording your descent."
+            }
+            emptyActionText="Find a movie"
+            emptyActionPath="/movies/search"
+        />
+    );
+};

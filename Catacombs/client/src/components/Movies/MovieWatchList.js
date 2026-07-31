@@ -1,37 +1,26 @@
-import React, { useContext, useEffect, useState } from "react"
-import { MovieContext } from "../Repositories/MovieProvider"
-import { MovieWatchListCard } from "./MovieWatchListCard"
-import { MovieCollectionHeading } from "./MovieCollectionHeading"
-import { Container } from "reactstrap";
-import "./Movie.css"
+import React, { useContext } from "react";
+import { MovieContext } from "../Repositories/MovieProvider";
+import { MovieCollectionPage } from "./MovieCollectionPage";
+import { MovieWatchListCard } from "./MovieWatchListCard";
 
 export const MovieWatchList = () => {
-  let { movies, getAllMovies } = useContext(MovieContext)
-  const [reload, setReload] = useState();
+    const { getAllMovies } = useContext(MovieContext);
 
-
-  //useEffect - reach out to the world for something
-  useEffect(() => {
-    getAllMovies()
-    // eslint-disable-next-line
-  }, [reload])
-
-  return (
-    <>
-      <div id="main">
-        <Container>
-          <MovieCollectionHeading
+    return (
+        <MovieCollectionPage
+            loadMovies={getAllMovies}
+            CardComponent={MovieWatchListCard}
             eyebrow="Up Next"
             title="Your Watchlist"
             description="Movies waiting in the dark for their turn."
-          />
-          <div className="discovery-movie-grid">
-            {movies.map((movie) => (
-              <MovieWatchListCard key={movie.id} movie={movie} reloadProp={setReload} />
-            ))}
-          </div>
-        </Container>
-      </div>
-    </>
-  )
-}
+            loadingText="Opening your watchlist..."
+            emptyEyebrow="Nothing waiting in the dark"
+            emptyTitle="Your watchlist is empty"
+            emptyDescription={
+                "Unearth a few horror movies and save them for later."
+            }
+            emptyActionText="Explore popular horror"
+            emptyActionPath="/movies/popular"
+        />
+    );
+};

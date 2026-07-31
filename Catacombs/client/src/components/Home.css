@@ -28,18 +28,6 @@
     box-shadow: 0 1.5rem 3.5rem rgba(0, 0, 0, 0.3);
 }
 
-.home-hero::before {
-    position: absolute;
-    right: -8rem;
-    bottom: -12rem;
-    width: 28rem;
-    height: 28rem;
-    content: "";
-    background: rgba(230, 30, 77, 0.08);
-    border-radius: 50%;
-    filter: blur(0.15rem);
-}
-
 .home-hero-copy,
 .home-hero-mark {
     position: relative;

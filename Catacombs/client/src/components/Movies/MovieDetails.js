@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faArrowLeft,
+    faClapperboard,
     faClock,
     faStar
 } from "@fortawesome/free-solid-svg-icons";
@@ -9,6 +10,11 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { Container, Spinner } from "reactstrap";
 import { MovieContext } from "../Repositories/MovieProvider";
 import { getMoviePosterUrl } from "./MovieCardContent";
+import { MovieCollectionActions } from "./MovieCollectionActions";
+import { SocialLinks } from "./SocialLinks";
+import { TrailerButton } from "./TrailerButton";
+import { selectTrailer } from "./useMovieMetadata";
+import "./Movie.css";
 import "./MovieDetails.css";
 
 const backdropBaseUrl = "https://image.tmdb.org/t/p/w1280";
@@ -109,6 +115,7 @@ export const MovieDetails = () => {
     const backdropUrl = getBackdropUrl(movie?.backdrop_path);
     const genres = movie?.genres?.map((genre) => genre.name) || [];
     const rating = Number(movie?.vote_average);
+    const trailer = selectTrailer(movie?.videos);
 
     return (
         <main className="movie-details-page">
@@ -207,6 +214,39 @@ export const MovieDetails = () => {
                                         ))}
                                     </div>
                                 )}
+
+                                <div
+                                    className="movie-details-actions"
+                                    role="group"
+                                    aria-label={`Actions for ${movie.title}`}
+                                >
+                                    <TrailerButton
+                                        trailer={trailer}
+                                        title={movie.title}
+                                        showLabel
+                                    />
+                                    <MovieCollectionActions
+                                        movie={movie}
+                                        showLabels
+                                    />
+                                    <Link
+                                        className="movie-details-similar-action"
+                                        to={`/movies/similar/${movie.id}`}
+                                    >
+                                        <FontAwesomeIcon
+                                            icon={faClapperboard}
+                                            aria-hidden="true"
+                                        />
+                                        Similar movies
+                                    </Link>
+                                </div>
+
+                                <div className="movie-details-social">
+                                    <span>Find this movie elsewhere</span>
+                                    <SocialLinks
+                                        socials={movie.external_ids || {}}
+                                    />
+                                </div>
 
                                 <div className="movie-details-rating">
                                     <FontAwesomeIcon

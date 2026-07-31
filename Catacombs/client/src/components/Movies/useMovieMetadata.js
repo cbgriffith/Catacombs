@@ -8,7 +8,7 @@ const emptyMetadata = {
     }
 };
 
-const selectTrailer = (videos) => {
+export const selectTrailer = (videos) => {
     return (videos?.results || [])
         .filter(video =>
             video.site === "YouTube" &&

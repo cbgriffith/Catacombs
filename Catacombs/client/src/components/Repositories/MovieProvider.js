@@ -1,4 +1,9 @@
-import React, { useMemo, useState, createContext } from "react"
+import React, {
+    useCallback,
+    useMemo,
+    useState,
+    createContext
+} from "react"
 
 export const MovieContext = createContext()
 
@@ -88,14 +93,14 @@ export const MovieProvider = (props) => {
         return savedMovie
     }
 
-    const loadMovieCollection = () => {
+    const loadMovieCollection = useCallback(() => {
         return apiFetch("/api/Movies/collection")
             .then((response) => response.json())
             .then((collection) => {
                 setSavedMovies(collection)
                 return collection
             })
-    }
+    }, [])
 
     const loadTmdbMovies = async (path) => {
         setIsLoadingMovies(true)
@@ -180,11 +185,13 @@ export const MovieProvider = (props) => {
         }))
     }
 
-    const getMovieDetails = (movieId) => {
-        return tmdbApiFetch(
-            `/api/tmdb/movies/${movieId}/metadata`
-        )
-    }
+    const getMovieDetails = useCallback(async (movieId) => {
+        const [details] = await Promise.all([
+            tmdbApiFetch(`/api/tmdb/movies/${movieId}/metadata`),
+            loadMovieCollection()
+        ])
+        return details
+    }, [loadMovieCollection])
 
     const addMovie = async (movie) => {
         const response = await secureApiFetch("/api/Movies", {

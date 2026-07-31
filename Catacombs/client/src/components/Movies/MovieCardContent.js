@@ -5,6 +5,7 @@ import {
     CardText,
     CardTitle
 } from "reactstrap";
+import { Link } from "react-router-dom";
 
 const posterBaseUrl = "https://image.tmdb.org/t/p/w342";
 const missingPoster = require("./images/broken-1.png");
@@ -51,17 +52,27 @@ const formatRating = (rating) => {
     return `${numericRating.toFixed(1)} / 10`;
 };
 
-export const MovieCardContent = ({ movie }) => (
-    <CardBody className="movie-card-body">
-        <img
-            className="movie-card-poster"
-            src={getMoviePosterUrl(movie.poster_path)}
-            alt={`${movie.title} poster`}
-            loading="lazy"
-        />
+export const MovieCardContent = ({ movie }) => {
+    const tmdbMovieId = movie.movieId ?? movie.id;
+    const detailsPath = `/movies/details/${tmdbMovieId}`;
+
+    return (
+        <CardBody className="movie-card-body">
+        <Link
+            className="movie-card-poster-link"
+            to={detailsPath}
+            aria-label={`View details for ${movie.title}`}
+        >
+            <img
+                className="movie-card-poster"
+                src={getMoviePosterUrl(movie.poster_path)}
+                alt={`${movie.title} poster`}
+                loading="lazy"
+            />
+        </Link>
         <div className="movie-card-details">
             <CardTitle className="movie-card-title" tag="h2">
-                {movie.title}
+                <Link to={detailsPath}>{movie.title}</Link>
             </CardTitle>
             <div className="movie-card-meta">
                 <CardSubtitle
@@ -90,4 +101,5 @@ export const MovieCardContent = ({ movie }) => (
             </CardText>
         </div>
     </CardBody>
-);
+    );
+};

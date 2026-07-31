@@ -26,7 +26,7 @@ export const LikedMoviesList = () => {
                         "The scares and stories worth revisiting."
                     }
                 />
-                <div id="movielist">
+                <div className="discovery-movie-grid">
                     {movies.map((movie) => (
                         <LikedDislikedMovieCard
                             key={movie.id}

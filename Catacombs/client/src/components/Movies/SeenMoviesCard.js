@@ -1,16 +1,16 @@
 import React, { useContext } from "react"
 import { MovieContext } from "../Repositories/MovieProvider";
-import { Card, CardFooter } from "reactstrap";
-import { useNavigate } from "react-router-dom";
-import "./Movie.css"
 import {
     faArrowRotateLeft,
-    faClapperboard,
     faPen,
     faTrashCan
 } from "@fortawesome/free-solid-svg-icons";
+import {
+    CollectionMovieStatus,
+    getMovieCollectionStatus
+} from "./CollectionMovieStatus";
+import { DiscoveryMovieTile } from "./DiscoveryMovieTile";
 import { MovieActionButton } from "./MovieActionButton";
-import { MovieCardContent } from "./MovieCardContent";
 import {
     chooseUpdatedMovieRating,
     confirmMoveToWatchlist,
@@ -20,14 +20,9 @@ import {
     showRemovedMovie,
     showUpdatedMovieRating
 } from "./movieAlerts";
-import { SocialLinks } from "./SocialLinks";
-import { TrailerButton } from "./TrailerButton";
-import { useMovieMetadata } from "./useMovieMetadata";
 
 export const SeenMoviesCard = ({ movie, reloadProp }) => {
     const { deleteMovie, setMovieStatus } = useContext(MovieContext)
-    const { socials, trailer } = useMovieMetadata(movie.movieId);
-    const navigate = useNavigate();
 
     const handleDeleteMovie = async () => {
         if (!await confirmRemoveMovie(movie.title, "your movie history")) {
@@ -79,49 +74,35 @@ export const SeenMoviesCard = ({ movie, reloadProp }) => {
         }
     }
 
-    const handleSimilarMovies = () => {
-        navigate(`/movies/similar/${movie.movieId}`)
-    }
-
     return (
-        <div className="movie-grid-item">
-                <Card color="dark" inverse className="movie-card">
-                    <MovieCardContent movie={movie} />
-                    <CardFooter className="movie-card-footer">
-                        <SocialLinks socials={socials} />
-                        <div
-                            className="movie-card-actions"
-                            role="group"
-                            aria-label={`Actions for ${movie.title}`}
-                        >
-                            <TrailerButton
-                                trailer={trailer}
-                                title={movie.title}
-                            />
-                            <MovieActionButton
-                                icon={faClapperboard}
-                                label={`View movies similar to ${movie.title}`}
-                                onClick={handleSimilarMovies}
-                            />
-                            <MovieActionButton
-                                icon={faPen}
-                                label={`Change the rating for ${movie.title}`}
-                                onClick={handleRating}
-                            />
-                            <MovieActionButton
-                                icon={faArrowRotateLeft}
-                                label={`Move ${movie.title} back to your watchlist`}
-                                onClick={handleMoveToWatchlist}
-                            />
-                            <MovieActionButton
-                                icon={faTrashCan}
-                                label={`Remove ${movie.title} from your movie history`}
-                                onClick={handleDeleteMovie}
-                                variant="danger"
-                            />
-                        </div>
-                    </CardFooter>
-                </Card>
-        </div>
+        <DiscoveryMovieTile
+            movie={movie}
+            badge={(
+                <CollectionMovieStatus
+                    status={getMovieCollectionStatus(movie.rating)}
+                />
+            )}
+            actionsLabel={`Viewing log actions for ${movie.title}`}
+            actions={(
+                <>
+                    <MovieActionButton
+                        icon={faPen}
+                        label={`Change the rating for ${movie.title}`}
+                        onClick={handleRating}
+                    />
+                    <MovieActionButton
+                        icon={faArrowRotateLeft}
+                        label={`Move ${movie.title} back to your watchlist`}
+                        onClick={handleMoveToWatchlist}
+                    />
+                    <MovieActionButton
+                        icon={faTrashCan}
+                        label={`Remove ${movie.title} from your movie history`}
+                        onClick={handleDeleteMovie}
+                        variant="danger"
+                    />
+                </>
+            )}
+        />
     )
 }

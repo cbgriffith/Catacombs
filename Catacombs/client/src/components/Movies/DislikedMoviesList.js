@@ -24,7 +24,7 @@ export const DislikedMoviesList = () => {
                     title="Movies You Didn't Like"
                     description="The movies that failed to haunt you."
                 />
-                <div id="movielist">
+                <div className="discovery-movie-grid">
                     {movies.map((movie) => (
                         <LikedDislikedMovieCard
                             key={movie.id}

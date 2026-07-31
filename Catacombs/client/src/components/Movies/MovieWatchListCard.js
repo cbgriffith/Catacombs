@@ -1,11 +1,10 @@
 import React, { useContext } from "react"
 import { MovieContext } from "../Repositories/MovieProvider"
 import {
-    faBookmark,
     faEye,
     faTrashCan
 } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { CollectionMovieStatus } from "./CollectionMovieStatus";
 import { DiscoveryMovieTile } from "./DiscoveryMovieTile";
 import { MovieActionButton } from "./MovieActionButton";
 import {
@@ -15,7 +14,6 @@ import {
     showRemovedMovie,
     showViewingStatusSaved
 } from "./movieAlerts";
-import "./WatchlistMovieTile.css";
 
 
 export const MovieWatchListCard = ({ movie, reloadProp }) => {
@@ -59,13 +57,7 @@ export const MovieWatchListCard = ({ movie, reloadProp }) => {
         <DiscoveryMovieTile
             movie={movie}
             badge={(
-                <span className="discovery-movie-rating watchlist-movie-status">
-                    <FontAwesomeIcon
-                        icon={faBookmark}
-                        aria-hidden="true"
-                    />
-                    Watchlist
-                </span>
+                <CollectionMovieStatus status="watchlist" />
             )}
             actionsLabel={`Watchlist actions for ${movie.title}`}
             actions={(

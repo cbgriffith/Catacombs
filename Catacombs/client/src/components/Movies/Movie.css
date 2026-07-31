@@ -454,6 +454,7 @@
 
 .movie-search-results-heading {
     margin: 0 auto;
+    scroll-margin-top: 6rem;
     text-align: center;
 }
 

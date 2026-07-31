@@ -1,4 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, {
+    useContext,
+    useEffect,
+    useRef,
+    useState
+} from "react";
 import { useSearchParams } from "react-router-dom";
 import { MovieContext } from "../Repositories/MovieProvider"
 import { MovieCard } from "./MovieCard";
@@ -22,6 +27,8 @@ export const SearchMovies = () => {
         : ""
     const [searchTerm, setSearchTerm] = useState(submittedSearchTerm)
     const [completedSearchKey, setCompletedSearchKey] = useState("")
+    const resultsHeadingRef = useRef(null)
+    const previousPageRef = useRef(requestedPage)
     const {
         movies,
         moviePage,
@@ -118,6 +125,28 @@ export const SearchMovies = () => {
             totalPages={totalPages}
         />
     ) : null
+
+    useEffect(() => {
+        if (!hasResults) {
+            return
+        }
+
+        const pageChanged = previousPageRef.current !== requestedPage
+        previousPageRef.current = requestedPage
+
+        if (!pageChanged) {
+            return
+        }
+
+        const reduceMotion = window.matchMedia?.(
+            "(prefers-reduced-motion: reduce)"
+        ).matches
+
+        resultsHeadingRef.current?.scrollIntoView({
+            behavior: reduceMotion ? "auto" : "smooth",
+            block: "start"
+        })
+    }, [hasResults, requestedPage])
 
     return (
         <>
@@ -232,7 +261,10 @@ export const SearchMovies = () => {
                     )}
                     {hasResults && (
                         <>
-                            <header className="movie-search-results-heading">
+                            <header
+                                className="movie-search-results-heading"
+                                ref={resultsHeadingRef}
+                            >
                                 <p className="movie-search-state-eyebrow">
                                     Titles unearthed
                                 </p>

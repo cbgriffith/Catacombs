@@ -17,7 +17,10 @@ import {
     showViewingStatusSaved
 } from "./movieAlerts";
 
-export const MovieCollectionActions = ({ movie }) => {
+export const MovieCollectionActions = ({
+    movie,
+    showLabels = false
+}) => {
     const {
         addMovie,
         getSavedMovie,
@@ -105,6 +108,13 @@ export const MovieCollectionActions = ({ movie }) => {
                     variant={isOnWatchlist ? "selected" : undefined}
                     isDisabled={isOnWatchlist}
                     isSelected={isOnWatchlist}
+                    text={
+                        showLabels
+                            ? isOnWatchlist
+                                ? "In watchlist"
+                                : "Add to watchlist"
+                            : undefined
+                    }
                 />
             )}
             <MovieActionButton
@@ -117,6 +127,13 @@ export const MovieCollectionActions = ({ movie }) => {
                 onClick={handleViewingStatus}
                 variant={isWatched ? "selected" : undefined}
                 isSelected={isWatched}
+                text={
+                    showLabels
+                        ? isWatched
+                            ? "Change rating"
+                            : "I've seen this"
+                        : undefined
+                }
             />
         </>
     );

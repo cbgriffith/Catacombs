@@ -7,7 +7,11 @@ import {
 } from "reactstrap";
 import { MovieActionButton } from "./MovieActionButton";
 
-export const TrailerButton = ({ trailer, title }) => {
+export const TrailerButton = ({
+    trailer,
+    title,
+    showLabel = false
+}) => {
     const [isOpen, setIsOpen] = useState(false);
 
     if (!trailer) {
@@ -26,6 +30,7 @@ export const TrailerButton = ({ trailer, title }) => {
                 label={`Watch the trailer for ${title}`}
                 onClick={toggle}
                 variant="trailer"
+                text={showLabel ? "Watch trailer" : undefined}
             />
             <Modal
                 isOpen={isOpen}

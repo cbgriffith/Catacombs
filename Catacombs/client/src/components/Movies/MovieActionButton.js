@@ -7,11 +7,13 @@ export const MovieActionButton = ({
     label,
     onClick,
     variant,
+    text,
     isDisabled = false,
     isSelected = false
 }) => {
     const className = [
         "movie-icon-button",
+        text ? "movie-icon-button--labeled" : "",
         variant ? `movie-icon-button--${variant}` : ""
     ].filter(Boolean).join(" ");
 
@@ -33,6 +35,7 @@ export const MovieActionButton = ({
             data-tooltip={label}
         >
             <FontAwesomeIcon icon={icon} aria-hidden="true" />
+            {text && <span>{text}</span>}
         </Button>
     );
 };

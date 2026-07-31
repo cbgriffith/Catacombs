@@ -1,31 +1,18 @@
-import React, { useContext, useEffect } from "react"
-import { MovieContext } from "../Repositories/MovieProvider"
-import { MovieCard } from "./MovieCard"
-import { Container } from "reactstrap";
-import "./Movie.css"
+import React, { useContext } from "react";
+import { MovieContext } from "../Repositories/MovieProvider";
+import { PaginatedMovieList } from "./PaginatedMovieList";
 
 export const ComingSoonList = () => {
-  let { movies, comingSoon } = useContext(MovieContext)
-
-
-  //useEffect - reach out to the world for something
-  useEffect(() => {
-    comingSoon()
-    // eslint-disable-next-line
-  }, [])
+  const { comingSoon } = useContext(MovieContext);
 
   return (
-    <>
-      <Container>
-        <h1 style={{ textAlign: "center" }}>Coming Soon</h1>
-        <div className="discovery-movie-grid">
-          {
-            movies?.map(movie => {
-              return <MovieCard key={movie.id} movie={movie} />
-            })
-          }
-        </div>
-      </Container>
-    </>
-  )
-}
+    <PaginatedMovieList
+      title="Coming Soon"
+      description={
+        "Upcoming horror movies waiting just beyond the darkness."
+      }
+      basePath="/movies/comingsoon"
+      loadMovies={comingSoon}
+    />
+  );
+};

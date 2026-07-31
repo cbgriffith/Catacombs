@@ -59,7 +59,15 @@ export default function ApplicationViews() {
 
             <Route path="/movies/search" element={<SearchMovies />} />
             <Route path="/movies/comingsoon" element={<ComingSoonList />} />
+            <Route
+              path="/movies/comingsoon/:page"
+              element={<ComingSoonList />}
+            />
             <Route path="/movies/nowplaying" element={<NowPlayingList />} />
+            <Route
+              path="/movies/nowplaying/:page"
+              element={<NowPlayingList />}
+            />
             <Route path="/movies/similar/:id" element={<SimilarMovieList />} />
             <Route path="/movies/details/:id" element={<MovieDetails />} />
 

@@ -1,31 +1,18 @@
-import React, { useContext, useEffect } from "react"
-import { MovieContext } from "../Repositories/MovieProvider"
-import { MovieCard } from "./MovieCard"
-import { Container } from "reactstrap";
-import "./Movie.css"
+import React, { useContext } from "react";
+import { MovieContext } from "../Repositories/MovieProvider";
+import { PaginatedMovieList } from "./PaginatedMovieList";
 
 export const NowPlayingList = () => {
-  const { movies, nowPlaying } = useContext(MovieContext)
-
-
-  //useEffect - reach out to the world for something
-  useEffect(() => {
-    nowPlaying()
-    // eslint-disable-next-line
-  }, [])
+  const { nowPlaying } = useContext(MovieContext);
 
   return (
-    <>
-      <Container>
-        <h1 style={{ textAlign: "center" }}>Now Playing</h1>
-        <div className="discovery-movie-grid">
-          {
-            movies?.map(movie => {
-              return <MovieCard key={movie.id} movie={movie} />
-            })
-          }
-        </div>
-      </Container>
-    </>
-  )
-}
+    <PaginatedMovieList
+      title="Now Playing"
+      description={
+        "Horror movies currently haunting theaters."
+      }
+      basePath="/movies/nowplaying"
+      loadMovies={nowPlaying}
+    />
+  );
+};

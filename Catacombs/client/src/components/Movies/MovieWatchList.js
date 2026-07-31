@@ -25,7 +25,7 @@ export const MovieWatchList = () => {
             title="Your Watchlist"
             description="Movies waiting in the dark for their turn."
           />
-          <div id="movielist">
+          <div className="discovery-movie-grid">
             {movies.map((movie) => (
               <MovieWatchListCard key={movie.id} movie={movie} reloadProp={setReload} />
             ))}

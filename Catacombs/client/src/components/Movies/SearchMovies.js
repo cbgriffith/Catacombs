@@ -102,7 +102,7 @@ export const SearchMovies = () => {
                             <span>Searching movies...</span>
                         </div>
                     ) : (
-                        <div id="movielist">
+                        <div className="discovery-movie-grid">
                             {movies.map(movie => (
                                 <MovieCard
                                     key={movie.id}

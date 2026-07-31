@@ -18,7 +18,7 @@ export const ComingSoonList = () => {
     <>
       <Container>
         <h1 style={{ textAlign: "center" }}>Coming Soon</h1>
-        <div id="movielist">
+        <div className="discovery-movie-grid">
           {
             movies?.map(movie => {
               return <MovieCard key={movie.id} movie={movie} />

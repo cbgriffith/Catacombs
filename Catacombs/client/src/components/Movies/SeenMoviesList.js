@@ -26,7 +26,7 @@ export const SeenMoviesList = () => {
                         "Every horror movie you've survived so far."
                     }
                 />
-                <div id="movielist">
+                <div className="discovery-movie-grid">
                     {movies.map((movie) => (
                         <SeenMoviesCard key={movie.id} movie={movie} reloadProp={setReload} />
                     ))}

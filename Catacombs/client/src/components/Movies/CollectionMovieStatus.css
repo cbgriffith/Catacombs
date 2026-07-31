@@ -1,0 +1,60 @@
+.collection-movie-status {
+    color: #ffffff;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.collection-movie-status--watchlist {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(116, 27, 53, 0.96),
+            rgba(74, 22, 39, 0.96)
+        );
+    border-color: rgba(255, 113, 143, 0.58);
+}
+
+.collection-movie-status--watchlist svg,
+.collection-movie-status--loved svg {
+    color: #ff8ca4;
+}
+
+.collection-movie-status--loved {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(157, 27, 66, 0.96),
+            rgba(91, 20, 42, 0.96)
+        );
+    border-color: rgba(255, 113, 143, 0.66);
+}
+
+.collection-movie-status--disliked {
+    color: #e3e5e7;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(61, 66, 71, 0.97),
+            rgba(35, 38, 41, 0.97)
+        );
+    border-color: rgba(255, 138, 163, 0.38);
+}
+
+.collection-movie-status--disliked svg {
+    color: #ff8aa3;
+}
+
+.collection-movie-status--seen {
+    color: #edf3f6;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(51, 69, 77, 0.97),
+            rgba(31, 40, 45, 0.97)
+        );
+    border-color: rgba(157, 202, 222, 0.42);
+}
+
+.collection-movie-status--seen svg {
+    color: #a6d8ed;
+}

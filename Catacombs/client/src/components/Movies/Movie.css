@@ -457,6 +457,31 @@
     text-align: center;
 }
 
+.movie-search-result-count {
+    margin: 0.55rem 0 0;
+    color: #aeb4b9;
+    font-size: 0.85rem;
+}
+
+.movie-search-clear-button.btn {
+    margin-top: 0.9rem;
+    padding: 0.42rem 0.7rem;
+    color: #c9cdd1;
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 0.55rem;
+    font-size: 0.78rem;
+    font-weight: 750;
+}
+
+.movie-search-clear-button.btn:hover,
+.movie-search-clear-button.btn:focus-visible {
+    color: #ffffff;
+    background-color: rgba(230, 30, 77, 0.15);
+    border-color: rgba(255, 113, 143, 0.55);
+    box-shadow: none;
+}
+
 @media (max-width: 575.98px) {
     .movie-search-form {
         flex-direction: column;

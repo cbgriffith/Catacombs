@@ -1,15 +1,30 @@
 import React, { useContext, useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { MovieContext } from "../Repositories/MovieProvider"
 import { MovieCard } from "./MovieCard";
+import { MoviePagination } from "./MoviePagination";
 import { Alert, Container, Button, Spinner } from "reactstrap";
 import "./Movie.css"
 
 export const SearchMovies = () => {
-    const [searchTerm, setSearchTerm] = useState("")
-    const [submittedSearchTerm, setSubmittedSearchTerm] = useState("")
-    const [hasSearched, setHasSearched] = useState(false)
+    const [searchParams, setSearchParams] = useSearchParams()
+    const submittedSearchTerm =
+        (searchParams.get("query") || "").trim()
+    const parsedPage = Number(searchParams.get("page") || "1")
+    const requestedPage =
+        Number.isInteger(parsedPage) &&
+        parsedPage >= 1 &&
+        parsedPage <= 500
+            ? parsedPage
+            : 1
+    const searchKey = submittedSearchTerm
+        ? `${submittedSearchTerm}:${requestedPage}`
+        : ""
+    const [searchTerm, setSearchTerm] = useState(submittedSearchTerm)
+    const [completedSearchKey, setCompletedSearchKey] = useState("")
     const {
         movies,
+        moviePage,
         searchMovies,
         clearMovieResults,
         isLoadingMovies,
@@ -17,31 +32,92 @@ export const SearchMovies = () => {
     } = useContext(MovieContext);
 
     useEffect(() => {
-        clearMovieResults()
-    }, [clearMovieResults])
+        let isActive = true
 
-    const handleSearch = async (event) => {
+        setSearchTerm(submittedSearchTerm)
+        setCompletedSearchKey("")
+
+        if (!submittedSearchTerm) {
+            clearMovieResults()
+            return () => {
+                isActive = false
+            }
+        }
+
+        searchMovies(submittedSearchTerm, requestedPage)
+            .finally(() => {
+                if (isActive) {
+                    setCompletedSearchKey(searchKey)
+                }
+            })
+
+        return () => {
+            isActive = false
+        }
+        // searchMovies is supplied by MovieProvider and intentionally omitted.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [
+        clearMovieResults,
+        requestedPage,
+        searchKey,
+        submittedSearchTerm
+    ])
+
+    const handleSearch = (event) => {
         event?.preventDefault()
         const query = searchTerm.trim()
         if (!query) {
             return
         }
 
-        setHasSearched(true)
-        setSubmittedSearchTerm(query)
-        await searchMovies(query)
+        setSearchParams({ query })
     }
 
+    const clearSearch = () => {
+        setSearchTerm("")
+        setSearchParams({})
+    }
+
+    const hasSearched = Boolean(submittedSearchTerm)
+    const isCurrentSearchComplete =
+        completedSearchKey === searchKey
     const noResults =
         hasSearched &&
+        isCurrentSearchComplete &&
         !isLoadingMovies &&
         !movieLoadError &&
         movies.length === 0;
     const hasResults =
         hasSearched &&
+        isCurrentSearchComplete &&
         !isLoadingMovies &&
         !movieLoadError &&
         movies.length > 0;
+    const totalPages = moviePage.totalPages
+    const currentPage = Math.min(
+        moviePage.page || requestedPage,
+        Math.max(totalPages, 1),
+        500
+    )
+    const resultCount = moviePage.totalResults || movies.length
+    const pagePath = (page) => {
+        const parameters = new URLSearchParams({
+            query: submittedSearchTerm
+        })
+
+        if (page > 1) {
+            parameters.set("page", String(page))
+        }
+
+        return `/movies/search?${parameters.toString()}`
+    }
+    const pagination = hasResults ? (
+        <MoviePagination
+            getPagePath={pagePath}
+            currentPage={currentPage}
+            totalPages={totalPages}
+        />
+    ) : null
 
     return (
         <>
@@ -135,6 +211,13 @@ export const SearchMovies = () => {
                                 &ldquo;{submittedSearchTerm}&rdquo;. Check the
                                 spelling or try another title.
                             </p>
+                            <Button
+                                type="button"
+                                className="movie-search-clear-button"
+                                onClick={clearSearch}
+                            >
+                                Clear search
+                            </Button>
                         </section>
                     )}
                     {isLoadingMovies && (
@@ -153,8 +236,25 @@ export const SearchMovies = () => {
                                 <p className="movie-search-state-eyebrow">
                                     Titles unearthed
                                 </p>
-                                <h2>Search Results</h2>
+                                <h2>
+                                    Results for &ldquo;
+                                    {submittedSearchTerm}
+                                    &rdquo;
+                                </h2>
+                                <p className="movie-search-result-count">
+                                    {resultCount.toLocaleString()}{" "}
+                                    {resultCount === 1 ? "title" : "titles"}{" "}
+                                    found
+                                </p>
+                                <Button
+                                    type="button"
+                                    className="movie-search-clear-button"
+                                    onClick={clearSearch}
+                                >
+                                    Clear search
+                                </Button>
                             </header>
+                            {pagination}
                             <div className="discovery-movie-grid">
                                 {movies.map(movie => (
                                     <MovieCard
@@ -163,6 +263,7 @@ export const SearchMovies = () => {
                                     />
                                 ))}
                             </div>
+                            {pagination}
                         </>
                     )}
                 </Container>

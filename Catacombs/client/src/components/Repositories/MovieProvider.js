@@ -102,6 +102,13 @@ export const MovieProvider = (props) => {
             })
     }, [])
 
+    const clearMovieResults = useCallback(() => {
+        setMovies([])
+        setMoviePage(emptyMoviePage)
+        setMovieLoadError("")
+        setIsLoadingMovies(false)
+    }, [])
+
     const loadTmdbMovies = async (path) => {
         setIsLoadingMovies(true)
         setMovieLoadError("")
@@ -286,6 +293,7 @@ export const MovieProvider = (props) => {
             getMoviesByRating,
             popularMovies,
             hiddenGems,
+            clearMovieResults,
             addMovie,
             setMovieStatus,
             getWatchlist,

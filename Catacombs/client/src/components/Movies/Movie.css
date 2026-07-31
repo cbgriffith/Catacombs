@@ -417,6 +417,46 @@
     transform: none;
 }
 
+.movie-search-idle-state {
+    max-width: 38rem;
+    margin: 0 auto 3rem;
+    padding: clamp(1.5rem, 5vw, 2.25rem);
+    text-align: center;
+    background:
+        radial-gradient(
+            circle at top,
+            rgba(230, 30, 77, 0.09),
+            transparent 65%
+        ),
+        rgba(24, 27, 30, 0.72);
+    border: 1px dashed rgba(255, 113, 143, 0.3);
+    border-radius: 1rem;
+}
+
+.movie-search-state-eyebrow {
+    margin: 0 0 0.45rem;
+    color: #ff718f;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.movie-search-idle-state h2,
+.movie-search-results-heading h2 {
+    margin: 0;
+}
+
+.movie-search-idle-state > p:last-child {
+    margin: 0.75rem 0 0;
+    color: #b8bdc2;
+}
+
+.movie-search-results-heading {
+    margin: 0 auto;
+    text-align: center;
+}
+
 @media (max-width: 575.98px) {
     .movie-search-form {
         flex-direction: column;

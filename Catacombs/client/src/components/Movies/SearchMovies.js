@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { MovieContext } from "../Repositories/MovieProvider"
 import { MovieCard } from "./MovieCard";
 import { Alert, Container, Button, Spinner } from "reactstrap";
@@ -6,13 +6,19 @@ import "./Movie.css"
 
 export const SearchMovies = () => {
     const [searchTerm, setSearchTerm] = useState("")
+    const [submittedSearchTerm, setSubmittedSearchTerm] = useState("")
     const [hasSearched, setHasSearched] = useState(false)
     const {
         movies,
         searchMovies,
+        clearMovieResults,
         isLoadingMovies,
         movieLoadError
     } = useContext(MovieContext);
+
+    useEffect(() => {
+        clearMovieResults()
+    }, [clearMovieResults])
 
     const handleSearch = async (event) => {
         event?.preventDefault()
@@ -22,6 +28,7 @@ export const SearchMovies = () => {
         }
 
         setHasSearched(true)
+        setSubmittedSearchTerm(query)
         await searchMovies(query)
     }
 
@@ -30,6 +37,11 @@ export const SearchMovies = () => {
         !isLoadingMovies &&
         !movieLoadError &&
         movies.length === 0;
+    const hasResults =
+        hasSearched &&
+        !isLoadingMovies &&
+        !movieLoadError &&
+        movies.length > 0;
 
     return (
         <>
@@ -85,14 +97,47 @@ export const SearchMovies = () => {
                     </section>
                 </Container>
                 <Container>
-                    <h1 style={{ textAlign: "center" }}>Search Results</h1>
                     {movieLoadError && (
                         <Alert color="danger" role="alert">
                             {movieLoadError}
                         </Alert>
                     )}
-                    {noResults && <h4>Nothing Found</h4>}
-                    {isLoadingMovies ? (
+                    {!hasSearched && (
+                        <section
+                            className="movie-search-idle-state"
+                            aria-labelledby="movie-search-idle-heading"
+                        >
+                            <p className="movie-search-state-eyebrow">
+                                The archive awaits
+                            </p>
+                            <h2 id="movie-search-idle-heading">
+                                Unearth a movie
+                            </h2>
+                            <p>
+                                Enter a title above to search the horror
+                                archives.
+                            </p>
+                        </section>
+                    )}
+                    {noResults && (
+                        <section
+                            className="movie-empty-state"
+                            aria-labelledby="movie-search-empty-heading"
+                        >
+                            <p className="movie-empty-state-eyebrow">
+                                The trail goes cold
+                            </p>
+                            <h2 id="movie-search-empty-heading">
+                                No movies found
+                            </h2>
+                            <p>
+                                We couldn&apos;t find a movie matching
+                                &ldquo;{submittedSearchTerm}&rdquo;. Check the
+                                spelling or try another title.
+                            </p>
+                        </section>
+                    )}
+                    {isLoadingMovies && (
                         <div
                             className="movie-loading"
                             role="status"
@@ -101,15 +146,24 @@ export const SearchMovies = () => {
                             <Spinner size="sm" aria-hidden="true" />
                             <span>Searching movies...</span>
                         </div>
-                    ) : (
-                        <div className="discovery-movie-grid">
-                            {movies.map(movie => (
-                                <MovieCard
-                                    key={movie.id}
-                                    movie={movie}
-                                />
-                            ))}
-                        </div>
+                    )}
+                    {hasResults && (
+                        <>
+                            <header className="movie-search-results-heading">
+                                <p className="movie-search-state-eyebrow">
+                                    Titles unearthed
+                                </p>
+                                <h2>Search Results</h2>
+                            </header>
+                            <div className="discovery-movie-grid">
+                                {movies.map(movie => (
+                                    <MovieCard
+                                        key={movie.id}
+                                        movie={movie}
+                                    />
+                                ))}
+                            </div>
+                        </>
                     )}
                 </Container>
             </div>

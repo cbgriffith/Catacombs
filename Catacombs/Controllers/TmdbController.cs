@@ -93,12 +93,59 @@ namespace Catacombs.Controllers
         public Task<IActionResult> Search(
             [FromQuery, Required, StringLength(200)] string query,
             [FromQuery, Range(1, 500)] int page = 1,
+            [FromQuery, Range(1000, 9999)] int? year = null,
             CancellationToken cancellationToken = default)
         {
             return ProxyAsync(
                 token => _tmdbClient.SearchMoviesAsync(
                     query.Trim(),
                     page,
+                    year,
+                    token),
+                cancellationToken);
+        }
+
+        [HttpGet("movies/browse")]
+        public Task<IActionResult> BrowseHorror(
+            [FromQuery, Range(1, 500)] int page = 1,
+            [FromQuery, Range(1890, 2090)] int? decade = null,
+            [FromQuery, Range(0, 10)] double minimumRating = 0,
+            [FromQuery, Range(0, 1000000)] int minimumVotes = 100,
+            [FromQuery, Range(1, 600)] int? minimumRuntime = null,
+            [FromQuery, Range(1, 600)] int? maximumRuntime = null,
+            [FromQuery] TmdbMovieSort sort = TmdbMovieSort.Popular,
+            CancellationToken cancellationToken = default)
+        {
+            if (decade.HasValue && decade.Value % 10 != 0)
+            {
+                return Task.FromResult<IActionResult>(
+                    BadRequest(new ProblemDetails
+                    {
+                        Title = "The decade must begin with a year ending in 0."
+                    }));
+            }
+
+            if (minimumRuntime.HasValue &&
+                maximumRuntime.HasValue &&
+                minimumRuntime.Value > maximumRuntime.Value)
+            {
+                return Task.FromResult<IActionResult>(
+                    BadRequest(new ProblemDetails
+                    {
+                        Title =
+                            "The minimum runtime cannot exceed the maximum."
+                    }));
+            }
+
+            return ProxyAsync(
+                token => _tmdbClient.BrowseHorrorMoviesAsync(
+                    page,
+                    decade,
+                    minimumRating,
+                    minimumVotes,
+                    minimumRuntime,
+                    maximumRuntime,
+                    sort,
                     token),
                 cancellationToken);
         }

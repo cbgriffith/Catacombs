@@ -125,18 +125,106 @@ namespace Catacombs.Services.Tmdb
         public Task<TmdbResponse> SearchMoviesAsync(
             string query,
             int page,
+            int? primaryReleaseYear,
             CancellationToken cancellationToken)
         {
+            var searchParameters = new Dictionary<string, string>
+            {
+                ["query"] = query,
+                ["include_adult"] = "false",
+                ["language"] = "en-US",
+                ["region"] = "US",
+                ["page"] = FormatNumber(page)
+            };
+
+            if (primaryReleaseYear.HasValue)
+            {
+                searchParameters["primary_release_year"] =
+                    FormatNumber(primaryReleaseYear.Value);
+            }
+
             return GetAsync(
                 "search/movie",
-                new Dictionary<string, string>
+                searchParameters,
+                cancellationToken);
+        }
+
+        public Task<TmdbResponse> BrowseHorrorMoviesAsync(
+            int page,
+            int? decade,
+            double minimumRating,
+            int minimumVoteCount,
+            int? minimumRuntime,
+            int? maximumRuntime,
+            TmdbMovieSort sort,
+            CancellationToken cancellationToken)
+        {
+            var today = DateOnly.FromDateTime(
+                _timeProvider.GetUtcNow().UtcDateTime);
+            var latestReleaseDate = today;
+            var query = new Dictionary<string, string>
+            {
+                ["language"] = "en-US",
+                ["region"] = "US",
+                ["page"] = FormatNumber(page),
+                ["include_adult"] = "false",
+                ["include_video"] = "false",
+                ["with_genres"] = "27",
+                ["without_genres"] = "10751,10770",
+                ["sort_by"] = sort switch
                 {
-                    ["query"] = query,
-                    ["include_adult"] = "false",
-                    ["language"] = "en-US",
-                    ["region"] = "US",
-                    ["page"] = FormatNumber(page)
-                },
+                    TmdbMovieSort.Popular => "popularity.desc",
+                    TmdbMovieSort.HighestRated => "vote_average.desc",
+                    TmdbMovieSort.Newest => "primary_release_date.desc",
+                    TmdbMovieSort.Oldest => "primary_release_date.asc",
+                    _ => throw new ArgumentOutOfRangeException(nameof(sort))
+                }
+            };
+
+            if (decade.HasValue)
+            {
+                var decadeStart = new DateOnly(decade.Value, 1, 1);
+                var decadeEnd = new DateOnly(decade.Value + 9, 12, 31);
+
+                query["primary_release_date.gte"] =
+                    FormatDate(decadeStart);
+
+                if (decadeEnd < latestReleaseDate)
+                {
+                    latestReleaseDate = decadeEnd;
+                }
+            }
+
+            query["primary_release_date.lte"] =
+                FormatDate(latestReleaseDate);
+
+            if (minimumRating > 0)
+            {
+                query["vote_average.gte"] =
+                    FormatDecimal(minimumRating);
+            }
+
+            if (minimumVoteCount > 0)
+            {
+                query["vote_count.gte"] =
+                    FormatNumber(minimumVoteCount);
+            }
+
+            if (minimumRuntime.HasValue)
+            {
+                query["with_runtime.gte"] =
+                    FormatNumber(minimumRuntime.Value);
+            }
+
+            if (maximumRuntime.HasValue)
+            {
+                query["with_runtime.lte"] =
+                    FormatNumber(maximumRuntime.Value);
+            }
+
+            return GetAsync(
+                "discover/movie",
+                query,
                 cancellationToken);
         }
 
@@ -237,6 +325,13 @@ namespace Catacombs.Services.Tmdb
         {
             return value.ToString(
                 "yyyy-MM-dd",
+                CultureInfo.InvariantCulture);
+        }
+
+        private static string FormatDecimal(double value)
+        {
+            return value.ToString(
+                "0.#",
                 CultureInfo.InvariantCulture);
         }
     }

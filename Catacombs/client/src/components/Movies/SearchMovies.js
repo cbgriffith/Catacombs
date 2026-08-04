@@ -8,6 +8,7 @@ import { useSearchParams } from "react-router-dom";
 import { MovieContext } from "../Repositories/MovieProvider"
 import { MovieCard } from "./MovieCard";
 import { MoviePagination } from "./MoviePagination";
+import { MovieSearchModeTabs } from "./MovieSearchModeTabs";
 import { Alert, Container, Button, Spinner } from "reactstrap";
 import "./Movie.css"
 
@@ -15,6 +16,15 @@ export const SearchMovies = () => {
     const [searchParams, setSearchParams] = useSearchParams()
     const submittedSearchTerm =
         (searchParams.get("query") || "").trim()
+    const releaseYearParameter =
+        (searchParams.get("year") || "").trim()
+    const parsedReleaseYear = Number(releaseYearParameter)
+    const submittedReleaseYear =
+        Number.isInteger(parsedReleaseYear) &&
+        parsedReleaseYear >= 1000 &&
+        parsedReleaseYear <= 9999
+            ? String(parsedReleaseYear)
+            : ""
     const parsedPage = Number(searchParams.get("page") || "1")
     const requestedPage =
         Number.isInteger(parsedPage) &&
@@ -23,9 +33,12 @@ export const SearchMovies = () => {
             ? parsedPage
             : 1
     const searchKey = submittedSearchTerm
-        ? `${submittedSearchTerm}:${requestedPage}`
+        ? `${submittedSearchTerm}:${submittedReleaseYear}:${requestedPage}`
         : ""
     const [searchTerm, setSearchTerm] = useState(submittedSearchTerm)
+    const [releaseYear, setReleaseYear] = useState(
+        submittedReleaseYear
+    )
     const [completedSearchKey, setCompletedSearchKey] = useState("")
     const resultsHeadingRef = useRef(null)
     const previousPageRef = useRef(requestedPage)
@@ -42,6 +55,7 @@ export const SearchMovies = () => {
         let isActive = true
 
         setSearchTerm(submittedSearchTerm)
+        setReleaseYear(submittedReleaseYear)
         setCompletedSearchKey("")
 
         if (!submittedSearchTerm) {
@@ -51,7 +65,11 @@ export const SearchMovies = () => {
             }
         }
 
-        searchMovies(submittedSearchTerm, requestedPage)
+        searchMovies(
+            submittedSearchTerm,
+            requestedPage,
+            submittedReleaseYear
+        )
             .finally(() => {
                 if (isActive) {
                     setCompletedSearchKey(searchKey)
@@ -67,7 +85,8 @@ export const SearchMovies = () => {
         clearMovieResults,
         requestedPage,
         searchKey,
-        submittedSearchTerm
+        submittedSearchTerm,
+        submittedReleaseYear
     ])
 
     const handleSearch = (event) => {
@@ -77,12 +96,36 @@ export const SearchMovies = () => {
             return
         }
 
-        setSearchParams({ query })
+        const normalizedReleaseYear = releaseYear.trim()
+        const parsedYear = Number(normalizedReleaseYear)
+
+        if (
+            normalizedReleaseYear &&
+            (!Number.isInteger(parsedYear) ||
+                parsedYear < 1000 ||
+                parsedYear > 9999)
+        ) {
+            return
+        }
+
+        const parameters = { query }
+
+        if (normalizedReleaseYear) {
+            parameters.year = normalizedReleaseYear
+        }
+
+        setSearchParams(parameters)
     }
 
     const clearSearch = () => {
         setSearchTerm("")
+        setReleaseYear("")
         setSearchParams({})
+    }
+
+    const clearReleaseYear = () => {
+        setReleaseYear("")
+        setSearchParams({ query: submittedSearchTerm })
     }
 
     const hasSearched = Boolean(submittedSearchTerm)
@@ -111,6 +154,10 @@ export const SearchMovies = () => {
         const parameters = new URLSearchParams({
             query: submittedSearchTerm
         })
+
+        if (submittedReleaseYear) {
+            parameters.set("year", submittedReleaseYear)
+        }
 
         if (page > 1) {
             parameters.set("page", String(page))
@@ -156,6 +203,7 @@ export const SearchMovies = () => {
                         className="movie-search-panel"
                         aria-labelledby="movie-search-heading"
                     >
+                        <MovieSearchModeTabs />
                         <p className="movie-search-eyebrow">
                             Find your next scare
                         </p>
@@ -169,35 +217,63 @@ export const SearchMovies = () => {
                             className="movie-search-form"
                             onSubmit={handleSearch}
                         >
-                            <label
-                                className="visually-hidden"
-                                htmlFor="movie-search"
-                            >
-                                Movie title
-                            </label>
-                            <input
-                                className="movie-search-input"
-                                type="search"
-                                id="movie-search"
-                                autoFocus
-                                placeholder="Enter a movie title"
-                                value={searchTerm}
-                                onChange={(event) =>
-                                    setSearchTerm(event.target.value)
-                                }
-                            />
-                            <Button
-                                className="movie-search-button"
-                                type="submit"
-                                disabled={
-                                    isLoadingMovies ||
-                                    !searchTerm.trim()
-                                }
-                            >
-                                {isLoadingMovies
-                                    ? "Searching..."
-                                    : "Search"}
-                            </Button>
+                            <div className="movie-search-primary-row">
+                                <label
+                                    className="visually-hidden"
+                                    htmlFor="movie-search"
+                                >
+                                    Movie title
+                                </label>
+                                <input
+                                    className="movie-search-input"
+                                    type="search"
+                                    id="movie-search"
+                                    autoFocus
+                                    placeholder="Enter a movie title"
+                                    value={searchTerm}
+                                    onChange={(event) =>
+                                        setSearchTerm(event.target.value)
+                                    }
+                                />
+                                <Button
+                                    className="movie-search-button"
+                                    type="submit"
+                                    disabled={
+                                        isLoadingMovies ||
+                                        !searchTerm.trim()
+                                    }
+                                >
+                                    {isLoadingMovies
+                                        ? "Searching..."
+                                        : "Search"}
+                                </Button>
+                            </div>
+                            <div className="movie-search-filters">
+                                <label
+                                    className="movie-search-filter"
+                                    htmlFor="movie-search-year"
+                                >
+                                    <span>
+                                        Release year
+                                        <small>Optional</small>
+                                    </span>
+                                    <input
+                                        className="movie-search-year-input"
+                                        type="number"
+                                        id="movie-search-year"
+                                        min="1000"
+                                        max="9999"
+                                        step="1"
+                                        placeholder="Example: 1979"
+                                        value={releaseYear}
+                                        onChange={(event) =>
+                                            setReleaseYear(
+                                                event.target.value
+                                            )
+                                        }
+                                    />
+                                </label>
+                            </div>
                         </form>
                     </section>
                 </Container>
@@ -237,8 +313,10 @@ export const SearchMovies = () => {
                             </h2>
                             <p>
                                 We couldn&apos;t find a movie matching
-                                &ldquo;{submittedSearchTerm}&rdquo;. Check the
-                                spelling or try another title.
+                                &ldquo;{submittedSearchTerm}&rdquo;
+                                {submittedReleaseYear &&
+                                    ` from ${submittedReleaseYear}`}.
+                                Check the spelling or try another title.
                             </p>
                             <Button
                                 type="button"
@@ -272,12 +350,29 @@ export const SearchMovies = () => {
                                     Results for &ldquo;
                                     {submittedSearchTerm}
                                     &rdquo;
+                                    {submittedReleaseYear &&
+                                        ` from ${submittedReleaseYear}`}
                                 </h2>
                                 <p className="movie-search-result-count">
                                     {resultCount.toLocaleString()}{" "}
                                     {resultCount === 1 ? "title" : "titles"}{" "}
                                     found
                                 </p>
+                                {submittedReleaseYear && (
+                                    <Button
+                                        type="button"
+                                        className="movie-search-filter-chip"
+                                        aria-label={
+                                            `Remove release year filter ` +
+                                            submittedReleaseYear
+                                        }
+                                        onClick={clearReleaseYear}
+                                    >
+                                        Release year:{" "}
+                                        {submittedReleaseYear}
+                                        <span aria-hidden="true">×</span>
+                                    </Button>
+                                )}
                                 <Button
                                     type="button"
                                     className="movie-search-clear-button"

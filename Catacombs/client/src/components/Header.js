@@ -87,6 +87,10 @@ export default function Header() {
     "/movies/liked",
     "/movies/disliked"
   ].some(path => location.pathname.startsWith(path));
+  const findMoviesIsActive = [
+    "/movies/search",
+    "/movies/browse"
+  ].some(path => location.pathname.startsWith(path));
 
   const logoutClick = async (event) => {
     event.preventDefault();
@@ -217,6 +221,7 @@ export default function Header() {
                   <NavLink
                     tag={RRNavLink}
                     to="/movies/search"
+                    className={findMoviesIsActive ? "active" : ""}
                     onClick={closeMenu}
                   >
                     <span className="header-nav-label">

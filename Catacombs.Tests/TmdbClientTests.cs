@@ -225,6 +225,73 @@ public sealed class TmdbClientTests
     }
 
     [Fact]
+    public async Task BrowseHorrorAppliesFiltersBeforePagination()
+    {
+        var handler = new RecordingHandler();
+        var client = CreateClient(
+            handler,
+            TestToken,
+            new FixedTimeProvider(
+                new DateTimeOffset(
+                    2026,
+                    8,
+                    4,
+                    12,
+                    0,
+                    0,
+                    TimeSpan.Zero)));
+
+        await client.BrowseHorrorMoviesAsync(
+            3,
+            1980,
+            6.5,
+            250,
+            TmdbMovieSort.HighestRated,
+            CancellationToken.None);
+
+        var query = Uri.UnescapeDataString(
+            handler.RequestUri?.Query ?? string.Empty);
+
+        Assert.Equal(
+            "/3/discover/movie",
+            handler.RequestUri?.AbsolutePath);
+        Assert.Contains("page=3", query);
+        Assert.Contains("with_genres=27", query);
+        Assert.Contains("without_genres=10751,10770", query);
+        Assert.Contains("primary_release_date.gte=1980-01-01", query);
+        Assert.Contains("primary_release_date.lte=1989-12-31", query);
+        Assert.Contains("vote_average.gte=6.5", query);
+        Assert.Contains("vote_count.gte=250", query);
+        Assert.Contains("sort_by=vote_average.desc", query);
+    }
+
+    [Theory]
+    [InlineData(TmdbMovieSort.Popular, "popularity.desc")]
+    [InlineData(TmdbMovieSort.HighestRated, "vote_average.desc")]
+    [InlineData(TmdbMovieSort.Newest, "primary_release_date.desc")]
+    [InlineData(TmdbMovieSort.Oldest, "primary_release_date.asc")]
+    public async Task BrowseHorrorUsesTheSelectedSort(
+        TmdbMovieSort sort,
+        string expectedSort)
+    {
+        var handler = new RecordingHandler();
+        var client = CreateClient(handler, TestToken);
+
+        await client.BrowseHorrorMoviesAsync(
+            1,
+            null,
+            0,
+            100,
+            sort,
+            CancellationToken.None);
+
+        var query = Uri.UnescapeDataString(
+            handler.RequestUri?.Query ?? string.Empty);
+
+        Assert.Contains($"sort_by={expectedSort}", query);
+    }
+
+    [Fact]
     public async Task SimilarMoviesUseTheOfficialSimilarEndpoint()
     {
         var handler = new RecordingHandler();

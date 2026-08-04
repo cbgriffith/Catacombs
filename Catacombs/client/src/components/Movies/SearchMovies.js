@@ -8,6 +8,7 @@ import { useSearchParams } from "react-router-dom";
 import { MovieContext } from "../Repositories/MovieProvider"
 import { MovieCard } from "./MovieCard";
 import { MoviePagination } from "./MoviePagination";
+import { MovieSearchModeTabs } from "./MovieSearchModeTabs";
 import { Alert, Container, Button, Spinner } from "reactstrap";
 import "./Movie.css"
 
@@ -197,6 +198,7 @@ export const SearchMovies = () => {
                         className="movie-search-panel"
                         aria-labelledby="movie-search-heading"
                     >
+                        <MovieSearchModeTabs />
                         <p className="movie-search-eyebrow">
                             Find your next scare
                         </p>

@@ -10,6 +10,7 @@ import { PopularMovieList } from "./Movies/Popular/PopularMovieList";
 import { HiddenGemsList } from "./Movies/HiddenGemsList";
 import { MovieWatchList } from "./Movies/MovieWatchList";
 import { SearchMovies } from "./Movies/SearchMovies";
+import { BrowseHorrorMovies } from "./Movies/BrowseHorrorMovies";
 import { ComingSoonList } from "./Movies/ComingSoonList";
 import { NowPlayingList } from "./Movies/NowPlayingList";
 import { SeenMoviesList } from "./Movies/SeenMoviesList";
@@ -58,6 +59,7 @@ export default function ApplicationViews() {
             <Route path="/movies/hidden-gems/:page" element={<HiddenGemsList />} />
 
             <Route path="/movies/search" element={<SearchMovies />} />
+            <Route path="/movies/browse" element={<BrowseHorrorMovies />} />
             <Route path="/movies/comingsoon" element={<ComingSoonList />} />
             <Route
               path="/movies/comingsoon/:page"

@@ -149,6 +149,71 @@ namespace Catacombs.Services.Tmdb
                 cancellationToken);
         }
 
+        public Task<TmdbResponse> BrowseHorrorMoviesAsync(
+            int page,
+            int? decade,
+            double minimumRating,
+            int minimumVoteCount,
+            TmdbMovieSort sort,
+            CancellationToken cancellationToken)
+        {
+            var today = DateOnly.FromDateTime(
+                _timeProvider.GetUtcNow().UtcDateTime);
+            var latestReleaseDate = today;
+            var query = new Dictionary<string, string>
+            {
+                ["language"] = "en-US",
+                ["region"] = "US",
+                ["page"] = FormatNumber(page),
+                ["include_adult"] = "false",
+                ["include_video"] = "false",
+                ["with_genres"] = "27",
+                ["without_genres"] = "10751,10770",
+                ["sort_by"] = sort switch
+                {
+                    TmdbMovieSort.Popular => "popularity.desc",
+                    TmdbMovieSort.HighestRated => "vote_average.desc",
+                    TmdbMovieSort.Newest => "primary_release_date.desc",
+                    TmdbMovieSort.Oldest => "primary_release_date.asc",
+                    _ => throw new ArgumentOutOfRangeException(nameof(sort))
+                }
+            };
+
+            if (decade.HasValue)
+            {
+                var decadeStart = new DateOnly(decade.Value, 1, 1);
+                var decadeEnd = new DateOnly(decade.Value + 9, 12, 31);
+
+                query["primary_release_date.gte"] =
+                    FormatDate(decadeStart);
+
+                if (decadeEnd < latestReleaseDate)
+                {
+                    latestReleaseDate = decadeEnd;
+                }
+            }
+
+            query["primary_release_date.lte"] =
+                FormatDate(latestReleaseDate);
+
+            if (minimumRating > 0)
+            {
+                query["vote_average.gte"] =
+                    FormatDecimal(minimumRating);
+            }
+
+            if (minimumVoteCount > 0)
+            {
+                query["vote_count.gte"] =
+                    FormatNumber(minimumVoteCount);
+            }
+
+            return GetAsync(
+                "discover/movie",
+                query,
+                cancellationToken);
+        }
+
         public Task<TmdbResponse> GetSimilarMoviesAsync(
             int movieId,
             int page,
@@ -246,6 +311,13 @@ namespace Catacombs.Services.Tmdb
         {
             return value.ToString(
                 "yyyy-MM-dd",
+                CultureInfo.InvariantCulture);
+        }
+
+        private static string FormatDecimal(double value)
+        {
+            return value.ToString(
+                "0.#",
                 CultureInfo.InvariantCulture);
         }
     }

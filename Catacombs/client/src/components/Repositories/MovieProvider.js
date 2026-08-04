@@ -173,6 +173,23 @@ export const MovieProvider = (props) => {
         )
     }
 
+    const browseHorrorMovies = (filters, page = 1) => {
+        const parameters = new URLSearchParams({
+            page: String(page),
+            minimumRating: String(filters.minimumRating),
+            minimumVotes: String(filters.minimumVotes),
+            sort: filters.sort
+        })
+
+        if (filters.decade) {
+            parameters.set("decade", String(filters.decade))
+        }
+
+        return loadTmdbMovies(
+            `/api/tmdb/movies/browse?${parameters.toString()}`
+        )
+    }
+
     const comingSoon = (page = 1) => {
         return loadTmdbMovies(
             `/api/tmdb/movies/upcoming?page=${page}`
@@ -307,6 +324,7 @@ export const MovieProvider = (props) => {
             getWatchlist,
             getAllMovies,
             searchMovies,
+            browseHorrorMovies,
             comingSoon,
             nowPlaying,
             similarMovies,

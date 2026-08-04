@@ -105,6 +105,35 @@ namespace Catacombs.Controllers
                 cancellationToken);
         }
 
+        [HttpGet("movies/browse")]
+        public Task<IActionResult> BrowseHorror(
+            [FromQuery, Range(1, 500)] int page = 1,
+            [FromQuery, Range(1890, 2090)] int? decade = null,
+            [FromQuery, Range(0, 10)] double minimumRating = 0,
+            [FromQuery, Range(0, 1000000)] int minimumVotes = 100,
+            [FromQuery] TmdbMovieSort sort = TmdbMovieSort.Popular,
+            CancellationToken cancellationToken = default)
+        {
+            if (decade.HasValue && decade.Value % 10 != 0)
+            {
+                return Task.FromResult<IActionResult>(
+                    BadRequest(new ProblemDetails
+                    {
+                        Title = "The decade must begin with a year ending in 0."
+                    }));
+            }
+
+            return ProxyAsync(
+                token => _tmdbClient.BrowseHorrorMoviesAsync(
+                    page,
+                    decade,
+                    minimumRating,
+                    minimumVotes,
+                    sort,
+                    token),
+                cancellationToken);
+        }
+
         [HttpGet("movies/{movieId:int}/similar")]
         public Task<IActionResult> SimilarMovies(
             [FromRoute, Range(1, int.MaxValue)] int movieId,

@@ -13,6 +13,7 @@ namespace Catacombs.Services.Tmdb
         Task<TmdbResponse> SearchMoviesAsync(
             string query,
             int page,
+            int? primaryReleaseYear,
             CancellationToken cancellationToken);
 
         Task<TmdbResponse> GetSimilarMoviesAsync(

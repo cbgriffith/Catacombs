@@ -93,12 +93,14 @@ namespace Catacombs.Controllers
         public Task<IActionResult> Search(
             [FromQuery, Required, StringLength(200)] string query,
             [FromQuery, Range(1, 500)] int page = 1,
+            [FromQuery, Range(1000, 9999)] int? year = null,
             CancellationToken cancellationToken = default)
         {
             return ProxyAsync(
                 token => _tmdbClient.SearchMoviesAsync(
                     query.Trim(),
                     page,
+                    year,
                     token),
                 cancellationToken);
         }

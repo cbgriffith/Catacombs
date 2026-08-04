@@ -125,18 +125,27 @@ namespace Catacombs.Services.Tmdb
         public Task<TmdbResponse> SearchMoviesAsync(
             string query,
             int page,
+            int? primaryReleaseYear,
             CancellationToken cancellationToken)
         {
+            var searchParameters = new Dictionary<string, string>
+            {
+                ["query"] = query,
+                ["include_adult"] = "false",
+                ["language"] = "en-US",
+                ["region"] = "US",
+                ["page"] = FormatNumber(page)
+            };
+
+            if (primaryReleaseYear.HasValue)
+            {
+                searchParameters["primary_release_year"] =
+                    FormatNumber(primaryReleaseYear.Value);
+            }
+
             return GetAsync(
                 "search/movie",
-                new Dictionary<string, string>
-                {
-                    ["query"] = query,
-                    ["include_adult"] = "false",
-                    ["language"] = "en-US",
-                    ["region"] = "US",
-                    ["page"] = FormatNumber(page)
-                },
+                searchParameters,
                 cancellationToken);
         }
 

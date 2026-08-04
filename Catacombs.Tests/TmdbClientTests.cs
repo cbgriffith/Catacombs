@@ -196,12 +196,32 @@ public sealed class TmdbClientTests
         await client.SearchMoviesAsync(
             "Alien & Aliens",
             2,
+            null,
             CancellationToken.None);
 
         Assert.Equal(
             "/3/search/movie?query=Alien%20%26%20Aliens" +
             "&include_adult=false&language=en-US&region=US&page=2",
             handler.RequestUri?.PathAndQuery);
+    }
+
+    [Fact]
+    public async Task SearchCanFilterByPrimaryReleaseYear()
+    {
+        var handler = new RecordingHandler();
+        var client = CreateClient(handler, TestToken);
+
+        await client.SearchMoviesAsync(
+            "Alien",
+            1,
+            1979,
+            CancellationToken.None);
+
+        var query = Uri.UnescapeDataString(
+            handler.RequestUri?.Query ?? string.Empty);
+
+        Assert.Contains("query=Alien", query);
+        Assert.Contains("primary_release_year=1979", query);
     }
 
     [Fact]

@@ -352,8 +352,62 @@
 }
 
 .movie-search-form {
+    display: grid;
+    gap: 0.9rem;
+}
+
+.movie-search-primary-row {
     display: flex;
     gap: 0.75rem;
+}
+
+.movie-search-filters {
+    display: flex;
+    padding-top: 0.9rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.movie-search-filter {
+    display: grid;
+    gap: 0.45rem;
+    margin: 0;
+    color: #d9dcdf;
+    font-size: 0.82rem;
+    font-weight: 750;
+}
+
+.movie-search-filter > span {
+    display: flex;
+    gap: 0.55rem;
+    align-items: baseline;
+}
+
+.movie-search-filter small {
+    color: #92999f;
+    font-size: 0.7rem;
+    font-weight: 650;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.movie-search-year-input {
+    width: 10.5rem;
+    min-height: 2.7rem;
+    padding: 0.55rem 0.75rem;
+    color: #f4f5f6;
+    background-color: #171a1d;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 0.6rem;
+}
+
+.movie-search-year-input:focus {
+    border-color: #ff5579;
+    box-shadow: 0 0 0 0.2rem rgba(230, 30, 77, 0.22);
+    outline: none;
+}
+
+.movie-search-year-input::placeholder {
+    color: #777f86;
 }
 
 .movie-search-input {
@@ -484,11 +538,15 @@
 }
 
 @media (max-width: 575.98px) {
-    .movie-search-form {
+    .movie-search-primary-row {
         flex-direction: column;
     }
 
     .movie-search-button.btn {
+        width: 100%;
+    }
+
+    .movie-search-year-input {
         width: 100%;
     }
 }

@@ -158,10 +158,18 @@ export const MovieProvider = (props) => {
         )
     }
 
-    const searchMovies = (query, page = 1) => {
+    const searchMovies = (query, page = 1, releaseYear = "") => {
+        const parameters = new URLSearchParams({
+            query,
+            page: String(page)
+        })
+
+        if (releaseYear) {
+            parameters.set("year", String(releaseYear))
+        }
+
         return loadTmdbMovies(
-            `/api/tmdb/movies/search?query=${encodeURIComponent(query)}` +
-            `&page=${page}`
+            `/api/tmdb/movies/search?${parameters.toString()}`
         )
     }
 

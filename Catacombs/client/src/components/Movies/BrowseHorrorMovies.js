@@ -13,7 +13,23 @@ import { MovieSearchModeTabs } from "./MovieSearchModeTabs";
 import "./Movie.css";
 
 const ratingOptions = ["0", "5", "6", "7", "8"];
-const voteOptions = ["50", "100", "250", "500", "1000"];
+const voteOptions = ["0", "50", "100", "250", "500", "1000"];
+const runtimeOptions = ["Any", "Short", "Standard", "Long"];
+const runtimeRanges = {
+    Any: {},
+    Short: { maximumRuntime: "89" },
+    Standard: {
+        minimumRuntime: "90",
+        maximumRuntime: "120"
+    },
+    Long: { minimumRuntime: "121" }
+};
+const runtimeLabels = {
+    Any: "Any length",
+    Short: "Under 90 minutes",
+    Standard: "90 to 120 minutes",
+    Long: "Over 2 hours"
+};
 const sortOptions = [
     "Popular",
     "HighestRated",
@@ -65,6 +81,11 @@ export const BrowseHorrorMovies = () => {
         voteOptions,
         "100"
     );
+    const submittedRuntime = allowedValue(
+        searchParams.get("runtime") || "Any",
+        runtimeOptions,
+        "Any"
+    );
     const submittedSort = allowedValue(
         searchParams.get("sort") || "Popular",
         sortOptions,
@@ -74,6 +95,7 @@ export const BrowseHorrorMovies = () => {
         submittedDecade,
         submittedRating,
         submittedVotes,
+        submittedRuntime,
         submittedSort,
         requestedPage
     ].join(":");
@@ -81,6 +103,7 @@ export const BrowseHorrorMovies = () => {
         decade: submittedDecade,
         rating: submittedRating,
         votes: submittedVotes,
+        runtime: submittedRuntime,
         sort: submittedSort
     });
     const [completedBrowseKey, setCompletedBrowseKey] = useState("");
@@ -101,14 +124,19 @@ export const BrowseHorrorMovies = () => {
             decade: submittedDecade,
             rating: submittedRating,
             votes: submittedVotes,
+            runtime: submittedRuntime,
             sort: submittedSort
         });
         setCompletedBrowseKey("");
+
+        const runtimeRange = runtimeRanges[submittedRuntime];
 
         browseHorrorMovies({
             decade: submittedDecade,
             minimumRating: submittedRating,
             minimumVotes: submittedVotes,
+            minimumRuntime: runtimeRange.minimumRuntime || "",
+            maximumRuntime: runtimeRange.maximumRuntime || "",
             sort: submittedSort
         }, requestedPage).finally(() => {
             if (isActive) {
@@ -126,6 +154,7 @@ export const BrowseHorrorMovies = () => {
         requestedPage,
         submittedDecade,
         submittedRating,
+        submittedRuntime,
         submittedSort,
         submittedVotes
     ]);
@@ -150,6 +179,9 @@ export const BrowseHorrorMovies = () => {
         }
         if (filters.votes !== "100") {
             parameters.votes = filters.votes;
+        }
+        if (filters.runtime !== "Any") {
+            parameters.runtime = filters.runtime;
         }
         if (filters.sort !== "Popular") {
             parameters.sort = filters.sort;
@@ -192,6 +224,9 @@ export const BrowseHorrorMovies = () => {
         }
         if (submittedVotes !== "100") {
             parameters.set("votes", submittedVotes);
+        }
+        if (submittedRuntime !== "Any") {
+            parameters.set("runtime", submittedRuntime);
         }
         if (submittedSort !== "Popular") {
             parameters.set("sort", submittedSort);
@@ -300,6 +335,7 @@ export const BrowseHorrorMovies = () => {
                                     value={filters.votes}
                                     onChange={updateFilter}
                                 >
+                                    <option value="0">Any</option>
                                     <option value="50">50 votes</option>
                                     <option value="100">100 votes</option>
                                     <option value="250">250 votes</option>
@@ -325,6 +361,27 @@ export const BrowseHorrorMovies = () => {
                                     </option>
                                     <option value="Oldest">
                                         Oldest first
+                                    </option>
+                                </select>
+                            </label>
+                            <label>
+                                <span>Runtime</span>
+                                <select
+                                    name="runtime"
+                                    value={filters.runtime}
+                                    onChange={updateFilter}
+                                >
+                                    <option value="Any">
+                                        Any length
+                                    </option>
+                                    <option value="Short">
+                                        Under 90 minutes
+                                    </option>
+                                    <option value="Standard">
+                                        90 to 120 minutes
+                                    </option>
+                                    <option value="Long">
+                                        Over 2 hours
                                     </option>
                                 </select>
                             </label>
@@ -413,7 +470,14 @@ export const BrowseHorrorMovies = () => {
                                         ? "Any rating"
                                         : `${submittedRating}+ rating`}
                                 </span>
-                                <span>{submittedVotes}+ votes</span>
+                                <span>
+                                    {submittedVotes === "0"
+                                        ? "Any number of votes"
+                                        : `${submittedVotes}+ votes`}
+                                </span>
+                                <span>
+                                    {runtimeLabels[submittedRuntime]}
+                                </span>
                                 <span>{sortLabels[submittedSort]}</span>
                             </div>
                         </header>

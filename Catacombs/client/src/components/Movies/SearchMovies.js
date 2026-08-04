@@ -123,6 +123,11 @@ export const SearchMovies = () => {
         setSearchParams({})
     }
 
+    const clearReleaseYear = () => {
+        setReleaseYear("")
+        setSearchParams({ query: submittedSearchTerm })
+    }
+
     const hasSearched = Boolean(submittedSearchTerm)
     const isCurrentSearchComplete =
         completedSearchKey === searchKey
@@ -353,6 +358,21 @@ export const SearchMovies = () => {
                                     {resultCount === 1 ? "title" : "titles"}{" "}
                                     found
                                 </p>
+                                {submittedReleaseYear && (
+                                    <Button
+                                        type="button"
+                                        className="movie-search-filter-chip"
+                                        aria-label={
+                                            `Remove release year filter ` +
+                                            submittedReleaseYear
+                                        }
+                                        onClick={clearReleaseYear}
+                                    >
+                                        Release year:{" "}
+                                        {submittedReleaseYear}
+                                        <span aria-hidden="true">×</span>
+                                    </Button>
+                                )}
                                 <Button
                                     type="button"
                                     className="movie-search-clear-button"

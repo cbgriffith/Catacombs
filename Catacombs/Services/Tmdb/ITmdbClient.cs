@@ -21,6 +21,8 @@ namespace Catacombs.Services.Tmdb
             int? decade,
             double minimumRating,
             int minimumVoteCount,
+            int? minimumRuntime,
+            int? maximumRuntime,
             TmdbMovieSort sort,
             CancellationToken cancellationToken);
 

@@ -154,6 +154,8 @@ namespace Catacombs.Services.Tmdb
             int? decade,
             double minimumRating,
             int minimumVoteCount,
+            int? minimumRuntime,
+            int? maximumRuntime,
             TmdbMovieSort sort,
             CancellationToken cancellationToken)
         {
@@ -206,6 +208,18 @@ namespace Catacombs.Services.Tmdb
             {
                 query["vote_count.gte"] =
                     FormatNumber(minimumVoteCount);
+            }
+
+            if (minimumRuntime.HasValue)
+            {
+                query["with_runtime.gte"] =
+                    FormatNumber(minimumRuntime.Value);
+            }
+
+            if (maximumRuntime.HasValue)
+            {
+                query["with_runtime.lte"] =
+                    FormatNumber(maximumRuntime.Value);
             }
 
             return GetAsync(

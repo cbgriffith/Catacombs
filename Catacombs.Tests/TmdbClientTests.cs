@@ -246,6 +246,8 @@ public sealed class TmdbClientTests
             1980,
             6.5,
             250,
+            90,
+            120,
             TmdbMovieSort.HighestRated,
             CancellationToken.None);
 
@@ -262,6 +264,8 @@ public sealed class TmdbClientTests
         Assert.Contains("primary_release_date.lte=1989-12-31", query);
         Assert.Contains("vote_average.gte=6.5", query);
         Assert.Contains("vote_count.gte=250", query);
+        Assert.Contains("with_runtime.gte=90", query);
+        Assert.Contains("with_runtime.lte=120", query);
         Assert.Contains("sort_by=vote_average.desc", query);
     }
 
@@ -282,6 +286,8 @@ public sealed class TmdbClientTests
             null,
             0,
             100,
+            null,
+            null,
             sort,
             CancellationToken.None);
 
@@ -289,6 +295,28 @@ public sealed class TmdbClientTests
             handler.RequestUri?.Query ?? string.Empty);
 
         Assert.Contains($"sort_by={expectedSort}", query);
+    }
+
+    [Fact]
+    public async Task BrowseHorrorCanRemoveTheMinimumVoteRequirement()
+    {
+        var handler = new RecordingHandler();
+        var client = CreateClient(handler, TestToken);
+
+        await client.BrowseHorrorMoviesAsync(
+            1,
+            null,
+            0,
+            0,
+            null,
+            null,
+            TmdbMovieSort.Popular,
+            CancellationToken.None);
+
+        var query = Uri.UnescapeDataString(
+            handler.RequestUri?.Query ?? string.Empty);
+
+        Assert.DoesNotContain("vote_count.gte", query);
     }
 
     [Fact]

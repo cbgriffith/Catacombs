@@ -111,6 +111,8 @@ namespace Catacombs.Controllers
             [FromQuery, Range(1890, 2090)] int? decade = null,
             [FromQuery, Range(0, 10)] double minimumRating = 0,
             [FromQuery, Range(0, 1000000)] int minimumVotes = 100,
+            [FromQuery, Range(1, 600)] int? minimumRuntime = null,
+            [FromQuery, Range(1, 600)] int? maximumRuntime = null,
             [FromQuery] TmdbMovieSort sort = TmdbMovieSort.Popular,
             CancellationToken cancellationToken = default)
         {
@@ -123,12 +125,26 @@ namespace Catacombs.Controllers
                     }));
             }
 
+            if (minimumRuntime.HasValue &&
+                maximumRuntime.HasValue &&
+                minimumRuntime.Value > maximumRuntime.Value)
+            {
+                return Task.FromResult<IActionResult>(
+                    BadRequest(new ProblemDetails
+                    {
+                        Title =
+                            "The minimum runtime cannot exceed the maximum."
+                    }));
+            }
+
             return ProxyAsync(
                 token => _tmdbClient.BrowseHorrorMoviesAsync(
                     page,
                     decade,
                     minimumRating,
                     minimumVotes,
+                    minimumRuntime,
+                    maximumRuntime,
                     sort,
                     token),
                 cancellationToken);

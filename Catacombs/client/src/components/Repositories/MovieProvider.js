@@ -184,6 +184,18 @@ export const MovieProvider = (props) => {
         if (filters.decade) {
             parameters.set("decade", String(filters.decade))
         }
+        if (filters.minimumRuntime) {
+            parameters.set(
+                "minimumRuntime",
+                String(filters.minimumRuntime)
+            )
+        }
+        if (filters.maximumRuntime) {
+            parameters.set(
+                "maximumRuntime",
+                String(filters.maximumRuntime)
+            )
+        }
 
         return loadTmdbMovies(
             `/api/tmdb/movies/browse?${parameters.toString()}`

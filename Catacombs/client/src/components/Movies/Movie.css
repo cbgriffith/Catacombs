@@ -536,6 +536,42 @@
     font-weight: 700;
 }
 
+.movie-browse-surprise-button.btn {
+    display: inline-flex;
+    gap: 0.55rem;
+    align-items: center;
+    margin-top: 1rem;
+    padding: 0.65rem 1rem;
+    color: #ffffff;
+    background-color: rgba(230, 30, 77, 0.16);
+    border: 1px solid rgba(255, 113, 143, 0.5);
+    border-radius: 0.65rem;
+    font-weight: 750;
+    box-shadow: none;
+    transition:
+        background-color 150ms ease,
+        border-color 150ms ease,
+        box-shadow 150ms ease,
+        transform 150ms ease;
+}
+
+.movie-browse-surprise-button.btn:hover,
+.movie-browse-surprise-button.btn:focus-visible {
+    color: #ffffff;
+    background-color: #c91845;
+    border-color: #ff718f;
+    box-shadow: 0 0.55rem 1.3rem rgba(230, 30, 77, 0.24);
+    transform: translateY(-1px);
+}
+
+.movie-browse-surprise-button.btn:disabled {
+    color: #b7bbc0;
+    background-color: rgba(52, 58, 64, 0.8);
+    border-color: rgba(255, 255, 255, 0.12);
+    opacity: 1;
+    transform: none;
+}
+
 .movie-search-primary-row {
     display: flex;
     gap: 0.75rem;

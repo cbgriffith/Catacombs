@@ -4,11 +4,18 @@ import React, {
     useMemo,
     useState
 } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Button, Container, Spinner } from "reactstrap";
 import { MovieContext } from "../Repositories/MovieProvider";
 import { MovieCollectionHeading } from "./MovieCollectionHeading";
 import "./Movie.css";
+
+const validSortOrders = new Set([
+    "title",
+    "newest",
+    "oldest",
+    "rating"
+]);
 
 const compareTitles = (firstMovie, secondMovie) => (
     (firstMovie.title || "").localeCompare(
@@ -82,11 +89,28 @@ export const MovieCollectionPage = ({
     emptyActionPath
 }) => {
     const { movies } = useContext(MovieContext);
+    const [searchParams, setSearchParams] = useSearchParams();
     const [reload, setReload] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [loadError, setLoadError] = useState(false);
-    const [titleFilter, setTitleFilter] = useState("");
-    const [sortOrder, setSortOrder] = useState("title");
+    const titleFilter = searchParams.get("filter") || "";
+    const requestedSortOrder = searchParams.get("sort") || "title";
+    const sortOrder = validSortOrders.has(requestedSortOrder)
+        ? requestedSortOrder
+        : "title";
+
+    const updateCollectionView = (nextFilter, nextSortOrder) => {
+        const parameters = new URLSearchParams();
+
+        if (nextFilter.trim()) {
+            parameters.set("filter", nextFilter);
+        }
+        if (nextSortOrder !== "title") {
+            parameters.set("sort", nextSortOrder);
+        }
+
+        setSearchParams(parameters, { replace: true });
+    };
 
     const visibleMovies = useMemo(() => {
         const normalizedFilter = titleFilter.trim().toLocaleLowerCase();
@@ -189,7 +213,10 @@ export const MovieCollectionPage = ({
                                     value={titleFilter}
                                     placeholder="Filter by movie title"
                                     onChange={(event) =>
-                                        setTitleFilter(event.target.value)}
+                                        updateCollectionView(
+                                            event.target.value,
+                                            sortOrder
+                                        )}
                                 />
                             </label>
                             <label className="movie-collection-tool">
@@ -197,7 +224,10 @@ export const MovieCollectionPage = ({
                                 <select
                                     value={sortOrder}
                                     onChange={(event) =>
-                                        setSortOrder(event.target.value)}
+                                        updateCollectionView(
+                                            titleFilter,
+                                            event.target.value
+                                        )}
                                 >
                                     <option value="title">Title A–Z</option>
                                     <option value="newest">
@@ -234,7 +264,8 @@ export const MovieCollectionPage = ({
                             <Button
                                 type="button"
                                 className="movie-return-action"
-                                onClick={() => setTitleFilter("")}
+                                onClick={() =>
+                                    updateCollectionView("", sortOrder)}
                             >
                                 Clear filter
                             </Button>

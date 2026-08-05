@@ -80,9 +80,9 @@ export const BrowseHorrorMovies = () => {
         "0"
     );
     const submittedVotes = allowedValue(
-        searchParams.get("votes") || "100",
+        searchParams.get("votes") || "0",
         voteOptions,
-        "100"
+        "0"
     );
     const submittedRuntime = allowedValue(
         searchParams.get("runtime") || "Any",
@@ -190,7 +190,7 @@ export const BrowseHorrorMovies = () => {
         if (filters.rating !== "0") {
             parameters.rating = filters.rating;
         }
-        if (filters.votes !== "100") {
+        if (filters.votes !== "0") {
             parameters.votes = filters.votes;
         }
         if (filters.runtime !== "Any") {
@@ -254,7 +254,7 @@ export const BrowseHorrorMovies = () => {
         if (submittedRating !== "0") {
             parameters.set("rating", submittedRating);
         }
-        if (submittedVotes !== "100") {
+        if (submittedVotes !== "0") {
             parameters.set("votes", submittedVotes);
         }
         if (submittedRuntime !== "Any") {

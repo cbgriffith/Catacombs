@@ -14,6 +14,33 @@ const emptyMoviePage = {
     totalResults: 0
 };
 
+const getBrowseHorrorPath = (filters, page) => {
+    const parameters = new URLSearchParams({
+        page: String(page),
+        minimumRating: String(filters.minimumRating),
+        minimumVotes: String(filters.minimumVotes),
+        sort: filters.sort
+    })
+
+    if (filters.decade) {
+        parameters.set("decade", String(filters.decade))
+    }
+    if (filters.minimumRuntime) {
+        parameters.set(
+            "minimumRuntime",
+            String(filters.minimumRuntime)
+        )
+    }
+    if (filters.maximumRuntime) {
+        parameters.set(
+            "maximumRuntime",
+            String(filters.maximumRuntime)
+        )
+    }
+
+    return `/api/tmdb/movies/browse?${parameters.toString()}`
+}
+
 const authenticatedApiFetch = (path, options = {}) => {
     return fetch(`${apiUrl}${path}`, {
         ...options,
@@ -174,32 +201,35 @@ export const MovieProvider = (props) => {
     }
 
     const browseHorrorMovies = (filters, page = 1) => {
-        const parameters = new URLSearchParams({
-            page: String(page),
-            minimumRating: String(filters.minimumRating),
-            minimumVotes: String(filters.minimumVotes),
-            sort: filters.sort
-        })
-
-        if (filters.decade) {
-            parameters.set("decade", String(filters.decade))
-        }
-        if (filters.minimumRuntime) {
-            parameters.set(
-                "minimumRuntime",
-                String(filters.minimumRuntime)
-            )
-        }
-        if (filters.maximumRuntime) {
-            parameters.set(
-                "maximumRuntime",
-                String(filters.maximumRuntime)
-            )
-        }
-
         return loadTmdbMovies(
-            `/api/tmdb/movies/browse?${parameters.toString()}`
+            getBrowseHorrorPath(filters, page)
         )
+    }
+
+    const getHorrorMovieSuggestion = async (filters, totalPages) => {
+        const availablePageCount = Math.min(
+            Math.max(Math.trunc(Number(totalPages)) || 1, 1),
+            500
+        )
+        const randomPage =
+            Math.floor(Math.random() * availablePageCount) + 1
+        const movieObject = await tmdbApiFetch(
+            getBrowseHorrorPath(filters, randomPage)
+        )
+        const availableMovies = (movieObject.results || []).filter(
+            (movie) => Number(movie.id) > 0
+        )
+
+        if (availableMovies.length === 0) {
+            throw new Error(
+                "No movie could be chosen from these filters."
+            )
+        }
+
+        const randomMovieIndex = Math.floor(
+            Math.random() * availableMovies.length
+        )
+        return availableMovies[randomMovieIndex]
     }
 
     const comingSoon = (page = 1) => {
@@ -337,6 +367,7 @@ export const MovieProvider = (props) => {
             getAllMovies,
             searchMovies,
             browseHorrorMovies,
+            getHorrorMovieSuggestion,
             comingSoon,
             nowPlaying,
             similarMovies,

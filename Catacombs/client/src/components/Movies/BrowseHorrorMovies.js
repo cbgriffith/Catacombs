@@ -4,7 +4,9 @@ import React, {
     useRef,
     useState
 } from "react";
-import { useSearchParams } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDice } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Alert, Button, Container, Spinner } from "reactstrap";
 import { MovieContext } from "../Repositories/MovieProvider";
 import { MovieCard } from "./MovieCard";
@@ -54,6 +56,7 @@ const allowedValue = (value, options, fallback) => (
 );
 
 export const BrowseHorrorMovies = () => {
+    const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const parsedPage = Number(searchParams.get("page") || "1");
     const requestedPage =
@@ -77,9 +80,9 @@ export const BrowseHorrorMovies = () => {
         "0"
     );
     const submittedVotes = allowedValue(
-        searchParams.get("votes") || "100",
+        searchParams.get("votes") || "0",
         voteOptions,
-        "100"
+        "0"
     );
     const submittedRuntime = allowedValue(
         searchParams.get("runtime") || "Any",
@@ -107,15 +110,31 @@ export const BrowseHorrorMovies = () => {
         sort: submittedSort
     });
     const [completedBrowseKey, setCompletedBrowseKey] = useState("");
+    const [isChoosingSuggestion, setIsChoosingSuggestion] = useState(false);
+    const [suggestionError, setSuggestionError] = useState("");
     const resultsHeadingRef = useRef(null);
     const previousPageRef = useRef(requestedPage);
     const {
         movies,
         moviePage,
         browseHorrorMovies,
+        getHorrorMovieSuggestion,
         isLoadingMovies,
         movieLoadError
     } = useContext(MovieContext);
+
+    const getSubmittedFilters = () => {
+        const runtimeRange = runtimeRanges[submittedRuntime];
+
+        return {
+            decade: submittedDecade,
+            minimumRating: submittedRating,
+            minimumVotes: submittedVotes,
+            minimumRuntime: runtimeRange.minimumRuntime || "",
+            maximumRuntime: runtimeRange.maximumRuntime || "",
+            sort: submittedSort
+        };
+    };
 
     useEffect(() => {
         let isActive = true;
@@ -129,16 +148,10 @@ export const BrowseHorrorMovies = () => {
         });
         setCompletedBrowseKey("");
 
-        const runtimeRange = runtimeRanges[submittedRuntime];
-
-        browseHorrorMovies({
-            decade: submittedDecade,
-            minimumRating: submittedRating,
-            minimumVotes: submittedVotes,
-            minimumRuntime: runtimeRange.minimumRuntime || "",
-            maximumRuntime: runtimeRange.maximumRuntime || "",
-            sort: submittedSort
-        }, requestedPage).finally(() => {
+        browseHorrorMovies(
+            getSubmittedFilters(),
+            requestedPage
+        ).finally(() => {
             if (isActive) {
                 setCompletedBrowseKey(browseKey);
             }
@@ -177,7 +190,7 @@ export const BrowseHorrorMovies = () => {
         if (filters.rating !== "0") {
             parameters.rating = filters.rating;
         }
-        if (filters.votes !== "100") {
+        if (filters.votes !== "0") {
             parameters.votes = filters.votes;
         }
         if (filters.runtime !== "Any") {
@@ -192,6 +205,25 @@ export const BrowseHorrorMovies = () => {
 
     const resetFilters = () => {
         setSearchParams({});
+    };
+
+    const chooseSurpriseMovie = async () => {
+        setIsChoosingSuggestion(true);
+        setSuggestionError("");
+
+        try {
+            const movie = await getHorrorMovieSuggestion(
+                getSubmittedFilters(),
+                moviePage.totalPages
+            );
+            navigate(`/movies/details/${movie.id}`);
+        } catch (error) {
+            setSuggestionError(
+                error.message || "A movie could not be chosen right now."
+            );
+        } finally {
+            setIsChoosingSuggestion(false);
+        }
     };
 
     const isCurrentBrowseComplete =
@@ -222,7 +254,7 @@ export const BrowseHorrorMovies = () => {
         if (submittedRating !== "0") {
             parameters.set("rating", submittedRating);
         }
-        if (submittedVotes !== "100") {
+        if (submittedVotes !== "0") {
             parameters.set("votes", submittedVotes);
         }
         if (submittedRuntime !== "Any") {
@@ -412,6 +444,11 @@ export const BrowseHorrorMovies = () => {
                         {movieLoadError}
                     </Alert>
                 )}
+                {suggestionError && (
+                    <Alert color="danger" role="alert">
+                        {suggestionError}
+                    </Alert>
+                )}
                 {isLoadingMovies && (
                     <div
                         className="movie-loading"
@@ -480,6 +517,30 @@ export const BrowseHorrorMovies = () => {
                                 </span>
                                 <span>{sortLabels[submittedSort]}</span>
                             </div>
+                            <Button
+                                type="button"
+                                className="movie-browse-surprise-button"
+                                onClick={chooseSurpriseMovie}
+                                disabled={isChoosingSuggestion}
+                            >
+                                {isChoosingSuggestion ? (
+                                    <>
+                                        <Spinner
+                                            size="sm"
+                                            aria-hidden="true"
+                                        />
+                                        Choosing your fate...
+                                    </>
+                                ) : (
+                                    <>
+                                        <FontAwesomeIcon
+                                            icon={faDice}
+                                            aria-hidden="true"
+                                        />
+                                        Surprise me
+                                    </>
+                                )}
+                            </Button>
                         </header>
                         {pagination}
                         <div className="discovery-movie-grid">

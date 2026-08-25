@@ -19,7 +19,15 @@ namespace Catacombs.Repositories
 
             using var command = connection.CreateCommand();
             command.CommandText = @"
-                SELECT u.id, u.username, u.email, u.password_hash
+                SELECT u.id,
+                       u.username,
+                       u.email,
+                       u.password_hash,
+                       u.role,
+                       u.is_banned,
+                       u.banned_at,
+                       u.banned_by_user_id,
+                       u.ban_reason
                   FROM users u
                  WHERE u.id = @id";
 
@@ -36,7 +44,15 @@ namespace Catacombs.Repositories
 
             using var command = connection.CreateCommand();
             command.CommandText = @"
-                SELECT u.id, u.username, u.email, u.password_hash
+                SELECT u.id,
+                       u.username,
+                       u.email,
+                       u.password_hash,
+                       u.role,
+                       u.is_banned,
+                       u.banned_at,
+                       u.banned_by_user_id,
+                       u.ban_reason
                   FROM users u
                  WHERE u.email = @email";
 
@@ -109,7 +125,15 @@ namespace Catacombs.Repositories
                 id = DbUtils.GetInt(reader, "id"),
                 username = DbUtils.GetString(reader, "username"),
                 email = DbUtils.GetString(reader, "email"),
-                passwordHash = DbUtils.GetString(reader, "password_hash")
+                passwordHash = DbUtils.GetString(reader, "password_hash"),
+                role = DbUtils.GetString(reader, "role"),
+                isBanned = reader.GetBoolean(
+                    reader.GetOrdinal("is_banned")),
+                bannedAt = DbUtils.GetNullableDateTime(reader, "banned_at"),
+                bannedByUserId = DbUtils.GetNullableInt(
+                    reader,
+                    "banned_by_user_id"),
+                banReason = DbUtils.GetNullableString(reader, "ban_reason")
             };
         }
     }

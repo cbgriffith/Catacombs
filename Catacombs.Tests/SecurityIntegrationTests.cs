@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Catacombs.Models;
+using Catacombs.Repositories;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -87,6 +88,31 @@ public sealed class SecurityIntegrationTests : IAsyncLifetime
         Assert.NotEqual(
             PasswordVerificationResult.Failed,
             verificationResult);
+    }
+
+    [Fact]
+    public async Task RegistrationCreatesAnActiveNonAdminUser()
+    {
+        var email = NewEmail("account-defaults");
+
+        var response = await RegisterAsync(
+            _client,
+            "Account Defaults",
+            email);
+
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+
+        await using var scope = _factory.Services.CreateAsyncScope();
+        var usersRepository = scope.ServiceProvider
+            .GetRequiredService<IUsersRepository>();
+        var user = usersRepository.GetByEmail(email);
+
+        Assert.NotNull(user);
+        Assert.Equal(UserRoles.User, user.role);
+        Assert.False(user.isBanned);
+        Assert.Null(user.bannedAt);
+        Assert.Null(user.bannedByUserId);
+        Assert.Null(user.banReason);
     }
 
     [Fact]

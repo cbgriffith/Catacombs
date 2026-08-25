@@ -1,3 +1,4 @@
+using Catacombs.Authentication;
 using Catacombs.Database;
 using Catacombs.HealthChecks;
 using Catacombs.Models;
@@ -68,6 +69,7 @@ namespace Catacombs
                 options.IterationCount = 210_000;
             });
             services.AddScoped<IPasswordHasher<Users>, PasswordHasher<Users>>();
+            services.AddScoped<CatacombsCookieAuthenticationEvents>();
 
             services.AddCors(options =>
             {
@@ -104,18 +106,8 @@ namespace Catacombs
                     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                     options.ExpireTimeSpan = TimeSpan.FromHours(8);
                     options.SlidingExpiration = true;
-                    options.Events.OnRedirectToLogin = context =>
-                    {
-                        context.Response.StatusCode =
-                            StatusCodes.Status401Unauthorized;
-                        return Task.CompletedTask;
-                    };
-                    options.Events.OnRedirectToAccessDenied = context =>
-                    {
-                        context.Response.StatusCode =
-                            StatusCodes.Status403Forbidden;
-                        return Task.CompletedTask;
-                    };
+                    options.EventsType =
+                        typeof(CatacombsCookieAuthenticationEvents);
                 });
             services.AddAuthorization();
             services.AddRateLimiter(options =>

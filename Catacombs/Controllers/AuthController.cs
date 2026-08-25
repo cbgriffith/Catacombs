@@ -1,3 +1,4 @@
+using Catacombs.Authentication;
 using Catacombs.Contracts.Authentication;
 using Catacombs.Models;
 using Catacombs.Repositories;
@@ -21,6 +22,10 @@ namespace Catacombs.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
+        private const string UniqueEmailConstraint = "uq_users_email";
+        private const string UniqueUsernameIndex =
+            "uq_users_username_ci";
+
         private readonly IUsersRepository _usersRepository;
         private readonly IPasswordHasher<Users> _passwordHasher;
         private readonly IAntiforgery _antiforgery;
@@ -74,6 +79,11 @@ namespace Catacombs.Controllers
                 .Trim()
                 .ToLowerInvariant();
 
+            if (_usersRepository.GetByUsername(normalizedUsername) != null)
+            {
+                return DuplicateUsernameConflict();
+            }
+
             if (_usersRepository.GetByEmail(normalizedEmail) != null)
             {
                 return DuplicateEmailConflict();
@@ -95,7 +105,23 @@ namespace Catacombs.Controllers
             catch (PostgresException exception)
                 when (exception.SqlState == PostgresErrorCodes.UniqueViolation)
             {
-                return DuplicateEmailConflict();
+                if (string.Equals(
+                    exception.ConstraintName,
+                    UniqueUsernameIndex,
+                    StringComparison.Ordinal))
+                {
+                    return DuplicateUsernameConflict();
+                }
+
+                if (string.Equals(
+                    exception.ConstraintName,
+                    UniqueEmailConstraint,
+                    StringComparison.Ordinal))
+                {
+                    return DuplicateEmailConflict();
+                }
+
+                throw;
             }
 
             return StatusCode(
@@ -109,6 +135,7 @@ namespace Catacombs.Controllers
         [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         public async Task<ActionResult<UserResponse>> Login(
             LoginRequest request)
@@ -134,6 +161,11 @@ namespace Catacombs.Controllers
                 return InvalidCredentials();
             }
 
+            if (user.isBanned)
+            {
+                return BannedAccount();
+            }
+
             if (verificationResult ==
                 PasswordVerificationResult.SuccessRehashNeeded)
             {
@@ -145,21 +177,9 @@ namespace Catacombs.Controllers
                     user.passwordHash);
             }
 
-            var claims = new[]
-            {
-                new Claim(
-                    ClaimTypes.NameIdentifier,
-                    user.id.ToString(CultureInfo.InvariantCulture)),
-                new Claim(ClaimTypes.Name, user.username),
-                new Claim(ClaimTypes.Email, user.email)
-            };
-            var identity = new ClaimsIdentity(
-                claims,
-                CookieAuthenticationDefaults.AuthenticationScheme);
-
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(identity),
+                UserClaimsPrincipalFactory.CreatePrincipal(user),
                 new AuthenticationProperties
                 {
                     AllowRefresh = true,
@@ -300,6 +320,27 @@ namespace Catacombs.Controllers
                 Status = StatusCodes.Status401Unauthorized,
                 Title = "Invalid email or password."
             });
+        }
+
+        private static ConflictObjectResult DuplicateUsernameConflict()
+        {
+            return new ConflictObjectResult(new ProblemDetails
+            {
+                Status = StatusCodes.Status409Conflict,
+                Title = "That username is already in use."
+            });
+        }
+
+        private static ObjectResult BannedAccount()
+        {
+            return new ObjectResult(new ProblemDetails
+            {
+                Status = StatusCodes.Status403Forbidden,
+                Title = "This account has been banned."
+            })
+            {
+                StatusCode = StatusCodes.Status403Forbidden
+            };
         }
     }
 }

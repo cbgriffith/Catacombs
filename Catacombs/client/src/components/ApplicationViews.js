@@ -19,11 +19,12 @@ import { DislikedMoviesList } from "./Movies/DislikedMoviesList";
 import { SimilarMovieList } from "./Movies/SimilarMoviesList";
 import { MovieDetails } from "./Movies/MovieDetails";
 import { Home } from "./Home";
+import AdminDashboard from "./Administration/AdminDashboard";
 import "./auth/Auth.css";
 
 
 export default function ApplicationViews() {
-   const { isLoadingUser, isLoggedIn } = useContext(UserContext);
+   const { isLoadingUser, isLoggedIn, userProfile } = useContext(UserContext);
 
    if (isLoadingUser) {
       return (
@@ -83,6 +84,14 @@ export default function ApplicationViews() {
             <Route
               path="/account/password"
               element={<ChangePassword />}
+            />
+            <Route
+              path="/admin/users"
+              element={
+                userProfile?.isAdmin
+                  ? <AdminDashboard />
+                  : <Navigate to="/" replace />
+              }
             />
             <Route path="/login" element={<Navigate to="/" replace />} />
             <Route path="/register" element={<Navigate to="/" replace />} />

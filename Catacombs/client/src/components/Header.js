@@ -33,6 +33,7 @@ import {
   faThumbsDown,
   faTicket,
   faTrophy,
+  faUserShield,
   faUser
 } from "@fortawesome/free-solid-svg-icons";
 import { UserContext } from "./Repositories/UserProvider";
@@ -302,6 +303,7 @@ export default function Header() {
                   caret
                   className={
                     location.pathname.startsWith("/account/")
+                      || location.pathname.startsWith("/admin/")
                       ? "header-account-toggle active"
                       : "header-account-toggle"
                   }
@@ -319,6 +321,23 @@ export default function Header() {
                   end
                   className="header-account-menu"
                 >
+                  {userProfile?.isAdmin && (
+                    <>
+                      <DropdownItem
+                        tag={RRNavLink}
+                        to="/admin/users"
+                        className="header-account-action"
+                        onClick={closeMenu}
+                      >
+                        <FontAwesomeIcon
+                          icon={faUserShield}
+                          aria-hidden="true"
+                        />
+                        <span>Admin dashboard</span>
+                      </DropdownItem>
+                      <DropdownItem divider />
+                    </>
+                  )}
                   <DropdownItem
                     tag={RRNavLink}
                     to="/account/password"

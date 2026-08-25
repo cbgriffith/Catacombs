@@ -102,6 +102,12 @@ public sealed class SecurityIntegrationTests : IAsyncLifetime
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
+        using (var document = await ReadJsonAsync(response))
+        {
+            Assert.False(
+                document.RootElement.GetProperty("isAdmin").GetBoolean());
+        }
+
         await using var scope = _factory.Services.CreateAsyncScope();
         var usersRepository = scope.ServiceProvider
             .GetRequiredService<IUsersRepository>();
@@ -180,6 +186,93 @@ public sealed class SecurityIntegrationTests : IAsyncLifetime
 
         var signedOutUser = await _client.GetAsync("/api/auth/me");
         Assert.Equal(HttpStatusCode.Unauthorized, signedOutUser.StatusCode);
+    }
+
+    [Fact]
+    public async Task AdministratorLoginIdentifiesTheAdministrator()
+    {
+        var email = NewEmail("admin-login");
+
+        var registerResponse = await RegisterAsync(
+            _client,
+            "Admin Login",
+            email);
+        Assert.Equal(HttpStatusCode.Created, registerResponse.StatusCode);
+
+        await SetUserRoleAsync(email, UserRoles.Admin);
+
+        var loginResponse = await LoginAsync(
+            _client,
+            email,
+            TestPassword);
+        Assert.Equal(HttpStatusCode.OK, loginResponse.StatusCode);
+
+        using var document = await ReadJsonAsync(loginResponse);
+        Assert.True(
+            document.RootElement.GetProperty("isAdmin").GetBoolean());
+    }
+
+    [Fact]
+    public async Task BannedLoginRequiresTheCorrectPassword()
+    {
+        var email = NewEmail("banned-login");
+
+        var registerResponse = await RegisterAsync(
+            _client,
+            "Banned Login",
+            email);
+        Assert.Equal(HttpStatusCode.Created, registerResponse.StatusCode);
+
+        await BanUserAsync(email);
+
+        var wrongPasswordResponse = await LoginAsync(
+            _client,
+            email,
+            "Definitely the wrong password");
+        Assert.Equal(
+            HttpStatusCode.Unauthorized,
+            wrongPasswordResponse.StatusCode);
+
+        var correctPasswordResponse = await LoginAsync(
+            _client,
+            email,
+            TestPassword);
+        Assert.Equal(
+            HttpStatusCode.Forbidden,
+            correctPasswordResponse.StatusCode);
+
+        using var document = await ReadJsonAsync(correctPasswordResponse);
+        Assert.Equal(
+            "This account has been banned.",
+            document.RootElement.GetProperty("title").GetString());
+    }
+
+    [Fact]
+    public async Task ExistingSessionIsRejectedAfterUserIsBanned()
+    {
+        var email = NewEmail("banned-session");
+
+        var registerResponse = await RegisterAsync(
+            _client,
+            "Banned Session",
+            email);
+        Assert.Equal(HttpStatusCode.Created, registerResponse.StatusCode);
+
+        var loginResponse = await LoginAsync(
+            _client,
+            email,
+            TestPassword);
+        Assert.Equal(HttpStatusCode.OK, loginResponse.StatusCode);
+
+        var activeSession = await _client.GetAsync("/api/auth/me");
+        Assert.Equal(HttpStatusCode.OK, activeSession.StatusCode);
+
+        await BanUserAsync(email);
+
+        var bannedSession = await _client.GetAsync("/api/auth/me");
+        Assert.Equal(
+            HttpStatusCode.Unauthorized,
+            bannedSession.StatusCode);
     }
 
     [Fact]
@@ -649,6 +742,44 @@ public sealed class SecurityIntegrationTests : IAsyncLifetime
             $"integration-{scenario}-{Guid.NewGuid():N}@catacombs.local";
         _testEmails.Add(email);
         return email;
+    }
+
+    private async Task SetUserRoleAsync(string email, string role)
+    {
+        await using var scope = _factory.Services.CreateAsyncScope();
+        var dataSource = scope.ServiceProvider
+            .GetRequiredService<NpgsqlDataSource>();
+
+        await using var connection = await dataSource.OpenConnectionAsync();
+        await using var command = new NpgsqlCommand(
+            "UPDATE users SET role = @role WHERE email = @email",
+            connection);
+        command.Parameters.AddWithValue("role", role);
+        command.Parameters.AddWithValue("email", email);
+
+        Assert.Equal(1, await command.ExecuteNonQueryAsync());
+    }
+
+    private async Task BanUserAsync(string email)
+    {
+        await using var scope = _factory.Services.CreateAsyncScope();
+        var dataSource = scope.ServiceProvider
+            .GetRequiredService<NpgsqlDataSource>();
+
+        await using var connection = await dataSource.OpenConnectionAsync();
+        await using var command = new NpgsqlCommand(
+            """
+            UPDATE users
+               SET is_banned = true,
+                   banned_at = now(),
+                   banned_by_user_id = NULL,
+                   ban_reason = 'Automated integration test ban.'
+             WHERE email = @email
+            """,
+            connection);
+        command.Parameters.AddWithValue("email", email);
+
+        Assert.Equal(1, await command.ExecuteNonQueryAsync());
     }
 
     private async Task RegisterAndLoginAsync(

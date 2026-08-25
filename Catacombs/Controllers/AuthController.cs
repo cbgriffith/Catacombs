@@ -22,6 +22,10 @@ namespace Catacombs.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
+        private const string UniqueEmailConstraint = "uq_users_email";
+        private const string UniqueUsernameIndex =
+            "uq_users_username_ci";
+
         private readonly IUsersRepository _usersRepository;
         private readonly IPasswordHasher<Users> _passwordHasher;
         private readonly IAntiforgery _antiforgery;
@@ -75,6 +79,11 @@ namespace Catacombs.Controllers
                 .Trim()
                 .ToLowerInvariant();
 
+            if (_usersRepository.GetByUsername(normalizedUsername) != null)
+            {
+                return DuplicateUsernameConflict();
+            }
+
             if (_usersRepository.GetByEmail(normalizedEmail) != null)
             {
                 return DuplicateEmailConflict();
@@ -96,7 +105,23 @@ namespace Catacombs.Controllers
             catch (PostgresException exception)
                 when (exception.SqlState == PostgresErrorCodes.UniqueViolation)
             {
-                return DuplicateEmailConflict();
+                if (string.Equals(
+                    exception.ConstraintName,
+                    UniqueUsernameIndex,
+                    StringComparison.Ordinal))
+                {
+                    return DuplicateUsernameConflict();
+                }
+
+                if (string.Equals(
+                    exception.ConstraintName,
+                    UniqueEmailConstraint,
+                    StringComparison.Ordinal))
+                {
+                    return DuplicateEmailConflict();
+                }
+
+                throw;
             }
 
             return StatusCode(
@@ -294,6 +319,15 @@ namespace Catacombs.Controllers
             {
                 Status = StatusCodes.Status401Unauthorized,
                 Title = "Invalid email or password."
+            });
+        }
+
+        private static ConflictObjectResult DuplicateUsernameConflict()
+        {
+            return new ConflictObjectResult(new ProblemDetails
+            {
+                Status = StatusCodes.Status409Conflict,
+                Title = "That username is already in use."
             });
         }
 

@@ -71,6 +71,26 @@ namespace Catacombs.Repositories
             return MapUser(reader);
         }
 
+        public Users GetByUsername(string username)
+        {
+            using var connection = Connection;
+            connection.Open();
+
+            using var command = connection.CreateCommand();
+            command.CommandText = $@"
+                {SelectUserColumns}
+                 WHERE LOWER(u.username) = LOWER(@username)";
+
+            DbUtils.AddParameter(
+                command,
+                "@username",
+                username,
+                DbType.String);
+
+            using var reader = command.ExecuteReader();
+            return reader.Read() ? MapUser(reader) : null;
+        }
+
         public void Add(Users users)
         {
             using var connection = Connection;

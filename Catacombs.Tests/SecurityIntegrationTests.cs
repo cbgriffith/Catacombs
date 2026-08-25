@@ -122,6 +122,67 @@ public sealed class SecurityIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task RegistrationRequiresACaseInsensitiveUniqueUsername()
+    {
+        var firstResponse = await RegisterAsync(
+            _client,
+            "Unique Cryptkeeper",
+            NewEmail("unique-username-first"));
+        Assert.Equal(HttpStatusCode.Created, firstResponse.StatusCode);
+
+        var duplicateResponse = await RegisterAsync(
+            _client,
+            "unique cryptkeeper",
+            NewEmail("unique-username-second"));
+        Assert.Equal(
+            HttpStatusCode.Conflict,
+            duplicateResponse.StatusCode);
+
+        using var document = await ReadJsonAsync(duplicateResponse);
+        Assert.Equal(
+            "That username is already in use.",
+            document.RootElement.GetProperty("title").GetString());
+    }
+
+    [Fact]
+    public async Task DatabaseEnforcesCaseInsensitiveUniqueUsernames()
+    {
+        var firstResponse = await RegisterAsync(
+            _client,
+            "Database Cryptkeeper",
+            NewEmail("database-username-first"));
+        Assert.Equal(HttpStatusCode.Created, firstResponse.StatusCode);
+
+        var duplicateEmail = NewEmail("database-username-second");
+        await using var scope = _factory.Services.CreateAsyncScope();
+        var dataSource = scope.ServiceProvider
+            .GetRequiredService<NpgsqlDataSource>();
+        await using var connection = await dataSource.OpenConnectionAsync();
+        await using var command = new NpgsqlCommand(
+            """
+            INSERT INTO users (username, email, password_hash)
+            VALUES (@username, @email, @passwordHash)
+            """,
+            connection);
+        command.Parameters.AddWithValue(
+            "username",
+            "DATABASE CRYPTKEEPER");
+        command.Parameters.AddWithValue("email", duplicateEmail);
+        command.Parameters.AddWithValue(
+            "passwordHash",
+            "Not a usable password hash");
+
+        var exception = await Assert.ThrowsAsync<PostgresException>(
+            async () => await command.ExecuteNonQueryAsync());
+        Assert.Equal(
+            PostgresErrorCodes.UniqueViolation,
+            exception.SqlState);
+        Assert.Equal(
+            "uq_users_username_ci",
+            exception.ConstraintName);
+    }
+
+    [Fact]
     public async Task RegistrationRequiresAtLeastEightPasswordCharacters()
     {
         var shortPasswordResponse = await RegisterAsync(

@@ -276,6 +276,204 @@ public sealed class SecurityIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AdministratorCanListBanAndUnbanUsers()
+    {
+        using var adminClient = CreateClient();
+        using var memberClient = CreateClient();
+        var adminEmail = NewEmail("admin-manage");
+        var memberEmail = NewEmail("admin-member");
+
+        var adminRegistration = await RegisterAsync(
+            adminClient,
+            "Managing Admin",
+            adminEmail);
+        Assert.Equal(
+            HttpStatusCode.Created,
+            adminRegistration.StatusCode);
+        await SetUserRoleAsync(adminEmail, UserRoles.Admin);
+
+        var adminLogin = await LoginAsync(
+            adminClient,
+            adminEmail,
+            TestPassword);
+        Assert.Equal(HttpStatusCode.OK, adminLogin.StatusCode);
+
+        var memberRegistration = await RegisterAsync(
+            memberClient,
+            "Managed Member",
+            memberEmail);
+        Assert.Equal(
+            HttpStatusCode.Created,
+            memberRegistration.StatusCode);
+
+        int memberId;
+        using (var document = await ReadJsonAsync(memberRegistration))
+        {
+            memberId = document.RootElement.GetProperty("id").GetInt32();
+        }
+
+        var memberLogin = await LoginAsync(
+            memberClient,
+            memberEmail,
+            TestPassword);
+        Assert.Equal(HttpStatusCode.OK, memberLogin.StatusCode);
+
+        var usersResponse = await adminClient.GetAsync("/api/admin/users");
+        Assert.Equal(HttpStatusCode.OK, usersResponse.StatusCode);
+
+        using (var document = await ReadJsonAsync(usersResponse))
+        {
+            var users = document.RootElement.EnumerateArray().ToList();
+            var member = Assert.Single(
+                users,
+                user => user.GetProperty("email").GetString()
+                    == memberEmail);
+
+            Assert.False(member.GetProperty("isBanned").GetBoolean());
+            Assert.False(member.TryGetProperty("passwordHash", out _));
+        }
+
+        var banResponse = await SendWithAntiforgeryAsync(
+            adminClient,
+            HttpMethod.Put,
+            $"/api/admin/users/{memberId}/ban",
+            new { reason = "Repeatedly awakening the dead." });
+        Assert.Equal(HttpStatusCode.OK, banResponse.StatusCode);
+
+        using (var document = await ReadJsonAsync(banResponse))
+        {
+            Assert.True(
+                document.RootElement.GetProperty("isBanned").GetBoolean());
+            Assert.Equal(
+                "Repeatedly awakening the dead.",
+                document.RootElement.GetProperty("banReason").GetString());
+        }
+
+        var rejectedSession = await memberClient.GetAsync("/api/auth/me");
+        Assert.Equal(
+            HttpStatusCode.Unauthorized,
+            rejectedSession.StatusCode);
+
+        var rejectedLogin = await LoginAsync(
+            memberClient,
+            memberEmail,
+            TestPassword);
+        Assert.Equal(HttpStatusCode.Forbidden, rejectedLogin.StatusCode);
+
+        var unbanResponse = await SendWithAntiforgeryAsync(
+            adminClient,
+            HttpMethod.Delete,
+            $"/api/admin/users/{memberId}/ban");
+        Assert.Equal(HttpStatusCode.OK, unbanResponse.StatusCode);
+
+        using (var document = await ReadJsonAsync(unbanResponse))
+        {
+            Assert.False(
+                document.RootElement.GetProperty("isBanned").GetBoolean());
+            Assert.Equal(
+                JsonValueKind.Null,
+                document.RootElement.GetProperty("banReason").ValueKind);
+        }
+
+        var restoredLogin = await LoginAsync(
+            memberClient,
+            memberEmail,
+            TestPassword);
+        Assert.Equal(HttpStatusCode.OK, restoredLogin.StatusCode);
+    }
+
+    [Fact]
+    public async Task AdministratorRoutesAndAccountsAreProtected()
+    {
+        using var regularClient = CreateClient();
+        using var adminClient = CreateClient();
+        using var secondAdminClient = CreateClient();
+
+        var anonymousResponse =
+            await adminClient.GetAsync("/api/admin/users");
+        Assert.Equal(
+            HttpStatusCode.Unauthorized,
+            anonymousResponse.StatusCode);
+
+        var regularEmail = NewEmail("regular-no-admin");
+        var regularRegistration = await RegisterAsync(
+            regularClient,
+            "Regular Account",
+            regularEmail);
+        Assert.Equal(
+            HttpStatusCode.Created,
+            regularRegistration.StatusCode);
+        var regularLogin = await LoginAsync(
+            regularClient,
+            regularEmail,
+            TestPassword);
+        Assert.Equal(HttpStatusCode.OK, regularLogin.StatusCode);
+
+        var forbiddenResponse =
+            await regularClient.GetAsync("/api/admin/users");
+        Assert.Equal(
+            HttpStatusCode.Forbidden,
+            forbiddenResponse.StatusCode);
+
+        var adminEmail = NewEmail("protected-admin");
+        var adminRegistration = await RegisterAsync(
+            adminClient,
+            "Protected Admin",
+            adminEmail);
+        Assert.Equal(
+            HttpStatusCode.Created,
+            adminRegistration.StatusCode);
+
+        int adminId;
+        using (var document = await ReadJsonAsync(adminRegistration))
+        {
+            adminId = document.RootElement.GetProperty("id").GetInt32();
+        }
+
+        await SetUserRoleAsync(adminEmail, UserRoles.Admin);
+        var adminLogin = await LoginAsync(
+            adminClient,
+            adminEmail,
+            TestPassword);
+        Assert.Equal(HttpStatusCode.OK, adminLogin.StatusCode);
+
+        var selfBanResponse = await SendWithAntiforgeryAsync(
+            adminClient,
+            HttpMethod.Put,
+            $"/api/admin/users/{adminId}/ban",
+            new { reason = "A terrible administrative decision." });
+        Assert.Equal(
+            HttpStatusCode.BadRequest,
+            selfBanResponse.StatusCode);
+
+        var secondAdminEmail = NewEmail("second-admin");
+        var secondAdminRegistration = await RegisterAsync(
+            secondAdminClient,
+            "Second Admin",
+            secondAdminEmail);
+        Assert.Equal(
+            HttpStatusCode.Created,
+            secondAdminRegistration.StatusCode);
+
+        int secondAdminId;
+        using (var document = await ReadJsonAsync(secondAdminRegistration))
+        {
+            secondAdminId = document.RootElement.GetProperty("id").GetInt32();
+        }
+
+        await SetUserRoleAsync(secondAdminEmail, UserRoles.Admin);
+
+        var adminBanResponse = await SendWithAntiforgeryAsync(
+            adminClient,
+            HttpMethod.Put,
+            $"/api/admin/users/{secondAdminId}/ban",
+            new { reason = "Administrators remain protected." });
+        Assert.Equal(
+            HttpStatusCode.BadRequest,
+            adminBanResponse.StatusCode);
+    }
+
+    [Fact]
     public async Task ChangingPasswordValidatesTheRequestAndSignsOut()
     {
         const string newPassword =

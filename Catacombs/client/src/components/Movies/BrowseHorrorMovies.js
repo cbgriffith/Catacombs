@@ -112,6 +112,7 @@ export const BrowseHorrorMovies = () => {
     const [completedBrowseKey, setCompletedBrowseKey] = useState("");
     const [isChoosingSuggestion, setIsChoosingSuggestion] = useState(false);
     const [suggestionError, setSuggestionError] = useState("");
+    const suggestionRequestId = useRef(0);
     const resultsHeadingRef = useRef(null);
     const previousPageRef = useRef(requestedPage);
     const {
@@ -147,6 +148,8 @@ export const BrowseHorrorMovies = () => {
             sort: submittedSort
         });
         setCompletedBrowseKey("");
+        setIsChoosingSuggestion(false);
+        setSuggestionError("");
 
         browseHorrorMovies(
             getSubmittedFilters(),
@@ -159,6 +162,8 @@ export const BrowseHorrorMovies = () => {
 
         return () => {
             isActive = false;
+            // A suggestion belongs to this visit and these applied filters.
+            suggestionRequestId.current += 1;
         };
         // browseHorrorMovies comes from MovieProvider.
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -208,6 +213,7 @@ export const BrowseHorrorMovies = () => {
     };
 
     const chooseSurpriseMovie = async () => {
+        const requestId = ++suggestionRequestId.current;
         setIsChoosingSuggestion(true);
         setSuggestionError("");
 
@@ -216,13 +222,19 @@ export const BrowseHorrorMovies = () => {
                 getSubmittedFilters(),
                 moviePage.totalPages
             );
-            navigate(`/movies/details/${movie.id}`);
+            if (requestId === suggestionRequestId.current) {
+                navigate(`/movies/details/${movie.id}`);
+            }
         } catch (error) {
-            setSuggestionError(
-                error.message || "A movie could not be chosen right now."
-            );
+            if (requestId === suggestionRequestId.current) {
+                setSuggestionError(
+                    error.message || "A movie could not be chosen right now."
+                );
+            }
         } finally {
-            setIsChoosingSuggestion(false);
+            if (requestId === suggestionRequestId.current) {
+                setIsChoosingSuggestion(false);
+            }
         }
     };
 

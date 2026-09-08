@@ -1,6 +1,7 @@
 import React, {
     useCallback,
     useMemo,
+    useRef,
     useState,
     createContext
 } from "react"
@@ -95,6 +96,9 @@ export const MovieProvider = (props) => {
     const [moviePage, setMoviePage] = useState(emptyMoviePage)
     const [isLoadingMovies, setIsLoadingMovies] = useState(false)
     const [movieLoadError, setMovieLoadError] = useState("")
+    // Discovery and personal lists share results, so they share a request ID.
+    const movieRequestId = useRef(0)
+    const collectionRequestId = useRef(0)
     const savedMovieByTmdbId = useMemo(
         () => new Map(
             savedMovies.map((movie) => [movie.movieId, movie])
@@ -103,6 +107,8 @@ export const MovieProvider = (props) => {
     )
 
     const rememberSavedMovie = (savedMovie) => {
+        // An earlier collection snapshot must not undo a completed edit.
+        collectionRequestId.current += 1
         setSavedMovies((currentMovies) => {
             const existingIndex = currentMovies.findIndex(
                 (movie) => movie.movieId === savedMovie.movieId
@@ -121,15 +127,19 @@ export const MovieProvider = (props) => {
     }
 
     const loadMovieCollection = useCallback(() => {
+        const requestId = ++collectionRequestId.current
         return apiFetch("/api/Movies/collection")
             .then((response) => response.json())
             .then((collection) => {
-                setSavedMovies(collection)
+                if (requestId === collectionRequestId.current) {
+                    setSavedMovies(collection)
+                }
                 return collection
             })
     }, [])
 
     const clearMovieResults = useCallback(() => {
+        movieRequestId.current += 1
         setMovies([])
         setMoviePage(emptyMoviePage)
         setMovieLoadError("")
@@ -137,6 +147,7 @@ export const MovieProvider = (props) => {
     }, [])
 
     const loadTmdbMovies = async (path) => {
+        const requestId = ++movieRequestId.current
         setIsLoadingMovies(true)
         setMovieLoadError("")
         setMovies([])
@@ -146,6 +157,9 @@ export const MovieProvider = (props) => {
                 tmdbApiFetch(path),
                 loadMovieCollection()
             ])
+            if (requestId !== movieRequestId.current) {
+                return null
+            }
             setMovies(movieObject.results || [])
             setMoviePage({
                 page: movieObject.page || 1,
@@ -154,6 +168,9 @@ export const MovieProvider = (props) => {
             })
             return movieObject
         } catch (error) {
+            if (requestId !== movieRequestId.current) {
+                return null
+            }
             setMovies([])
             setMoviePage({
                 page: 1,
@@ -163,7 +180,20 @@ export const MovieProvider = (props) => {
             setMovieLoadError(error.message)
             return null
         } finally {
-            setIsLoadingMovies(false)
+            if (requestId === movieRequestId.current) {
+                setIsLoadingMovies(false)
+            }
+        }
+    }
+
+    const loadPersonalMovies = async (path) => {
+        clearMovieResults()
+        const requestId = movieRequestId.current
+        const response = await apiFetch(path)
+        const collection = await response.json()
+
+        if (requestId === movieRequestId.current) {
+            setMovies(collection)
         }
     }
 
@@ -311,20 +341,18 @@ export const MovieProvider = (props) => {
     }
 
     const getAllMovies = () => {
-        return getWatchlist()
-            .then(setMovies)
+        return loadPersonalMovies("/api/Movies")
     }
 
     const getAllSeenMovies = () => {
-        return apiFetch("/api/Movies/seen")
-            .then((response) => response.json())
-            .then(setMovies)
+        return loadPersonalMovies("/api/Movies/seen")
     }
 
     const deleteMovie = async (movieId) => {
         const response = await secureApiFetch(`/api/Movies/${movieId}`, {
             method: "DELETE"
         })
+        collectionRequestId.current += 1
         setSavedMovies((currentMovies) => (
             currentMovies.filter((movie) => movie.id !== movieId)
         ))
@@ -332,15 +360,11 @@ export const MovieProvider = (props) => {
     }
 
     const getAllLikedMovies = () => {
-        return apiFetch("/api/Movies/liked")
-            .then((response) => response.json())
-            .then(setMovies)
+        return loadPersonalMovies("/api/Movies/liked")
     }
 
     const getAllDislikedMovies = () => {
-        return apiFetch("/api/Movies/disliked")
-            .then((response) => response.json())
-            .then(setMovies)
+        return loadPersonalMovies("/api/Movies/disliked")
     }
 
     const getMovieSummary = () => {
